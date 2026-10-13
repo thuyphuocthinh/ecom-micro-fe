@@ -1,0 +1,4259 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/test-health": {
+      "get": {
+        "operationId": "AppController_testHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API is healthy"
+          }
+        },
+        "summary": "Check API health",
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "operationId": "UserController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return the profile of the current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get current user profile",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "operationId": "UserController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The name is not valid (USR-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Change the display name",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/me/avatar": {
+      "put": {
+        "operationId": "UserController_uploadAvatar",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not a valid picture (USR-003)"
+          },
+          "413": {
+            "description": "The file is over 2 MB"
+          },
+          "503": {
+            "description": "Image storage unavailable"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upload the avatar (JPEG, PNG or WebP, at most 2 MB)",
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "operationId": "UserController_removeAvatar",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Removed (or there was none)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remove the avatar",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/v1/users/me/addresses": {
+      "get": {
+        "operationId": "AddressController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AddressResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "My addresses (default first, then newest)",
+        "tags": [
+          "Addresses"
+        ]
+      },
+      "post": {
+        "operationId": "AddressController_add",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid (ADDR-003)"
+          },
+          "409": {
+            "description": "Already 10 addresses (ADDR-002)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add an address (at most 10)",
+        "tags": [
+          "Addresses"
+        ]
+      }
+    },
+    "/api/v1/users/me/addresses/{id}": {
+      "patch": {
+        "operationId": "AddressController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Address id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAddressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Not valid (ADDR-003)"
+          },
+          "404": {
+            "description": "No such address of mine (ADDR-001)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Change some fields of an address",
+        "tags": [
+          "Addresses"
+        ]
+      },
+      "delete": {
+        "operationId": "AddressController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Address id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "No such address of mine (ADDR-001)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete an address (the newest remaining becomes the default if needed)",
+        "tags": [
+          "Addresses"
+        ]
+      }
+    },
+    "/api/v1/users/me/addresses/{id}/default": {
+      "put": {
+        "operationId": "AddressController_setDefault",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Address id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddressResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such address of mine (ADDR-001)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Make an address my default",
+        "tags": [
+          "Addresses"
+        ]
+      }
+    },
+    "/api/v1/locations/provinces": {
+      "get": {
+        "operationId": "LocationsController_listProvinces",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProvinceDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "All provinces and cities (34), by name",
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
+    "/api/v1/locations/provinces/{code}/wards": {
+      "get": {
+        "operationId": "LocationsController_listWards",
+        "parameters": [
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "description": "Province code",
+            "schema": {
+              "example": "01",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WardDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such province (LOC-001)"
+          }
+        },
+        "summary": "The wards, communes and special zones of a province",
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
+    "/api/v1/auth/register": {
+      "post": {
+        "description": "No account exists yet. Enter the code at POST /auth/verify-email to create it and log in.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already has an account"
+          }
+        },
+        "summary": "Start registration: emails a 6-digit code to confirm the address",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/verify-email": {
+      "post": {
+        "description": "The password must be the one sent to /auth/register. It proves the person confirming is the person who registered, so somebody who re-registered the address with their own password cannot take the account over.",
+        "operationId": "AuthController_verifyEmail",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong, expired or already used code, or a password that differs from the one used to register (AUTH-011)"
+          }
+        },
+        "summary": "Confirm the emailed code: creates the account and logs in",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/resend-verification": {
+      "post": {
+        "description": "Only for a registration that is still waiting. When nothing is waiting (never registered, already has an account, or it timed out) it answers 404, and the user should register again.",
+        "operationId": "AuthController_resendVerification",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResendVerificationResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No registration is waiting for this email; register again"
+          },
+          "429": {
+            "description": "Asked again too soon, or too many codes this hour. `errors.retryAfterSeconds` (and the Retry-After header) say how long to wait"
+          }
+        },
+        "summary": "Send the code again",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/forgot-password": {
+      "post": {
+        "description": "Always answers 202 with the same body, whether or not the address has an account, so it cannot be used to find out who is registered. If there is an account, a code arrives by email shortly. Call this again to get a new code (same cooldown).",
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForgotPasswordResponseDto"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Asked again too soon, or too many codes this hour; the same for every address. `errors.retryAfterSeconds` says how long to wait"
+          }
+        },
+        "summary": "Forgot the password: email a code to reset it",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/reset-password": {
+      "post": {
+        "description": "Closes every session of the account and does not log anyone in: log in again with the new password.",
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Wrong, expired or used code (AUTH-008), or a new password that is too easy to guess (AUTH-010, with the reason)"
+          }
+        },
+        "summary": "Set a new password with the emailed code",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/change-password": {
+      "post": {
+        "description": "Needs the current password. The other devices are logged out; this one stays logged in.",
+        "operationId": "AuthController_changePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Wrong current password (AUTH-012), or a new password that is the same as the current one or too easy to guess (AUTH-010, with the reason)"
+          },
+          "409": {
+            "description": "The password was changed by another request while this one was being processed (AUTH-013)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Change the password of the logged-in user",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Login with email and password",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Refresh access token",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Logout and invalidate current session",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout-all": {
+      "post": {
+        "operationId": "AuthController_logoutAll",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Logout from all devices",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/sessions": {
+      "get": {
+        "operationId": "SessionController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List the devices the current user is logged in on",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/sessions/revoke-others": {
+      "post": {
+        "operationId": "SessionController_revokeOthers",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Log out every device except the current one",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/sessions/{id}": {
+      "delete": {
+        "operationId": "SessionController_revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Session ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Log out one of the current user's devices",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/google": {
+      "post": {
+        "description": "Send the `credential` that Google Identity Services gives the page. A new person gets an account; a person whose Google account is linked is logged in; a person whose verified email already has an account gets Google linked to it (and an email telling them).",
+        "operationId": "GoogleAuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleLoginResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "The token is not acceptable (AUTH-014)"
+          },
+          "403": {
+            "description": "Google says the email is not verified (AUTH-015)"
+          },
+          "409": {
+            "description": "The account is linked to a different Google account (AUTH-016)"
+          },
+          "503": {
+            "description": "Sign in with Google is not enabled (AUTH-018), or Google could not be reached"
+          }
+        },
+        "summary": "Sign in (or sign up) with a Google ID token",
+        "tags": [
+          "Auth"
+        ]
+      },
+      "delete": {
+        "operationId": "GoogleAuthController_unlink",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Google is the only way to log in (AUTH-017)"
+          },
+          "404": {
+            "description": "No Google account is linked (AUTH-019)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unlink the Google account from the logged-in account",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/google/link": {
+      "post": {
+        "description": "An account that has a password must send it as `currentPassword` (a stolen access token alone cannot add a way to log in). The owner is emailed.",
+        "operationId": "GoogleAuthController_link",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkGoogleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          },
+          "400": {
+            "description": "Wrong or missing current password (AUTH-012)"
+          },
+          "409": {
+            "description": "That Google account belongs to someone else, or this account has a different one (AUTH-016)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Link a Google account to the logged-in account",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/suspend": {
+      "post": {
+        "operationId": "AdminUserController_suspend",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Suspended (or already was)"
+          },
+          "401": {
+            "description": "Not logged in"
+          },
+          "403": {
+            "description": "Not an admin, or the target is an admin"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Suspend an account and end every session it has",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/reinstate": {
+      "post": {
+        "operationId": "AdminUserController_reinstate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Reinstated (or was active)"
+          },
+          "401": {
+            "description": "Not logged in"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Let a suspended account log in again",
+        "tags": [
+          "Admin"
+        ]
+      }
+    },
+    "/api/v1/catalog/products": {
+      "get": {
+        "description": "Newest first unless `sort` says otherwise. Read it by `cursor` (\"load more\", newest only; `meta` has `hasMore` and `nextCursor`) or by `page` (a numbered page, any sort; `meta` has `page`, `limit`, `hasMore`, `total` counted up to 1000, and `totalCapped`). Each SKU and each product says whether it is in stock.",
+        "operationId": "ProductController_getProducts",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search products by name or description",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "inStock",
+            "required": false,
+            "in": "query",
+            "description": "Only products with at least one SKU in stock (units held for orders are not taken off)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            }
+          },
+          {
+            "name": "onSale",
+            "required": false,
+            "in": "query",
+            "description": "Only products with at least one SKU sold below its original price",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `meta.nextCursor` of the previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number, starting at 1 (instead of `cursor`)",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Filter products by category ID. Includes the products of every sub-category.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "newest (the default), price_asc, price_desc, or relevance (needs `search`). `cursor` only works with newest.",
+            "schema": {
+              "default": "newest",
+              "type": "string",
+              "enum": [
+                "newest",
+                "price_asc",
+                "price_desc",
+                "relevance"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ProductResponseDto"
+                          }
+                        },
+                        "meta": {
+                          "$ref": "#/components/schemas/PageMetaResponseDto"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A bad parameter (VAL-001), or options that cannot go together (CAT-017): page with cursor, cursor with another sort, relevance without search, a page past the first 1000 results, a cursor that is not a product"
+          }
+        },
+        "summary": "Get list of published products",
+        "tags": [
+          "Catalog - Products"
+        ]
+      }
+    },
+    "/api/v1/catalog/products/facets": {
+      "get": {
+        "description": "The categories directly under `parentId` (the root categories when left out), each with the products in it and in every category below it, inside the filters.",
+        "operationId": "ProductController_getFacets",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search products by name or description",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "inStock",
+            "required": false,
+            "in": "query",
+            "description": "Only products with at least one SKU in stock (units held for orders are not taken off)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            }
+          },
+          {
+            "name": "onSale",
+            "required": false,
+            "in": "query",
+            "description": "Only products with at least one SKU sold below its original price",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true"
+              ]
+            }
+          },
+          {
+            "name": "parentId",
+            "required": false,
+            "in": "query",
+            "description": "Count the categories directly under this one. Leave out for the root categories.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryProductCountResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "How many published products each category holds",
+        "tags": [
+          "Catalog - Products"
+        ]
+      }
+    },
+    "/api/v1/catalog/products/{id}": {
+      "get": {
+        "operationId": "ProductController_getProductById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully"
+          },
+          "404": {
+            "description": "Product not found, or not published"
+          }
+        },
+        "summary": "Get a published product by ID",
+        "tags": [
+          "Catalog - Products"
+        ]
+      }
+    },
+    "/api/v1/catalog/categories": {
+      "get": {
+        "operationId": "CategoryController_getCategories",
+        "parameters": [
+          {
+            "name": "parentId",
+            "required": false,
+            "in": "query",
+            "description": "ID of parent category to fetch children. Leave empty to fetch root categories.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully"
+          }
+        },
+        "summary": "Get list of categories",
+        "tags": [
+          "Catalog - Categories"
+        ]
+      }
+    },
+    "/api/v1/catalog/categories/{id}": {
+      "get": {
+        "operationId": "CategoryController_getCategoryById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully"
+          },
+          "404": {
+            "description": "Category not found"
+          }
+        },
+        "summary": "Get category by ID",
+        "tags": [
+          "Catalog - Categories"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products": {
+      "get": {
+        "operationId": "AdminProductController_getProducts",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Search products by name or description",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "minPrice",
+            "required": false,
+            "in": "query",
+            "description": "Minimum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "maxPrice",
+            "required": false,
+            "in": "query",
+            "description": "Maximum price filter",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `meta.nextCursor` of the previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categoryId",
+            "required": false,
+            "in": "query",
+            "description": "Filter products by category ID. Includes the products of every sub-category.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by product status. Leave empty for every status.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DRAFT",
+                "PUBLISHED",
+                "ARCHIVED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/ProductResponseDto"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get list of products in any status (draft included)",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      },
+      "post": {
+        "operationId": "AdminProductController_createProduct",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate product.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Product created successfully"
+          },
+          "400": {
+            "description": "Bad Request / Validation Error"
+          },
+          "409": {
+            "description": "A request with this Idempotency-Key is already in progress"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}": {
+      "get": {
+        "operationId": "AdminProductController_getProductById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product retrieved successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get product by ID in any status",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminProductController_updateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product updated successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update product details",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}/publish": {
+      "patch": {
+        "operationId": "AdminProductController_publishProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product published successfully"
+          },
+          "400": {
+            "description": "Cannot publish product without SKUs or Price"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publish a product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}/unpublish": {
+      "patch": {
+        "operationId": "AdminProductController_unpublishProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Product unpublished successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unpublish a product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}/skus": {
+      "post": {
+        "operationId": "AdminProductController_addSku",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSkuDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "SKU added successfully"
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add a SKU to a product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}/skus/{skuId}": {
+      "delete": {
+        "operationId": "AdminProductController_removeSku",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skuId",
+            "required": true,
+            "in": "path",
+            "description": "SKU ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "SKU removed successfully"
+          },
+          "404": {
+            "description": "Product or SKU not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remove a SKU from a product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/{id}/skus/{skuId}/price": {
+      "patch": {
+        "operationId": "AdminProductController_updateSkuPrice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Product ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skuId",
+            "required": true,
+            "in": "path",
+            "description": "SKU ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSkuPriceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SKU price updated successfully"
+          },
+          "404": {
+            "description": "Product or SKU not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update price of a SKU",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/categories": {
+      "post": {
+        "operationId": "AdminCategoryController_createCategory",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate category.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created successfully"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "409": {
+            "description": "A request with this Idempotency-Key is already in progress"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new category",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/categories/{id}": {
+      "patch": {
+        "operationId": "AdminCategoryController_updateCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "404": {
+            "description": "Category not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update category details",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminCategoryController_deleteCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Category deleted successfully"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "409": {
+            "description": "Cannot delete category containing products or child categories"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a category",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/categories/{id}/move": {
+      "patch": {
+        "operationId": "AdminCategoryController_moveCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Category ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveCategoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category moved successfully"
+          },
+          "404": {
+            "description": "Category or New Parent not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Move a category to a new parent",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/cart": {
+      "get": {
+        "operationId": "CartController_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "My cart, with the price, stock and flags looked up again (newest item first)",
+        "tags": [
+          "Cart"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_clear",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Empty the cart (also when it is already empty)",
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/api/v1/cart/items": {
+      "post": {
+        "operationId": "CartController_add",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCartItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not available (CART-003)"
+          },
+          "409": {
+            "description": "Cart full (CART-001) or too many of one item (CART-002)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add units of a SKU to the cart (added to what is already there, so sending it twice adds twice)",
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/api/v1/cart/items/{skuId}": {
+      "put": {
+        "operationId": "CartController_setQuantity",
+        "parameters": [
+          {
+            "name": "skuId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCartItemQuantityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartItemResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not in the cart (CART-004)"
+          },
+          "409": {
+            "description": "Too many of one item (CART-002)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Set the units of a SKU already in the cart (sending it again changes nothing)",
+        "tags": [
+          "Cart"
+        ]
+      },
+      "delete": {
+        "operationId": "CartController_removeItem",
+        "parameters": [
+          {
+            "name": "skuId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Take a SKU out of the cart (also when it is not there)",
+        "tags": [
+          "Cart"
+        ]
+      }
+    },
+    "/api/v1/orders": {
+      "post": {
+        "description": "The same Idempotency-Key from the same user always gives the same order: sending the request again returns that order with 200 and `Idempotency-Replayed: true`.",
+        "operationId": "OrderController_place",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "8 to 100 characters from A-Z a-z 0-9 _ -",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlaceOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The order of an earlier request with the same key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or bad Idempotency-Key (ORD-005) or body"
+          },
+          "404": {
+            "description": "Address not found (ADDR-001)"
+          },
+          "409": {
+            "description": "Not enough stock (ORD-001), empty cart (ORD-003), items no longer on sale (ORD-004)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Place an order from my cart",
+        "tags": [
+          "Orders"
+        ]
+      },
+      "get": {
+        "description": "Narrow the list with `status` (one or more, separated by commas), `createdFrom` and `createdTo` (ISO 8601 with a time zone), and `q` (the start of the order id, for example the 8-character order code).",
+        "operationId": "OrderController_list",
+        "parameters": [
+          {
+            "name": "createdFrom",
+            "required": false,
+            "in": "query",
+            "description": "Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdTo",
+            "required": false,
+            "in": "query",
+            "description": "Only orders placed at or before this moment (ISO 8601 with a time zone)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -)",
+            "schema": {
+              "example": "3fa85f64",
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "The `meta.nextCursor` of the previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "One or more statuses, separated by commas",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A bad filter, limit or cursor (VAL-001, ORD-000)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "My orders, newest first (cursor pagination)",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/v1/orders/counts": {
+      "get": {
+        "description": "The same `createdFrom`, `createdTo` and `q` as the list narrow what is counted. Every status is there, 0 when there are none.",
+        "operationId": "OrderController_counts",
+        "parameters": [
+          {
+            "name": "createdFrom",
+            "required": false,
+            "in": "query",
+            "description": "Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdTo",
+            "required": false,
+            "in": "query",
+            "description": "Only orders placed at or before this moment (ISO 8601 with a time zone)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -)",
+            "schema": {
+              "example": "3fa85f64",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderCountsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A bad filter (VAL-001, ORD-000)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "How many of my orders are in each status",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/v1/orders/{id}": {
+      "get": {
+        "operationId": "OrderController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found, or not yours (ORD-002): the same answer"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "One of my orders",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/v1/orders/{id}/cancel": {
+      "post": {
+        "operationId": "OrderController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found, or not yours (ORD-002)"
+          },
+          "409": {
+            "description": "The order cannot be cancelled from where it is (ORD-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel one of my orders before it ships (PENDING or CONFIRMED)",
+        "tags": [
+          "Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/{id}/ship": {
+      "post": {
+        "operationId": "AdminOrderController_ship",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such order (ORD-002)"
+          },
+          "409": {
+            "description": "Not CONFIRMED (ORD-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "CONFIRMED to SHIPPING",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/{id}/deliver": {
+      "post": {
+        "operationId": "AdminOrderController_deliver",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such order (ORD-002)"
+          },
+          "409": {
+            "description": "Not SHIPPING (ORD-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "SHIPPING to DELIVERED",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/orders/{orderId}/payments": {
+      "post": {
+        "description": "The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Send the customer to `payUrl`.",
+        "operationId": "PaymentController_start",
+        "parameters": [
+          {
+            "name": "orderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "8 to 100 characters from A-Z a-z 0-9 _ -",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The payment of an earlier request with the same key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or bad Idempotency-Key (PAY-001)"
+          },
+          "404": {
+            "description": "Not found, or not yours (ORD-002): the same answer"
+          },
+          "409": {
+            "description": "Not an online order (PAY-002), not payable now (PAY-003), too many attempts (PAY-004), time to pay is over or the held stock is gone (PAY-005)"
+          },
+          "503": {
+            "description": "The payment gateway cannot be reached (PAY-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Start paying one of my online orders",
+        "tags": [
+          "Payments"
+        ]
+      },
+      "get": {
+        "operationId": "PaymentController_list",
+        "parameters": [
+          {
+            "name": "orderId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found, or not yours (ORD-002): the same answer"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "The payments of one of my orders, newest first",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/payments/webhook/{provider}": {
+      "post": {
+        "description": "Public, but only a message with a valid signature is accepted. `:provider` must be the gateway this server is set up with.",
+        "operationId": "PaymentWebhookController_receive",
+        "parameters": [
+          {
+            "name": "provider",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "example": "fake",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Received (also for a message already handled)"
+          },
+          "400": {
+            "description": "Signed, but not a message we understand"
+          },
+          "401": {
+            "description": "Missing or wrong signature, changed content, or too old"
+          },
+          "404": {
+            "description": "Not the gateway this server uses"
+          }
+        },
+        "summary": "Webhook of the payment gateway (called by the gateway, not by a customer)",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/api/v1/dev/fake-gateway/charges/{providerRef}/pay": {
+      "post": {
+        "operationId": "DevFakeGatewayController_pay",
+        "parameters": [
+          {
+            "name": "providerRef",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FakePayDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FakeGatewayResultDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not the fake gateway, production, or no such charge"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dev only: the customer paid this charge at the fake gateway",
+        "tags": [
+          "Dev: fake payment gateway"
+        ]
+      }
+    },
+    "/api/v1/dev/fake-gateway/charges/{providerRef}/fail": {
+      "post": {
+        "operationId": "DevFakeGatewayController_fail",
+        "parameters": [
+          {
+            "name": "providerRef",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FakeGatewayResultDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not the fake gateway, production, or no such charge"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dev only: this charge failed at the fake gateway",
+        "tags": [
+          "Dev: fake payment gateway"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "E-Commerce API",
+    "description": "Tài liệu API cho hệ thống E-commerce (Catalog, Inventory, Order, v.v...)",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "role": {
+            "type": "string",
+            "description": "User role",
+            "enum": [
+              "CUSTOMER",
+              "ADMIN"
+            ]
+          },
+          "displayName": {
+            "type": "object",
+            "description": "User display name"
+          },
+          "avatarUrl": {
+            "type": "object",
+            "description": "User avatar URL"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Account creation time"
+          },
+          "email": {
+            "type": "object",
+            "description": "Email address of the account",
+            "nullable": true
+          },
+          "hasPassword": {
+            "type": "boolean",
+            "description": "Whether the account can log in with a password"
+          },
+          "googleLinked": {
+            "type": "boolean",
+            "description": "Whether a Google account is linked"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "createdAt",
+          "email",
+          "hasPassword",
+          "googleLinked"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "New display name: 1 to 100 visible characters (spaces are tidied)",
+            "example": "Nguyễn Văn A"
+          }
+        },
+        "required": [
+          "displayName"
+        ]
+      },
+      "AddressResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "recipientName": {
+            "type": "string",
+            "example": "Nguyễn Văn A"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0912345678"
+          },
+          "provinceCode": {
+            "type": "string",
+            "example": "01"
+          },
+          "provinceName": {
+            "type": "string",
+            "example": "Thành phố Hà Nội"
+          },
+          "wardCode": {
+            "type": "string",
+            "example": "00004"
+          },
+          "wardName": {
+            "type": "string",
+            "example": "Phường Ba Đình"
+          },
+          "street": {
+            "type": "string",
+            "example": "12 Bạch Đằng"
+          },
+          "label": {
+            "type": "object",
+            "nullable": true,
+            "example": "Nhà"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "recipientName",
+          "phone",
+          "provinceCode",
+          "provinceName",
+          "wardCode",
+          "wardName",
+          "street",
+          "label",
+          "isDefault",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CreateAddressDto": {
+        "type": "object",
+        "properties": {
+          "recipientName": {
+            "type": "string",
+            "description": "Who receives the parcel",
+            "example": "Nguyễn Văn A"
+          },
+          "phone": {
+            "type": "string",
+            "description": "10 digits starting with 0; +84 and separators are accepted",
+            "example": "0912345678"
+          },
+          "wardCode": {
+            "type": "string",
+            "description": "Code of the ward, commune or special zone (from GET /locations/provinces/:code/wards); the province follows from it",
+            "example": "00004"
+          },
+          "street": {
+            "type": "string",
+            "description": "House number and street",
+            "example": "12 Bạch Đằng"
+          },
+          "label": {
+            "type": "object",
+            "description": "A name for the address, such as \"Nhà\" or \"Công ty\" (at most 50 characters)",
+            "example": "Nhà",
+            "nullable": true
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "Make this the default address (the first address is always the default)"
+          }
+        },
+        "required": [
+          "recipientName",
+          "phone",
+          "wardCode",
+          "street"
+        ]
+      },
+      "UpdateAddressDto": {
+        "type": "object",
+        "properties": {
+          "recipientName": {
+            "type": "string",
+            "example": "Nguyễn Văn A"
+          },
+          "phone": {
+            "type": "string",
+            "example": "0912345678"
+          },
+          "wardCode": {
+            "type": "string",
+            "description": "Another ward; the province follows from it",
+            "example": "00004"
+          },
+          "street": {
+            "type": "string",
+            "example": "12 Bạch Đằng"
+          },
+          "label": {
+            "type": "object",
+            "description": "null removes the label",
+            "nullable": true,
+            "example": "Công ty"
+          }
+        }
+      },
+      "ProvinceDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code of the province: 2 digits",
+            "example": "01"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name without the kind",
+            "example": "Hà Nội"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Name with the kind",
+            "example": "Thành phố Hà Nội"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CITY",
+              "PROVINCE"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "fullName",
+          "type"
+        ]
+      },
+      "WardDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code of the ward: 5 digits",
+            "example": "00004"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name without the kind",
+            "example": "Ba Đình"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Name with the kind",
+            "example": "Phường Ba Đình"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "WARD",
+              "COMMUNE",
+              "SPECIAL_ZONE"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "fullName",
+          "type"
+        ]
+      },
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "k9#Tq2$vLm8x",
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "displayName": {
+            "type": "string",
+            "example": "John Doe",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RegisterResponseDto": {
+        "type": "object",
+        "properties": {
+          "verificationRequired": {
+            "type": "boolean",
+            "description": "Always true: the account is created only after the emailed code is entered (POST /auth/verify-email)",
+            "example": true
+          },
+          "resendAvailableInSeconds": {
+            "type": "number",
+            "description": "Seconds to wait before another code can be requested",
+            "example": 300
+          },
+          "verificationExpiresInSeconds": {
+            "type": "number",
+            "description": "Seconds the registration is kept. After that the user must register again; asking for another code will not help",
+            "example": 1800
+          }
+        },
+        "required": [
+          "verificationRequired",
+          "resendAvailableInSeconds",
+          "verificationExpiresInSeconds"
+        ]
+      },
+      "VerifyEmailDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "482915",
+            "description": "The 6-digit code sent to the email address"
+          },
+          "password": {
+            "type": "string",
+            "example": "k9#Tq2$vLm8x",
+            "description": "The password given when registering",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "code",
+          "password"
+        ]
+      },
+      "AuthResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "JWT Access Token"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Opaque Refresh Token"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken"
+        ]
+      },
+      "ResendVerificationDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResendVerificationResponseDto": {
+        "type": "object",
+        "properties": {
+          "resendAvailableInSeconds": {
+            "type": "number",
+            "description": "Seconds to wait before another code can be requested",
+            "example": 300
+          }
+        },
+        "required": [
+          "resendAvailableInSeconds"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ForgotPasswordResponseDto": {
+        "type": "object",
+        "properties": {
+          "resendAvailableInSeconds": {
+            "type": "number",
+            "description": "Seconds to wait before another reset code can be requested. The same answer is given whether or not the address has an account",
+            "example": 300
+          }
+        },
+        "required": [
+          "resendAvailableInSeconds"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "code": {
+            "type": "string",
+            "example": "482915",
+            "description": "The 6-digit code sent to the email address"
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "k9#Tq2$vLm8x",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "code",
+          "newPassword"
+        ]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string",
+            "example": "the-password-in-use-now",
+            "minLength": 8,
+            "maxLength": 128
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "k9#Tq2$vLm8x",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "k9#Tq2$vLm8x",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "some-random-hex-string"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
+      },
+      "LogoutDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Ignored. Kept so existing clients keep working."
+          }
+        }
+      },
+      "SessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session ID"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "Device, as the User-Agent it logged in with",
+            "example": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0"
+          },
+          "ipAddress": {
+            "type": "string",
+            "description": "IP of the most recent use"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When this device logged in"
+          },
+          "lastUsedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Last time this device refreshed its token"
+          },
+          "current": {
+            "type": "boolean",
+            "description": "True for the session making this request"
+          }
+        },
+        "required": [
+          "id",
+          "deviceName",
+          "ipAddress",
+          "createdAt",
+          "lastUsedAt",
+          "current"
+        ]
+      },
+      "GoogleTokenDto": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "The `credential` Google Identity Services hands to the page (a JWT signed by Google)",
+            "maxLength": 4096
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "The nonce given to Google when signing in, if any. Required to match when the token carries one"
+          }
+        },
+        "required": [
+          "idToken"
+        ]
+      },
+      "GoogleLoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "JWT Access Token"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Opaque Refresh Token"
+          },
+          "isNewUser": {
+            "type": "boolean",
+            "description": "True when this sign-in created the account (a good moment to ask for a profile)"
+          }
+        },
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "isNewUser"
+        ]
+      },
+      "LinkGoogleDto": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "The `credential` Google Identity Services hands to the page (a JWT signed by Google)",
+            "maxLength": 4096
+          },
+          "nonce": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "The nonce given to Google when signing in, if any. Required to match when the token carries one"
+          },
+          "currentPassword": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "The password of the account. Required when the account has one: it proves the owner is asking, which a stolen access token cannot"
+          }
+        },
+        "required": [
+          "idToken"
+        ]
+      },
+      "PaginatedMetaDto": {
+        "type": "object",
+        "properties": {
+          "hasMore": {
+            "type": "boolean"
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "hasMore",
+          "nextCursor"
+        ]
+      },
+      "PaginatedResponseDto": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/PaginatedMetaDto"
+          }
+        },
+        "required": [
+          "meta"
+        ]
+      },
+      "PageMetaResponseDto": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "limit": {
+            "type": "number"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "total": {
+            "type": "number",
+            "description": "How many products match, counted only up to 1000"
+          },
+          "totalCapped": {
+            "type": "boolean",
+            "description": "More than total products match"
+          }
+        },
+        "required": [
+          "page",
+          "limit",
+          "hasMore",
+          "total",
+          "totalCapped"
+        ]
+      },
+      "SkuResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "skuCode": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "description": "The selling price: the price that is charged"
+          },
+          "compareAtPrice": {
+            "type": "object",
+            "nullable": true,
+            "description": "The price before a discount, shown crossed out. Display only: money is always charged at price"
+          },
+          "discountPercent": {
+            "type": "number",
+            "description": "How much cheaper than compareAtPrice, in whole percent; 0 when not discounted"
+          },
+          "inStock": {
+            "type": "boolean",
+            "description": "In stock now (onHand above 0; units held for orders are not taken off). Only in the public endpoints."
+          },
+          "attributes": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "skuCode",
+          "price",
+          "compareAtPrice",
+          "discountPercent",
+          "attributes"
+        ]
+      },
+      "ProductResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "object",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "object",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "skus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkuResponseDto"
+            }
+          },
+          "minPrice": {
+            "type": "object",
+            "nullable": true,
+            "description": "The lowest price among the SKUs (\"from ... VND\")"
+          },
+          "onSale": {
+            "type": "boolean",
+            "description": "Some SKU is sold below its original price"
+          },
+          "discountPercent": {
+            "type": "number",
+            "description": "The biggest discount among the SKUs, in whole percent; 0 when none"
+          },
+          "inStock": {
+            "type": "boolean",
+            "description": "Some SKU is in stock now. Only in the public endpoints; false means \"out of stock\"."
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "categoryId",
+          "name",
+          "status",
+          "skus",
+          "minPrice",
+          "onSale",
+          "discountPercent",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CategoryProductCountResponseDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number",
+            "description": "Published products in the category and every category below it, inside the filters"
+          }
+        },
+        "required": [
+          "categoryId",
+          "name",
+          "count"
+        ]
+      },
+      "SkuDto": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "example": 150000,
+            "description": "Giá của SKU (VND)"
+          },
+          "compareAtPrice": {
+            "type": "number",
+            "example": 180000,
+            "description": "Giá trước khi giảm (hiển thị gạch ngang); phải lớn hơn price. Chỉ để hiển thị, tiền vẫn tính theo price"
+          },
+          "attributes": {
+            "type": "object",
+            "example": {
+              "color": "Red",
+              "size": "XL"
+            },
+            "description": "Thuộc tính cấu hình của SKU"
+          },
+          "skuCode": {
+            "type": "string",
+            "example": "SKU-RED-XL",
+            "description": "Mã SKU duy nhất",
+            "maxLength": 100
+          },
+          "barcode": {
+            "type": "string",
+            "example": "8931234567890",
+            "description": "Mã vạch (Barcode)",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "price",
+          "attributes",
+          "skuCode"
+        ]
+      },
+      "CreateProductDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "example": "cat_123",
+            "description": "ID của danh mục",
+            "maxLength": 100
+          },
+          "name": {
+            "type": "string",
+            "example": "Áo thun nam",
+            "description": "Tên sản phẩm",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "example": "Áo thun cotton 100%...",
+            "description": "Mô tả chi tiết sản phẩm",
+            "maxLength": 5000
+          },
+          "thumbnail": {
+            "type": "string",
+            "example": "https://example.com/image.png",
+            "description": "URL ảnh đại diện",
+            "maxLength": 500
+          },
+          "skus": {
+            "description": "Danh sách các phiên bản (SKU) của sản phẩm",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkuDto"
+            }
+          }
+        },
+        "required": [
+          "categoryId",
+          "name"
+        ]
+      },
+      "UpdateProductDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 5000
+          },
+          "thumbnail": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
+      "AddSkuDto": {
+        "type": "object",
+        "properties": {
+          "skuCode": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "price": {
+            "type": "number"
+          },
+          "compareAtPrice": {
+            "type": "number",
+            "description": "The price before a discount (shown crossed out); must be greater than price. Display only: money is always charged at price"
+          },
+          "attributes": {
+            "type": "object"
+          },
+          "barcode": {
+            "type": "string",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "skuCode",
+          "price",
+          "attributes"
+        ]
+      },
+      "UpdateSkuPriceDto": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "description": "New price for the SKU",
+            "minimum": 0
+          },
+          "compareAtPrice": {
+            "type": "object",
+            "nullable": true,
+            "description": "The price before a discount (shown crossed out), greater than price. A number sets it, null removes the discount, leaving it out keeps what is there. Display only: money is always charged at price"
+          }
+        },
+        "required": [
+          "price"
+        ]
+      },
+      "CreateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Áo Nam",
+            "description": "Tên danh mục",
+            "maxLength": 100
+          },
+          "parentId": {
+            "type": "string",
+            "example": "cat_12345",
+            "description": "ID của danh mục cha (nếu có)"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MoveCategoryDto": {
+        "type": "object",
+        "properties": {
+          "newParentId": {
+            "type": "object",
+            "description": "ID of the new parent category. Send null or omit to move to root."
+          }
+        }
+      },
+      "CartLineResponseDto": {
+        "type": "object",
+        "properties": {
+          "skuId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "object",
+            "nullable": true
+          },
+          "productName": {
+            "type": "object",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "object",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "price": {
+            "type": "object",
+            "nullable": true,
+            "description": "The price now; null when the item is no longer on sale"
+          },
+          "addedPrice": {
+            "type": "number",
+            "description": "The price when it was put in the cart"
+          },
+          "available": {
+            "type": "object",
+            "nullable": true,
+            "description": "Units that can be sold now; null when the item is no longer on sale"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "priceChanged",
+                "unpublished",
+                "outOfStock",
+                "notEnoughStock"
+              ]
+            }
+          }
+        },
+        "required": [
+          "skuId",
+          "productId",
+          "productName",
+          "thumbnail",
+          "attributes",
+          "quantity",
+          "price",
+          "addedPrice",
+          "available",
+          "flags"
+        ]
+      },
+      "CartResponseDto": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CartLineResponseDto"
+            }
+          },
+          "subtotal": {
+            "type": "number",
+            "description": "Total of the lines that can be ordered as they are"
+          },
+          "lineCount": {
+            "type": "number"
+          },
+          "quantityCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "items",
+          "subtotal",
+          "lineCount",
+          "quantityCount"
+        ]
+      },
+      "AddCartItemDto": {
+        "type": "object",
+        "properties": {
+          "skuId": {
+            "type": "string",
+            "description": "The SKU to add",
+            "example": "seed_sku_flash"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Units to ADD to what the cart already holds for this SKU",
+            "example": 1
+          }
+        },
+        "required": [
+          "skuId",
+          "quantity"
+        ]
+      },
+      "CartItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "skuId": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Units in the cart for this SKU after the change"
+          },
+          "addedPrice": {
+            "type": "number",
+            "description": "The price the cart recorded for this SKU"
+          }
+        },
+        "required": [
+          "skuId",
+          "quantity",
+          "addedPrice"
+        ]
+      },
+      "SetCartItemQuantityDto": {
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "number",
+            "description": "The units the cart should hold for this SKU (it replaces the old number; sending it again changes nothing)",
+            "example": 3
+          }
+        },
+        "required": [
+          "quantity"
+        ]
+      },
+      "PlaceOrderDto": {
+        "type": "object",
+        "properties": {
+          "addressId": {
+            "type": "string",
+            "description": "One of the addresses in your address book",
+            "example": "0b6f3d3a-2f6b-4a53-8f0e-1d6f2f6f0c11"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ONLINE",
+              "COD"
+            ],
+            "description": "ONLINE: pay before delivery, 15 minutes from now. COD: pay in cash on delivery; the order is confirmed at once."
+          }
+        },
+        "required": [
+          "addressId",
+          "paymentMethod"
+        ]
+      },
+      "OrderItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "skuId": {
+            "type": "string"
+          },
+          "productName": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "object",
+            "nullable": true
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "The price when the order was placed"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "lineTotal": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "skuId",
+          "productName",
+          "thumbnail",
+          "attributes",
+          "unitPrice",
+          "quantity",
+          "lineTotal"
+        ]
+      },
+      "ShippingAddressResponseDto": {
+        "type": "object",
+        "properties": {
+          "recipientName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "provinceCode": {
+            "type": "string"
+          },
+          "provinceName": {
+            "type": "string"
+          },
+          "wardCode": {
+            "type": "string"
+          },
+          "wardName": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "recipientName",
+          "phone",
+          "provinceCode",
+          "provinceName",
+          "wardCode",
+          "wardName",
+          "street",
+          "label"
+        ]
+      },
+      "OrderTimelineResponseDto": {
+        "type": "object",
+        "properties": {
+          "placedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the order was placed"
+          },
+          "confirmedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "shippedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "deliveredAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "cancelledAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "expiredAt": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "placedAt",
+          "confirmedAt",
+          "shippedAt",
+          "deliveredAt",
+          "cancelledAt",
+          "expiredAt"
+        ]
+      },
+      "OrderResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PAYMENT_PROCESSING",
+              "CONFIRMED",
+              "SHIPPING",
+              "DELIVERED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ONLINE",
+              "COD"
+            ]
+          },
+          "total": {
+            "type": "number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemResponseDto"
+            }
+          },
+          "shippingAddress": {
+            "$ref": "#/components/schemas/ShippingAddressResponseDto"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Online orders: when the time to pay runs out. Meaningless for cash on delivery."
+          },
+          "timeline": {
+            "$ref": "#/components/schemas/OrderTimelineResponseDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "paymentMethod",
+          "total",
+          "items",
+          "shippingAddress",
+          "expiresAt",
+          "timeline",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "OrderSummaryItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "productName": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "object",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "productName",
+          "thumbnail",
+          "quantity"
+        ]
+      },
+      "OrderSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PAYMENT_PROCESSING",
+              "CONFIRMED",
+              "SHIPPING",
+              "DELIVERED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ONLINE",
+              "COD"
+            ]
+          },
+          "total": {
+            "type": "number"
+          },
+          "itemCount": {
+            "type": "number",
+            "description": "How many lines the order has"
+          },
+          "items": {
+            "description": "The first 3 items, enough to show what the order is about",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderSummaryItemResponseDto"
+            }
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "paymentMethod",
+          "total",
+          "itemCount",
+          "items",
+          "createdAt",
+          "expiresAt"
+        ]
+      },
+      "OrderCountsResponseDto": {
+        "type": "object",
+        "properties": {
+          "PENDING": {
+            "type": "number"
+          },
+          "PAYMENT_PROCESSING": {
+            "type": "number"
+          },
+          "CONFIRMED": {
+            "type": "number"
+          },
+          "SHIPPING": {
+            "type": "number"
+          },
+          "DELIVERED": {
+            "type": "number"
+          },
+          "CANCELLED": {
+            "type": "number"
+          },
+          "EXPIRED": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "PENDING",
+          "PAYMENT_PROCESSING",
+          "CONFIRMED",
+          "SHIPPING",
+          "DELIVERED",
+          "CANCELLED",
+          "EXPIRED"
+        ]
+      },
+      "PaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "INITIATED",
+              "SUCCEEDED",
+              "FAILED",
+              "EXPIRED",
+              "REFUND_PENDING",
+              "REFUNDED"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "description": "What the customer has to pay (VND)"
+          },
+          "payUrl": {
+            "type": "object",
+            "nullable": true,
+            "description": "Where to pay. Only while the payment is INITIATED; null in every other state."
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The customer has until this moment to pay"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "orderId",
+          "status",
+          "amount",
+          "payUrl",
+          "expiresAt",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "FakePayDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "What the fake gateway says it collected. Leave it out to pay the right amount; send another number to try a wrong amount."
+          }
+        }
+      },
+      "FakeGatewayResultDto": {
+        "type": "object",
+        "properties": {
+          "webhookStatus": {
+            "type": "number",
+            "description": "The HTTP status our own webhook endpoint answered"
+          },
+          "eventId": {
+            "type": "string",
+            "description": "The id of the webhook message that was sent"
+          }
+        },
+        "required": [
+          "webhookStatus",
+          "eventId"
+        ]
+      }
+    }
+  }
+}

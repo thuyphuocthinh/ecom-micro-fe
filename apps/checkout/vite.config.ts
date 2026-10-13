@@ -25,6 +25,8 @@ export default defineConfig(({ mode }) => {
         shared: {
           react: { singleton: true, requiredVersion: REACT_RANGE },
           "react-dom": { singleton: true, requiredVersion: REACT_RANGE },
+          // One login for every app: the same copy of the API client holds the token
+          "@ecom/api": { singleton: true, requiredVersion: false },
         },
       }),
     ],

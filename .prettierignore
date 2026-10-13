@@ -1,0 +1,3 @@
+packages/api/src/generated
+packages/api/openapi.json
+pnpm-lock.yaml

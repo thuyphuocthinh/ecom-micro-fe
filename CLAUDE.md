@@ -19,7 +19,11 @@ apps/
   checkout/   Remote — cart, shipping, payment                                  (port 3002)
 packages/
   ui/         Shared design system (components, hooks) — consumed via pnpm symlink
+  api/        @ecom/api — the one API client (token/session, response unwrapping, ApiError,
+              Idempotency-Key) and TypeScript types generated from the backend's Swagger
 ```
+
+**All backend calls go through `@ecom/api`** (`api.get("/orders")`, never a hand-written `fetch`). Use `createIdempotencyKey()` once per attempt to place an order or pay and send the same key on every retry. When the backend API changes: `pnpm --filter @ecom/api fetch-openapi` (backend running) then `pnpm --filter @ecom/api generate`.
 
 ## Commands
 | Purpose | Command |
@@ -28,6 +32,7 @@ packages/
 | Run a single app in isolation | `pnpm --filter <catalog\|checkout\|shell> dev` |
 | Build all (Turborepo cached) | `pnpm build` |
 | Lint | `pnpm lint` |
+| Unit tests / type check | `pnpm test` / `pnpm typecheck` |
 
 ## Onboarding — how to use AI when joining this project
 1. Have the AI read [`../docs/architecture.md`](../docs/architecture.md) and this file first, then explain back the Shell/Remote split and how Module Federation loads `remoteEntry.js` at runtime. Verify it understands this is runtime integration, not a build-time merge.
