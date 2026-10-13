@@ -7,3 +7,7 @@ dist-ssr
 
 # Turborepo
 .turbo
+
+# Module Federation generated types
+.mf
+@mf-types
