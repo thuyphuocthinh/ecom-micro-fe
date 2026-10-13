@@ -1,3 +1,4 @@
+const ACCESS_TOKEN_KEY = "ecom.accessToken";
 const REFRESH_TOKEN_KEY = "ecom.refreshToken";
 
 export interface TokenPair {
@@ -5,26 +6,28 @@ export interface TokenPair {
   refreshToken: string;
 }
 
-function readStorage(): string | null {
+/** The stored value, null when nothing is stored, undefined when storage cannot be used at all. */
+function readStorage(key: string): string | null | undefined {
   try {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
+    return localStorage.getItem(key);
   } catch {
-    return null; // blocked storage (private window, site data off): behave as if empty
+    return undefined; // blocked storage (private window, site data off)
   }
 }
 
-function writeStorage(value: string | null): void {
+function writeStorage(key: string, value: string | null): void {
   try {
-    if (value === null) localStorage.removeItem(REFRESH_TOKEN_KEY);
-    else localStorage.setItem(REFRESH_TOKEN_KEY, value);
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
   } catch {
-    // The refresh token then lives only in memory: the login is lost when the page reloads
+    // The token then lives only in memory: the login is lost when the page reloads
   }
 }
 
 /**
- * Where the login lives. The access token stays in memory only; the refresh token is also kept in
- * localStorage so a reload or a second tab stays logged in.
+ * Where the login lives: both tokens are kept in localStorage, so a reload or a second tab stays
+ * logged in and every tab sees the tokens another tab renewed. Memory is the fallback when storage
+ * is blocked.
  */
 export interface Session {
   getAccessToken(): string | null;
@@ -42,18 +45,26 @@ export function createSession(): Session {
   let refreshToken: string | null = null;
   const listeners = new Set<() => void>();
 
+  // Storage is the truth while it works (another tab may have renewed or cleared the tokens)
+  const read = (key: string, inMemory: string | null) => {
+    const stored = readStorage(key);
+    return stored === undefined ? inMemory : stored;
+  };
+
   return {
-    getAccessToken: () => accessToken,
-    getRefreshToken: () => refreshToken ?? readStorage(),
+    getAccessToken: () => read(ACCESS_TOKEN_KEY, accessToken),
+    getRefreshToken: () => read(REFRESH_TOKEN_KEY, refreshToken),
     set(tokens) {
       accessToken = tokens.accessToken;
       refreshToken = tokens.refreshToken;
-      writeStorage(tokens.refreshToken);
+      writeStorage(ACCESS_TOKEN_KEY, tokens.accessToken);
+      writeStorage(REFRESH_TOKEN_KEY, tokens.refreshToken);
     },
     clear() {
       accessToken = null;
       refreshToken = null;
-      writeStorage(null);
+      writeStorage(ACCESS_TOKEN_KEY, null);
+      writeStorage(REFRESH_TOKEN_KEY, null);
     },
     onExpired(listener) {
       listeners.add(listener);
