@@ -9,3 +9,4 @@ export * from "./src/Spinner";
 export * from "./src/Tag";
 export * from "./src/TextField";
 export * from "./src/Dropdown";
+export * from "./src/SearchInput";

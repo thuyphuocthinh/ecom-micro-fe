@@ -1,4 +1,4 @@
-import { Card, Button, Tag } from "@ecom/ui";
+import { Card, Button, Tag, cx } from "@ecom/ui";
 import { Icon } from "@/components/common/Icon.tsx";
 import type { Address } from "@/types";
 
@@ -8,6 +8,7 @@ export interface AddressCardProps {
   onDelete: (address: Address) => void;
   onSetDefault: (id: string) => void;
   isSettingDefault?: boolean;
+  className?: string;
 }
 
 export function AddressCard({
@@ -16,11 +17,17 @@ export function AddressCard({
   onDelete,
   onSetDefault,
   isSettingDefault = false,
+  className,
 }: AddressCardProps) {
   const displayLabel = address.label || "Địa chỉ";
 
   return (
-    <Card className="p-6 flex flex-col gap-4 bg-white border-line">
+    <Card
+      className={cx(
+        "p-6 flex flex-col gap-4 bg-white border-line h-full",
+        className,
+      )}
+    >
       <div className="flex gap-3.5 items-start">
         <span
           className="size-10 rounded-[10px] bg-[#fdeedd] text-[#9a5b12] inline-flex items-center justify-center shrink-0 mt-0.5"

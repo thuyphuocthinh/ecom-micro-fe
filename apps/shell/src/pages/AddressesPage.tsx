@@ -112,7 +112,7 @@ export function AddressesPage() {
             /* Address Cards Grid */
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 m-0 p-0 list-none">
               {addresses.map((address) => (
-                <li key={address.id}>
+                <li key={address.id} className="h-full flex flex-col">
                   <AddressCard
                     address={address}
                     onEdit={handleOpenEditForm}

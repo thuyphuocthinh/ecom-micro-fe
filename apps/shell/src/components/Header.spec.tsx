@@ -58,6 +58,24 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
     expect(screen.queryByText("Đăng nhập")).not.toBeInTheDocument();
   });
 
+  it("renders user avatar image when avatarUrl is provided", () => {
+    renderHeader({
+      status: "signedIn",
+      user: {
+        id: "u-1",
+        displayName: "Nguyễn Văn A",
+        email: "a@ecom.vn",
+        role: "CUSTOMER",
+        avatarUrl: "https://example.com/avatar.jpg",
+      },
+    });
+
+    const img = screen.getByRole("img", { name: "Nguyễn Văn A" });
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute("src", "https://example.com/avatar.jpg");
+    expect(screen.queryByText("A")).not.toBeInTheDocument();
+  });
+
   it("shows cart badge when signed in and cart has items (AC-21)", () => {
     renderHeader({
       status: "signedIn",

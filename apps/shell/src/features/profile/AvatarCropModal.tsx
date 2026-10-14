@@ -229,12 +229,13 @@ function AvatarCropModalDialog({
           <h2 id="crop-modal-title" className="text-lg font-bold text-ink">
             Cắt ảnh đại diện
           </h2>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onClose}
             disabled={isUploading}
             aria-label="Đóng"
-            className="size-8 rounded-lg text-muted hover:text-ink hover:bg-canvas inline-flex items-center justify-center transition-colors disabled:opacity-50"
+            className="size-8 min-h-0 p-0 rounded-lg text-muted hover:text-ink hover:bg-canvas inline-flex items-center justify-center transition-colors disabled:opacity-50"
           >
             <svg
               className="size-5"
@@ -248,7 +249,7 @@ function AvatarCropModalDialog({
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
-          </button>
+          </Button>
         </div>
 
         {/* Modal Body: Interactive Viewport */}
@@ -290,15 +291,16 @@ function AvatarCropModalDialog({
 
           {/* Zoom controls */}
           <div className="w-full max-w-[320px] flex items-center gap-3">
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => setZoom((z) => Math.max(1, +(z - 0.2).toFixed(2)))}
               disabled={zoom <= 1 || isUploading}
               aria-label="Thu nhỏ"
-              className="size-8 rounded-md border border-line bg-white text-ink hover:bg-canvas disabled:opacity-40 inline-flex items-center justify-center text-base font-bold shrink-0"
+              className="size-8 min-h-0 p-0 rounded-md border border-line bg-white text-ink hover:bg-canvas disabled:opacity-40 inline-flex items-center justify-center text-base font-bold shrink-0"
             >
               −
-            </button>
+            </Button>
             <input
               type="range"
               min="1"
@@ -310,15 +312,16 @@ function AvatarCropModalDialog({
               aria-label="Độ phóng to ảnh"
               className="flex-1 accent-brand h-1.5 bg-line rounded-lg cursor-pointer"
             />
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => setZoom((z) => Math.min(3, +(z + 0.2).toFixed(2)))}
               disabled={zoom >= 3 || isUploading}
               aria-label="Phóng to"
-              className="size-8 rounded-md border border-line bg-white text-ink hover:bg-canvas disabled:opacity-40 inline-flex items-center justify-center text-base font-bold shrink-0"
+              className="size-8 min-h-0 p-0 rounded-md border border-line bg-white text-ink hover:bg-canvas disabled:opacity-40 inline-flex items-center justify-center text-base font-bold shrink-0"
             >
               +
-            </button>
+            </Button>
           </div>
         </div>
 

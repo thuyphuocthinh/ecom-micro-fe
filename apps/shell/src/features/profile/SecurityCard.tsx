@@ -108,7 +108,7 @@ export function SecurityCard() {
             <div className="pt-2">
               <Button
                 type="submit"
-                variant="secondary"
+                variant="primary"
                 size="md"
                 loading={changePasswordMutation.isPending || isSubmitting}
                 disabled={changePasswordMutation.isPending || isSubmitting}

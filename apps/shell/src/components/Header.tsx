@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
-import { Button } from "@ecom/ui";
+import { Button, SearchInput } from "@ecom/ui";
 import { useAuth } from "@/features/auth";
 import { getUserDisplayName, getUserInitial } from "@/utils/user.ts";
 import { formatCartAriaLabel } from "@/utils/cart.ts";
@@ -51,27 +51,17 @@ export function Header() {
           onSubmit={handleSearch}
           className="flex-1 max-w-[500px] min-w-[240px] flex gap-2 order-last md:order-none w-full md:w-auto"
         >
-          <div className="relative flex-1">
-            <label htmlFor="q" className="sr-only">
-              Tìm sản phẩm
-            </label>
-            <Icon
-              name="search"
-              size={20}
-              className="absolute left-3.5 top-3.5 size-5 text-muted pointer-events-none"
-            />
-            <input
-              id="q"
-              type="search"
-              name="q"
-              autoComplete="off"
-              spellCheck="false"
-              placeholder="Tìm tai nghe, balo, áo thun…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full min-h-[44px] pl-11 pr-3.5 border border-line rounded-control bg-white text-ink placeholder:text-muted focus-visible:outline-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/25"
-            />
-          </div>
+          <SearchInput
+            id="q"
+            name="q"
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="Tìm tai nghe, balo, áo thun…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Tìm sản phẩm"
+            startAdornment={<Icon name="search" size={20} className="size-5" />}
+          />
           <Button type="submit" variant="primary">
             Tìm kiếm
           </Button>
@@ -102,12 +92,20 @@ export function Header() {
                 aria-label={`Tài khoản của ${displayName}`}
                 className="inline-flex items-center gap-2 min-h-11 px-2.5 rounded-control text-ink font-semibold text-[14.5px] hover:bg-ink/6 transition-colors"
               >
-                <span
-                  aria-hidden="true"
-                  className="size-[30px] rounded-full bg-brand text-white inline-flex items-center justify-center text-xs font-bold"
-                >
-                  {initial}
-                </span>
+                {user?.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={displayName}
+                    className="size-[30px] rounded-full object-cover shrink-0 border border-line"
+                  />
+                ) : (
+                  <span
+                    aria-hidden="true"
+                    className="size-[30px] rounded-full bg-brand text-white inline-flex items-center justify-center text-xs font-bold"
+                  >
+                    {initial}
+                  </span>
+                )}
                 <span className="max-w-[120px] truncate hidden md:inline">
                   {displayName}
                 </span>
