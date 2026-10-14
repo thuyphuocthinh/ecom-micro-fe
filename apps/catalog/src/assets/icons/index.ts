@@ -18,6 +18,7 @@ import { PackageIcon } from "./package.tsx";
 import { MapPinIcon } from "./map-pin.tsx";
 import { CreditCardIcon } from "./credit-card.tsx";
 import { XCircleIcon } from "./x-circle.tsx";
+import { XIcon } from "./x.tsx";
 
 export const icons = {
   google: GoogleIcon,
@@ -40,6 +41,7 @@ export const icons = {
   "map-pin": MapPinIcon,
   "credit-card": CreditCardIcon,
   "x-circle": XCircleIcon,
+  x: XIcon,
 } as const;
 
 export type IconName = keyof typeof icons;
@@ -65,4 +67,5 @@ export {
   MapPinIcon,
   CreditCardIcon,
   XCircleIcon,
+  XIcon,
 };

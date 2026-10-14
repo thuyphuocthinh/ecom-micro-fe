@@ -15,20 +15,21 @@ export function ProductSortSelect({
     <div className="flex items-center gap-2">
       <label
         htmlFor="product-sort"
-        className="text-sm font-medium text-muted shrink-0"
+        className="text-sm font-semibold text-ink shrink-0"
       >
-        Sắp xếp:
+        Sắp xếp<span className="sr-only">:</span>
       </label>
       <select
         id="product-sort"
+        aria-label="Sắp xếp:"
         value={value}
         onChange={(e) => onChange(e.target.value as ProductSortOption)}
-        className="px-3 py-1.5 rounded-control border border-field-border bg-white text-sm font-medium text-ink focus:border-brand focus:outline-none cursor-pointer"
+        className="min-h-[42px] px-3 py-1.5 rounded-[10px] border border-line bg-white text-[14.5px] font-medium text-ink focus:border-brand focus:outline-none cursor-pointer transition-colors"
       >
         <option value="newest">Mới nhất</option>
-        <option value="price_asc">Giá: Thấp đến cao</option>
-        <option value="price_desc">Giá: Cao đến thấp</option>
-        {hasSearchQuery && <option value="relevance">Phù hợp nhất</option>}
+        <option value="price_asc">Giá thấp đến cao</option>
+        <option value="price_desc">Giá cao đến thấp</option>
+        {hasSearchQuery && <option value="relevance">Liên quan nhất</option>}
       </select>
     </div>
   );

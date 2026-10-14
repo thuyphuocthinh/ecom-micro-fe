@@ -1,5 +1,4 @@
-import { Button, Card } from "@ecom/ui";
-import { Icon } from "@/components/common/Icon.tsx";
+import { Button } from "@ecom/ui";
 
 export interface ProductsEmptyStateProps {
   onClearFilters?: () => void;
@@ -10,22 +9,15 @@ export interface ProductsEmptyStateProps {
 export function ProductsEmptyState({
   onClearFilters,
   title = "Không tìm thấy sản phẩm phù hợp",
-  description = "Thử kiểm tra lại từ khóa hoặc xóa bớt các bộ lọc để xem nhiều sản phẩm hơn.",
+  description = "Thử bỏ bớt bộ lọc hoặc đổi từ khoá. Bạn cũng có thể xoá tất cả bộ lọc để xem lại toàn bộ sản phẩm.",
 }: ProductsEmptyStateProps) {
   return (
-    <Card className="flex flex-col items-center justify-center p-8 sm:p-14 text-center border-dashed border-line bg-white rounded-2xl w-full">
-      <span
-        aria-hidden="true"
-        className="size-16 rounded-full bg-[#f4f7fe] text-muted inline-flex items-center justify-center mb-4 shrink-0"
-      >
-        <Icon name="search" size={32} className="text-muted/80" />
-      </span>
-
-      <h3 className="font-head text-xl sm:text-2xl font-bold text-ink mb-2">
+    <div className="bg-white border border-line rounded-[14px] p-10 sm:p-14 text-center flex flex-col items-center gap-3 w-full shadow-xs">
+      <h2 className="font-head text-2xl sm:text-[26px] font-bold text-ink">
         {title}
-      </h3>
+      </h2>
 
-      <p className="text-[15px] text-muted max-w-md mb-6 leading-relaxed">
+      <p className="text-[15px] text-[#344054] max-w-md leading-relaxed">
         {description}
       </p>
 
@@ -33,12 +25,13 @@ export function ProductsEmptyState({
         <Button
           type="button"
           variant="primary"
+          size="md"
           onClick={onClearFilters}
-          className="min-w-[160px]"
+          className="mt-2 min-w-[170px] justify-center"
         >
           Xoá tất cả bộ lọc
         </Button>
       )}
-    </Card>
+    </div>
   );
 }

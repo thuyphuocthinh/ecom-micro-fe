@@ -15,7 +15,7 @@ export function ProductGrid({
   products,
   categoryNames = {},
   isLoading = false,
-  skeletonCount = 8,
+  skeletonCount = 6,
   onAddToCart,
   onClearFilters,
 }: ProductGridProps) {
@@ -23,18 +23,16 @@ export function ProductGrid({
     return (
       <div
         data-testid="product-grid-loading"
-        className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-7 gap-x-5"
       >
         {Array.from({ length: skeletonCount }).map((_, i) => (
-          <div
-            key={i}
-            className="flex flex-col rounded-card border border-line bg-white p-4 gap-3 animate-pulse"
-          >
-            <div className="w-full aspect-square bg-slate-100 rounded-lg" />
-            <div className="h-4 bg-slate-100 rounded w-1/3" />
-            <div className="h-5 bg-slate-100 rounded w-full" />
-            <div className="h-6 bg-slate-100 rounded w-1/2 mt-auto" />
-            <div className="h-9 bg-slate-100 rounded w-full" />
+          <div key={i} className="flex flex-col gap-3 animate-pulse">
+            <div className="w-full aspect-square bg-line/60 rounded-[18px]" />
+            <div className="h-4 bg-line/60 rounded w-1/3 mt-2" />
+            <div className="h-5 bg-line/60 rounded w-4/5" />
+            <div className="h-6 bg-line/60 rounded w-1/2" />
+            <div className="h-4 bg-line/40 rounded w-1/4" />
+            <div className="h-11 bg-line/60 rounded-[10px] w-full mt-2" />
           </div>
         ))}
       </div>
@@ -46,7 +44,7 @@ export function ProductGrid({
   }
 
   return (
-    <ul className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 list-none m-0 p-0">
+    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-7 gap-x-5 list-none m-0 p-0">
       {products.map((product) => (
         <li key={product.id} className="h-full">
           <ProductCard

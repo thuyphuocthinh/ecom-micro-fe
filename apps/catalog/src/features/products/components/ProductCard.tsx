@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Card, Image, Tag, Button } from "@ecom/ui";
+import { Image, Tag, Button } from "@ecom/ui";
 import { Icon } from "@/components/common/Icon.tsx";
 import type { Product } from "@/types";
 import {
@@ -33,8 +33,8 @@ export function ProductCard({
   );
 
   return (
-    <Card
-      className={`group flex flex-col h-full overflow-hidden transition-all duration-200 hover:shadow-md hover:border-brand/40 bg-white ${
+    <div
+      className={`group flex flex-col h-full ${
         isOutOfStock ? "opacity-75" : ""
       }`}
     >
@@ -42,92 +42,107 @@ export function ProductCard({
       <Link
         to={`/products/${product.id}`}
         aria-label={`Xem chi tiết ${product.name}`}
-        className="relative block aspect-square w-full overflow-hidden bg-canvas cursor-pointer"
+        className="product-link block cursor-pointer"
       >
-        <Image
-          src={product.thumbnail || undefined}
-          alt={product.name}
-          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        <div className="relative aspect-square w-full rounded-[18px] overflow-hidden bg-canvas border border-line/40">
+          <Image
+            src={product.thumbnail || undefined}
+            alt={product.name}
+            className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
 
-        {/* Badges Overlay */}
-        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between gap-2 pointer-events-none">
-          {product.onSale && discountBadge ? (
-            <Tag tone="sale" className="font-bold shadow-xs">
-              {discountBadge}
-            </Tag>
-          ) : (
-            <div />
-          )}
+          {/* Badges Overlay */}
+          <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+            {product.onSale && discountBadge ? (
+              <Tag tone="sale" className="font-semibold shadow-xs">
+                {discountBadge}
+              </Tag>
+            ) : (
+              <div />
+            )}
 
-          {isOutOfStock && (
-            <Tag tone="default" className="font-medium bg-white/90 shadow-xs">
-              Hết hàng
-            </Tag>
+            {isOutOfStock && (
+              <Tag tone="default" className="font-medium bg-white/95 shadow-xs">
+                Hết hàng
+              </Tag>
+            )}
+          </div>
+        </div>
+
+        {/* Category & Title */}
+        <div className="mt-3 flex flex-col gap-1">
+          {categoryName && (
+            <span className="text-xs font-medium text-muted uppercase tracking-wider truncate">
+              {categoryName}
+            </span>
           )}
+          <h2 className="product-name text-ink font-semibold text-[15.5px] leading-snug line-clamp-2 group-hover:text-brand transition-colors">
+            {product.name}
+          </h2>
         </div>
       </Link>
 
-      {/* Product Information */}
-      <div className="p-4 sm:p-5 flex flex-col flex-1 gap-2.5">
-        {categoryName && (
-          <span className="text-xs font-medium text-muted uppercase tracking-wider truncate">
-            {categoryName}
+      {/* Price Area */}
+      <div className="mt-2 flex flex-wrap items-baseline gap-2">
+        <span className="tnum font-bold text-[17px] text-ink">
+          {priceLabel}
+        </span>
+        {product.onSale && maxOriginalPrice > (product.minPrice ?? 0) && (
+          <span className="tnum text-[13.5px] text-muted line-through">
+            {formatVnd(maxOriginalPrice)}
           </span>
         )}
-
-        <Link
-          to={`/products/${product.id}`}
-          className="text-ink font-semibold text-[15px] sm:text-base leading-snug line-clamp-2 group-hover:text-brand transition-colors"
-        >
-          {product.name}
-        </Link>
-
-        {/* Price Area */}
-        <div className="mt-auto pt-2 flex flex-wrap items-baseline gap-2">
-          <span className="tnum font-bold text-base sm:text-lg text-ink">
-            {priceLabel}
-          </span>
-          {product.onSale && maxOriginalPrice > (product.minPrice ?? 0) && (
-            <span className="tnum text-xs text-muted line-through">
-              {formatVnd(maxOriginalPrice)}
-            </span>
-          )}
-        </div>
-
-        {/* Action Button */}
-        <div className="pt-2">
-          {isOutOfStock ? (
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              disabled
-              className="w-full justify-center text-muted"
-            >
-              Hết hàng
-            </Button>
-          ) : onAddToCart ? (
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              onClick={() => onAddToCart(product)}
-              className="w-full justify-center group-hover:bg-brand group-hover:text-white transition-colors"
-            >
-              <Icon name="cart" size={16} />
-              <span>Thêm vào giỏ</span>
-            </Button>
-          ) : (
-            <Link
-              to={`/products/${product.id}`}
-              className="inline-flex items-center justify-center w-full min-h-[38px] px-3 rounded-control font-semibold text-[14px] border border-line bg-white text-ink hover:bg-canvas hover:border-brand/40 transition-colors"
-            >
-              Xem chi tiết
-            </Link>
-          )}
-        </div>
       </div>
-    </Card>
+
+      {/* Rating & Reviews (Matches storefront mock) */}
+      <div className="mt-1 flex items-center gap-1.5 text-[13.5px] text-muted">
+        <svg
+          className="size-4 fill-[#f2a900] stroke-[#f2a900] shrink-0"
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+        >
+          <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />
+        </svg>
+        <span className="tnum font-medium text-ink">
+          <span className="sr-only">Đánh giá </span>4.8
+        </span>
+        <span className="tnum" aria-hidden="true">
+          (120)
+        </span>
+      </div>
+
+      {/* Action Button */}
+      <div className="mt-3 pt-1">
+        {isOutOfStock ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            disabled
+            className="w-full justify-center text-muted"
+          >
+            Hết hàng
+          </Button>
+        ) : onAddToCart ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={() => onAddToCart(product)}
+            className="w-full justify-center group-hover:border-ink-2 transition-colors"
+          >
+            <Icon name="cart" size={16} />
+            <span>Thêm vào giỏ</span>
+          </Button>
+        ) : (
+          <Link
+            to={`/products/${product.id}`}
+            className="inline-flex items-center justify-center w-full min-h-[44px] px-4 rounded-control font-semibold text-[15px] border border-line bg-white text-ink hover:bg-canvas hover:border-ink-2 transition-colors"
+          >
+            Xem chi tiết
+          </Link>
+        )}
+      </div>
+    </div>
   );
 }

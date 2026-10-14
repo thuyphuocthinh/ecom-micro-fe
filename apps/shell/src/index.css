@@ -1,3 +1,5 @@
 @import "tailwindcss";
 @import "@ecom/ui/theme.css";
 @source "../../../packages/ui";
+@source "../../catalog/src";
+@source "../../checkout/src";

@@ -48,17 +48,17 @@ export function ProductFiltersDrawer({
       role="dialog"
       aria-modal="true"
       aria-label="Bộ lọc tìm kiếm"
-      className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden"
+      className="fixed inset-0 z-50 flex justify-end lg:hidden"
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Drawer content */}
-      <div className="relative bg-white w-full max-h-[85vh] rounded-t-3xl flex flex-col shadow-2xl z-10 animate-in slide-in-from-bottom duration-200">
+      {/* Drawer content: slides in from right or bottom, bounded max-width */}
+      <div className="relative bg-white w-full max-w-[420px] h-full flex flex-col shadow-2xl z-10 animate-in slide-in-from-right duration-200">
         {/* Header */}
         <div className="flex items-center justify-between p-4 px-6 border-b border-line">
           <h2 className="font-head text-lg font-bold text-ink">
