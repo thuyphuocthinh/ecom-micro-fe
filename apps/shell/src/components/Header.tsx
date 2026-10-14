@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { useState, useEffect, type FormEvent } from "react";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router";
 import {
   Button,
   SearchInput,
@@ -16,13 +16,26 @@ import { Icon } from "@/components/common/Icon.tsx";
 
 export function Header() {
   const { status, user, cartCount, logout } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const urlQ =
+    location.pathname === "/search" ? searchParams.get("q") || "" : "";
+  const [searchQuery, setSearchQuery] = useState(urlQ);
+
+  // Synchronize search input with URL query param `q`
+  useEffect(() => {
+    setSearchQuery(urlQ);
+  }, [urlQ]);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    const trimmed = searchQuery.trim();
+    if (trimmed) {
+      navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+    } else if (location.pathname === "/search") {
+      navigate("/search");
     }
   };
 

@@ -8,7 +8,7 @@ import {
   type AuthContextValue,
 } from "@/features/auth/auth-context.ts";
 
-function renderHeader(authValue: Partial<AuthContextValue>) {
+function renderHeader(authValue: Partial<AuthContextValue>, initialUrl = "/") {
   const fullValue: AuthContextValue = {
     status: "guest",
     user: null,
@@ -20,7 +20,7 @@ function renderHeader(authValue: Partial<AuthContextValue>) {
 
   return render(
     <AuthContext.Provider value={fullValue}>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialUrl]}>
         <Header />
       </MemoryRouter>
     </AuthContext.Provider>,
@@ -128,5 +128,17 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
       </AuthContext.Provider>,
     );
     expect(screen.queryByText("3")).not.toBeInTheDocument();
+  });
+
+  it("synchronizes search input with url search parameter q when on /search", () => {
+    renderHeader({}, "/search?q=m%C3%A1y%20t%C3%ADnh");
+    const input = screen.getByRole("searchbox", { name: "Tìm sản phẩm" });
+    expect(input).toHaveValue("máy tính");
+  });
+
+  it("leaves search input empty when not on /search even if q parameter is present", () => {
+    renderHeader({}, "/?q=máy tính");
+    const input = screen.getByRole("searchbox", { name: "Tìm sản phẩm" });
+    expect(input).toHaveValue("");
   });
 });
