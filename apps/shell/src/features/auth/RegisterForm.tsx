@@ -2,16 +2,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
-import { useRegisterMutation } from "../../hooks/mutations/useRegisterMutation.ts";
+import { useRegisterMutation } from "@/hooks/mutations/useRegisterMutation.ts";
 import { registerFormSchema, type RegisterFormData } from "./schemas.ts";
+import type { RegisterStep1SuccessPayload } from "@/types";
 
-export interface RegisterStep1SuccessPayload {
-  displayName: string;
-  email: string;
-  password: string;
-  resendAvailableInSeconds: number;
-  verificationExpiresInSeconds: number;
-}
+export type { RegisterStep1SuccessPayload };
 
 export function RegisterForm({
   onSuccess,

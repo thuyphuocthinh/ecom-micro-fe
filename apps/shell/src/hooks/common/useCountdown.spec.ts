@@ -39,4 +39,30 @@ describe("useCountdown", () => {
 
     vi.useRealTimers();
   });
+
+  it("calculates accurate countdown from targetTimestamp across simulated reloads", () => {
+    vi.useFakeTimers();
+    const now = Date.now();
+    const targetTimestamp = now + 45 * 1000; // 45 seconds in future
+
+    // Simulated first mount
+    const { result: firstResult } = renderHook(() =>
+      useCountdown({ targetTimestamp }),
+    );
+    expect(firstResult.current.countdown).toBe(45);
+
+    // 15 seconds pass
+    act(() => {
+      vi.advanceTimersByTime(15 * 1000);
+    });
+    expect(firstResult.current.countdown).toBe(30);
+
+    // Simulated page reload (new component instance with the same targetTimestamp)
+    const { result: reloadedResult } = renderHook(() =>
+      useCountdown({ targetTimestamp }),
+    );
+    expect(reloadedResult.current.countdown).toBe(30);
+
+    vi.useRealTimers();
+  });
 });

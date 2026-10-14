@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  authService,
-  type ResendVerificationPayload,
-  type ResendVerificationResponseData,
-} from "../../services/auth.service.ts";
+import { authService } from "@/services/auth.service.ts";
+import type {
+  ResendVerificationPayload,
+  ResendVerificationResponseData,
+} from "@/types";
 
 export function useResendCodeMutation() {
   return useMutation({

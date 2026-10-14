@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { session } from "@ecom/api";
-import { queryKeys } from "../../constants/queryKeys.ts";
-import { userService, type UserProfile } from "../../services/user.service.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
+import { userService } from "@/services/user.service.ts";
+import type { UserProfile } from "@/types";
 
 export function useCurrentUser() {
   const hasToken =

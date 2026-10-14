@@ -1,8 +1,7 @@
 import { createContext, useContext } from "react";
-import type { UserProfile } from "../../services/user.service.ts";
+import type { UserProfile, AuthStatus } from "@/types";
 
-export type AuthStatus = "checking" | "guest" | "signedIn";
-export type { UserProfile };
+export type { UserProfile, AuthStatus };
 
 export interface AuthContextValue {
   status: AuthStatus;

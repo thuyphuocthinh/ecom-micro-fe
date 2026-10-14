@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "../../constants/queryKeys.ts";
-import { cartService, type CartSummary } from "../../services/cart.service.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
+import { cartService } from "@/services/cart.service.ts";
+import type { CartSummary } from "@/types";
 
 export function useCartCount(enabled = true) {
   const queryClient = useQueryClient();

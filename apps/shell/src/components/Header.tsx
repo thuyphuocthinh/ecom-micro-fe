@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@ecom/ui";
-import { useAuth } from "../features/auth";
-import { getUserDisplayName, getUserInitial } from "../utils/user.ts";
-import { formatCartAriaLabel } from "../utils/cart.ts";
+import { useAuth } from "@/features/auth";
+import { getUserDisplayName, getUserInitial } from "@/utils/user.ts";
+import { formatCartAriaLabel } from "@/utils/cart.ts";
 
 export function Header() {
   const { status, user, cartCount, logout } = useAuth();

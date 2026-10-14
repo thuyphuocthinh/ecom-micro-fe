@@ -1,28 +1,68 @@
 import { useState, useEffect, useCallback } from "react";
 
-export function useCountdown(initialSeconds: number) {
-  const [prevInitial, setPrevInitial] = useState(initialSeconds);
-  const [countdown, setCountdown] = useState(initialSeconds);
+export interface UseCountdownOptions {
+  seconds?: number;
+  targetTimestamp?: number;
+}
 
-  // Adjust state during render when prop changes without cascading effect
-  if (prevInitial !== initialSeconds) {
-    setPrevInitial(initialSeconds);
-    setCountdown(initialSeconds);
+export function useCountdown(initial: number | UseCountdownOptions) {
+  const targetTimestamp =
+    typeof initial === "object" ? initial.targetTimestamp : undefined;
+  const initialSeconds =
+    typeof initial === "number" ? initial : (initial.seconds ?? 0);
+
+  const calculateRemaining = useCallback((): number => {
+    if (targetTimestamp !== undefined) {
+      return Math.max(0, Math.ceil((targetTimestamp - Date.now()) / 1000));
+    }
+    return Math.max(0, Math.floor(initialSeconds));
+  }, [initialSeconds, targetTimestamp]);
+
+  const [countdown, setCountdown] = useState(calculateRemaining);
+  const [currentTarget, setCurrentTarget] = useState<number | undefined>(
+    targetTimestamp,
+  );
+
+  // Track previous primitive values to prevent infinite loops when options are passed as object literals
+  const [prevTarget, setPrevTarget] = useState(targetTimestamp);
+  const [prevSeconds, setPrevSeconds] = useState(initialSeconds);
+
+  if (targetTimestamp !== prevTarget || initialSeconds !== prevSeconds) {
+    setPrevTarget(targetTimestamp);
+    setPrevSeconds(initialSeconds);
+    setCurrentTarget(targetTimestamp);
+    setCountdown(calculateRemaining());
   }
 
   useEffect(() => {
     if (countdown <= 0) return;
 
     const timer = setInterval(() => {
-      setCountdown((prev) => Math.max(0, prev - 1));
+      if (currentTarget !== undefined) {
+        const rem = Math.max(0, Math.ceil((currentTarget - Date.now()) / 1000));
+        setCountdown(rem);
+      } else {
+        setCountdown((prev) => Math.max(0, prev - 1));
+      }
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [countdown]);
+  }, [countdown, currentTarget]);
 
-  const resetCountdown = useCallback((seconds: number) => {
-    setCountdown(Math.max(0, Math.floor(seconds)));
-  }, []);
+  const resetCountdown = useCallback(
+    (newVal: number | { targetTimestamp: number }) => {
+      if (typeof newVal === "object") {
+        setCurrentTarget(newVal.targetTimestamp);
+        setCountdown(
+          Math.max(0, Math.ceil((newVal.targetTimestamp - Date.now()) / 1000)),
+        );
+      } else {
+        setCurrentTarget(undefined);
+        setCountdown(Math.max(0, Math.floor(newVal)));
+      }
+    },
+    [],
+  );
 
   return {
     countdown,

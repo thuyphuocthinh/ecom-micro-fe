@@ -1,9 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  authService,
-  type RegisterPayload,
-  type RegisterResponseData,
-} from "../../services/auth.service.ts";
+import { authService } from "@/services/auth.service.ts";
+import type { RegisterPayload, RegisterResponseData } from "@/types";
 
 export function useRegisterMutation() {
   return useMutation({

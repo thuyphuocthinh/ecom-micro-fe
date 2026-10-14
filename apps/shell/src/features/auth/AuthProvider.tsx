@@ -2,16 +2,13 @@ import { useState, useEffect, useCallback, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { session } from "@ecom/api";
-import { queryKeys } from "../../constants/queryKeys.ts";
-import { userService } from "../../services/user.service.ts";
-import { useCurrentUser } from "../../hooks/queries/useCurrentUser.ts";
-import { useCartCount } from "../../hooks/queries/useCartCount.ts";
-import { useLogoutMutation } from "../../hooks/mutations/useLogoutMutation.ts";
-import {
-  AuthContext,
-  type AuthStatus,
-  type UserProfile,
-} from "./auth-context.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
+import { userService } from "@/services/user.service.ts";
+import { useCurrentUser } from "@/hooks/queries/useCurrentUser.ts";
+import { useCartCount } from "@/hooks/queries/useCartCount.ts";
+import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation.ts";
+import { AuthContext } from "./auth-context.ts";
+import type { AuthStatus, UserProfile } from "@/types";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();

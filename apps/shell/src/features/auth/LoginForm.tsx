@@ -2,9 +2,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
-import { useLoginMutation } from "../../hooks/mutations/useLoginMutation.ts";
+import { useLoginMutation } from "@/hooks/mutations/useLoginMutation.ts";
 import { loginFormSchema, type LoginFormData } from "./schemas.ts";
-import { sanitizeReturnTo } from "../../utils/redirect.ts";
+import { sanitizeReturnTo } from "@/utils/redirect.ts";
 
 export function LoginForm() {
   const loginMutation = useLoginMutation();

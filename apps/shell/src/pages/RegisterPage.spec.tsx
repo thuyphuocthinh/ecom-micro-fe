@@ -8,7 +8,7 @@ import { RegisterPage } from "./RegisterPage.tsx";
 import {
   AuthContext,
   type AuthContextValue,
-} from "../features/auth/auth-context.ts";
+} from "@/features/auth/auth-context.ts";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -51,6 +51,7 @@ function renderRegisterPage() {
 
 describe("RegisterPage & Verification flow (AC-9, AC-11, AC-12, AC-13, AC-14, AC-15, AC-16)", () => {
   beforeEach(() => {
+    sessionStorage.clear();
     vi.clearAllMocks();
   });
 
@@ -202,7 +203,7 @@ describe("RegisterPage & Verification flow (AC-9, AC-11, AC-12, AC-13, AC-14, AC
   });
 
   it("handles resend countdown and requests new code when countdown reaches 0 (AC-16)", async () => {
-    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval"] });
+    vi.useFakeTimers({ toFake: ["setInterval", "clearInterval", "Date"] });
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 
     vi.spyOn(api, "post")
@@ -245,5 +246,24 @@ describe("RegisterPage & Verification flow (AC-9, AC-11, AC-12, AC-13, AC-14, AC
     expect(toast.success).toHaveBeenCalledWith("Đã gửi mã mới");
 
     vi.useRealTimers();
+  });
+
+  it("restores step 2 and preserves countdown on page reload", async () => {
+    sessionStorage.setItem(
+      "ecom.pendingRegistration",
+      JSON.stringify({
+        displayName: "Lê Văn C",
+        email: "c@ecom.vn",
+        password: "securepassword",
+        resendAvailableAt: Date.now() + 40 * 1000,
+        verificationExpiresAt: Date.now() + 600 * 1000,
+      }),
+    );
+
+    renderRegisterPage();
+
+    expect(screen.getByText("Xác minh email")).toBeInTheDocument();
+    expect(screen.getByText("c@ecom.vn")).toBeInTheDocument();
+    expect(screen.getByText(/Gửi lại sau 00:40/)).toBeInTheDocument();
   });
 });

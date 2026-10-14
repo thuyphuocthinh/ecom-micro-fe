@@ -1,40 +1,20 @@
 import { api } from "@ecom/api";
+import type {
+  LoginPayload,
+  RegisterPayload,
+  VerifyEmailPayload,
+  ResendVerificationPayload,
+} from "@/types";
 
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload {
-  email: string;
-  password: string;
-  displayName?: string;
-}
-
-export interface VerifyEmailPayload {
-  email: string;
-  code: string;
-  password: string;
-}
-
-export interface ResendVerificationPayload {
-  email: string;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-}
-
-export interface RegisterResponseData {
-  verificationRequired: boolean;
-  resendAvailableInSeconds?: number;
-  verificationExpiresInSeconds?: number;
-}
-
-export interface ResendVerificationResponseData {
-  resendAvailableInSeconds: number;
-}
+export type {
+  LoginPayload,
+  RegisterPayload,
+  VerifyEmailPayload,
+  ResendVerificationPayload,
+  AuthTokens,
+  RegisterResponseData,
+  ResendVerificationResponseData,
+} from "@/types";
 
 export const authService = {
   login(payload: LoginPayload) {

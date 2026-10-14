@@ -1,10 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  authService,
-  type VerifyEmailPayload,
-  type AuthTokens,
-} from "../../services/auth.service.ts";
-import { useAuth } from "../../features/auth/auth-context.ts";
+import { authService } from "@/services/auth.service.ts";
+import { useAuth } from "@/features/auth/auth-context.ts";
+import type { VerifyEmailPayload, AuthTokens } from "@/types";
 
 export function useVerifyEmailMutation() {
   const { login } = useAuth();

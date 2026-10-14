@@ -1,10 +1,5 @@
 import { api } from "@ecom/api";
-
-export interface CartSummary {
-  lineCount?: number;
-  totalQuantity?: number;
-  subtotal?: number;
-}
+export type { CartSummary } from "@/types";
 
 export const cartService = {
   getCart(options?: { silent?: boolean }) {

@@ -5,7 +5,7 @@ import { RequireAuth } from "./RequireAuth.tsx";
 import {
   AuthContext,
   type AuthContextValue,
-} from "../features/auth/auth-context.ts";
+} from "@/features/auth/auth-context.ts";
 
 function renderWithAuth(
   authStatus: AuthContextValue["status"],

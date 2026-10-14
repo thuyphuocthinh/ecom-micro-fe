@@ -5,7 +5,7 @@ import { Header } from "./Header.tsx";
 import {
   AuthContext,
   type AuthContextValue,
-} from "../features/auth/auth-context.ts";
+} from "@/features/auth/auth-context.ts";
 
 function renderHeader(authValue: Partial<AuthContextValue>) {
   const fullValue: AuthContextValue = {

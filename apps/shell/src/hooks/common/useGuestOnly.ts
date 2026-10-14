@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router";
-import { useAuth } from "../../features/auth";
-import { sanitizeReturnTo } from "../../utils/redirect.ts";
+import { useAuth } from "@/features/auth";
+import { sanitizeReturnTo } from "@/utils/redirect.ts";
 
 /**
  * Redirects authenticated users away from guest-only pages (e.g. /login, /register)
