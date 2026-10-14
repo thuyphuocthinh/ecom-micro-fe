@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { Header } from "./Header.tsx";
 import {
@@ -40,7 +41,9 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
     expect(screen.queryByText("Đơn hàng")).not.toBeInTheDocument();
   });
 
-  it("shows user name, avatar, orders link, and logout button when signed in (AC-20)", () => {
+  it("shows user name, avatar, and opens dropdown with profile, orders, addresses, and logout (AC-20)", async () => {
+    const user = userEvent.setup();
+    const logout = vi.fn();
     renderHeader({
       status: "signedIn",
       user: {
@@ -49,13 +52,31 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
         email: "a@ecom.vn",
         role: "CUSTOMER",
       },
+      logout,
     });
 
-    expect(screen.getByText("Đơn hàng")).toBeInTheDocument();
     expect(screen.getByText("Nguyễn Văn A")).toBeInTheDocument();
     expect(screen.getByText("A")).toBeInTheDocument(); // Initial avatar
-    expect(screen.getByText("Đăng xuất")).toBeInTheDocument();
     expect(screen.queryByText("Đăng nhập")).not.toBeInTheDocument();
+
+    // Menu should be closed initially
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+
+    // Open dropdown menu
+    const accountBtn = screen.getByRole("button", {
+      name: /tài khoản của nguyễn văn a/i,
+    });
+    await user.click(accountBtn);
+
+    expect(screen.getByRole("menu")).toBeInTheDocument();
+    expect(screen.getByText("Hồ sơ của tôi")).toBeInTheDocument();
+    expect(screen.getByText("Đơn hàng")).toBeInTheDocument();
+    expect(screen.getByText("Sổ địa chỉ")).toBeInTheDocument();
+    expect(screen.getByText("Đăng xuất")).toBeInTheDocument();
+
+    // Click logout calls logout
+    await user.click(screen.getByText("Đăng xuất"));
+    expect(logout).toHaveBeenCalledTimes(1);
   });
 
   it("renders user avatar image when avatarUrl is provided", () => {
