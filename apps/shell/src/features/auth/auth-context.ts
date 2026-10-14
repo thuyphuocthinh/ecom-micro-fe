@@ -1,14 +1,8 @@
 import { createContext, useContext } from "react";
+import type { UserProfile } from "../../services/user.service.ts";
 
 export type AuthStatus = "checking" | "guest" | "signedIn";
-
-export interface UserProfile {
-  id: string;
-  role: "CUSTOMER" | "ADMIN";
-  displayName?: string | null;
-  avatarUrl?: string | null;
-  email?: string | null;
-}
+export type { UserProfile };
 
 export interface AuthContextValue {
   status: AuthStatus;

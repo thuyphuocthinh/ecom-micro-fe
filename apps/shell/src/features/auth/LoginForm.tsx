@@ -2,13 +2,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
-import { api } from "@ecom/api";
+import { useLoginMutation } from "../../hooks/mutations/useLoginMutation.ts";
 import { loginFormSchema, type LoginFormData } from "./schemas.ts";
-import { useAuth } from "./auth-context.ts";
 import { sanitizeReturnTo } from "../../utils/redirect.ts";
 
 export function LoginForm() {
-  const { login } = useAuth();
+  const loginMutation = useLoginMutation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const rawReturnTo = searchParams.get("returnTo");
@@ -29,20 +28,19 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const res = await api.post("/auth/login", {
-        body: {
-          email: data.email,
-          password: data.password,
-        },
+      await loginMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
       });
 
-      await login(res.data);
       navigate(returnTo, { replace: true });
     } catch {
       // Backend errors are handled centrally via api.onError (ToastHost)
       // Form fields only display Zod errors (AC-4)
     }
   };
+
+  const isLoading = isSubmitting || loginMutation.isPending;
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -95,10 +93,10 @@ export function LoginForm() {
           type="submit"
           variant="primary"
           size="lg"
-          loading={isSubmitting}
+          loading={isLoading}
           className="w-full mt-2"
         >
-          {isSubmitting ? "Đang đăng nhập…" : "Đăng nhập"}
+          {isLoading ? "Đang đăng nhập…" : "Đăng nhập"}
         </Button>
       </form>
     </div>

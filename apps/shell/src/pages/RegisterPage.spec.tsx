@@ -18,9 +18,18 @@ vi.mock("sonner", () => ({
   },
 }));
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 const mockLogin = vi.fn();
 
 function renderRegisterPage() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
   const fullValue: AuthContextValue = {
     status: "guest",
     user: null,
@@ -30,11 +39,13 @@ function renderRegisterPage() {
   };
 
   return render(
-    <AuthContext.Provider value={fullValue}>
-      <MemoryRouter>
-        <RegisterPage />
-      </MemoryRouter>
-    </AuthContext.Provider>,
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider value={fullValue}>
+        <MemoryRouter>
+          <RegisterPage />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </QueryClientProvider>,
   );
 }
 

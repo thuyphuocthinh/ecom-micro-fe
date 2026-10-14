@@ -6,9 +6,18 @@ import { api } from "@ecom/api";
 import { LoginForm } from "./LoginForm.tsx";
 import { AuthContext, type AuthContextValue } from "./auth-context.ts";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 const mockLogin = vi.fn();
 
 function renderLoginForm(initialEntry = "/login") {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: { retry: false },
+      mutations: { retry: false },
+    },
+  });
+
   const fullValue: AuthContextValue = {
     status: "guest",
     user: null,
@@ -18,11 +27,13 @@ function renderLoginForm(initialEntry = "/login") {
   };
 
   return render(
-    <AuthContext.Provider value={fullValue}>
-      <MemoryRouter initialEntries={[initialEntry]}>
-        <LoginForm />
-      </MemoryRouter>
-    </AuthContext.Provider>,
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider value={fullValue}>
+        <MemoryRouter initialEntries={[initialEntry]}>
+          <LoginForm />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </QueryClientProvider>,
   );
 }
 

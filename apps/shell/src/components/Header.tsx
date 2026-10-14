@@ -2,6 +2,8 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@ecom/ui";
 import { useAuth } from "../features/auth";
+import { getUserDisplayName, getUserInitial } from "../utils/user.ts";
+import { formatCartAriaLabel } from "../utils/cart.ts";
 
 export function Header() {
   const { status, user, cartCount, logout } = useAuth();
@@ -15,17 +17,9 @@ export function Header() {
     }
   };
 
-  const displayName =
-    user?.displayName || (user?.email ? user.email.split("@")[0] : "Tài khoản");
-  const words = displayName.trim().split(/\s+/);
-  const initial = (
-    words[words.length - 1]?.charAt(0) ||
-    displayName.charAt(0) ||
-    "U"
-  ).toUpperCase();
-
-  const cartAriaLabel =
-    cartCount > 0 ? `Giỏ hàng, ${cartCount} sản phẩm` : "Giỏ hàng, đang trống";
+  const displayName = getUserDisplayName(user);
+  const initial = getUserInitial(user);
+  const cartAriaLabel = formatCartAriaLabel(cartCount);
 
   return (
     <header className="bg-white border-b border-line text-ink">

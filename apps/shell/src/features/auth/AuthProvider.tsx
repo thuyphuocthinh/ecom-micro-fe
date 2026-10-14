@@ -1,7 +1,12 @@
-import { useEffect, useState, useCallback, type ReactNode } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect, useCallback, type ReactNode } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { api, session } from "@ecom/api";
+import { session } from "@ecom/api";
+import { queryKeys } from "../../constants/queryKeys.ts";
+import { userService } from "../../services/user.service.ts";
+import { useCurrentUser } from "../../hooks/queries/useCurrentUser.ts";
+import { useCartCount } from "../../hooks/queries/useCartCount.ts";
+import { useLogoutMutation } from "../../hooks/mutations/useLogoutMutation.ts";
 import {
   AuthContext,
   type AuthStatus,
@@ -10,136 +15,101 @@ import {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
+  const [, setSessionKey] = useState(0);
 
-  const [status, setStatus] = useState<AuthStatus>(() => {
-    const hasToken =
-      typeof window !== "undefined" &&
-      Boolean(session.getAccessToken() || session.getRefreshToken());
-    return hasToken ? "checking" : "guest";
-  });
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const hasToken =
+    typeof window !== "undefined" &&
+    Boolean(session.getAccessToken() || session.getRefreshToken());
 
-  // Restore session or check user (AC-18, AC-19)
-  const refreshUser = useCallback(async () => {
-    const token = session.getAccessToken() || session.getRefreshToken();
-    if (!token) {
-      setUser(null);
-      setStatus("guest");
-      return;
+  const userQuery = useCurrentUser();
+  const user = userQuery.data ?? null;
+
+  // Derive status purely during render
+  let status: AuthStatus = "guest";
+  if (hasToken) {
+    if (userQuery.isLoading) {
+      status = "checking";
+    } else if (user) {
+      status = "signedIn";
+    } else {
+      status = "guest";
     }
-
-    try {
-      const res = await api.get("/users/me", { silent: true });
-      setUser(res.data as unknown as UserProfile);
-      setStatus("signedIn");
-    } catch {
-      session.clear();
-      setUser(null);
-      setStatus("guest");
-    }
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const token = session.getAccessToken() || session.getRefreshToken();
-    if (!token) return;
-
-    api
-      .get("/users/me", { silent: true })
-      .then((res) => {
-        if (!cancelled) {
-          setUser(res.data as unknown as UserProfile);
-          setStatus("signedIn");
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          session.clear();
-          setUser(null);
-          setStatus("guest");
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  } else {
+    status = "guest";
+  }
 
   // Session expired listener (AC-23)
   useEffect(() => {
     return session.onExpired(() => {
       session.clear();
-      setUser(null);
-      setStatus("guest");
+      queryClient.setQueryData(queryKeys.user.me(), null);
       queryClient.clear();
+      setSessionKey((k) => k + 1);
       toast.info("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.");
     });
   }, [queryClient]);
 
   // Multi-tab storage sync (AC-27)
   useEffect(() => {
-    const handleStorage = (e: StorageEvent) => {
+    const handleStorage = async (e: StorageEvent) => {
       if (e.key === "ecom.accessToken" || e.key === "ecom.refreshToken") {
-        void refreshUser();
+        const token = session.getAccessToken() || session.getRefreshToken();
+        if (!token) {
+          session.clear();
+          queryClient.setQueryData(queryKeys.user.me(), null);
+          queryClient.clear();
+          setSessionKey((k) => k + 1);
+        } else {
+          try {
+            const res = await userService.getMe({ silent: true });
+            queryClient.setQueryData(
+              queryKeys.user.me(),
+              res.data as unknown as UserProfile,
+            );
+            setSessionKey((k) => k + 1);
+            void queryClient.invalidateQueries({
+              queryKey: queryKeys.cart.all,
+            });
+          } catch {
+            session.clear();
+            queryClient.setQueryData(queryKeys.user.me(), null);
+            queryClient.clear();
+            setSessionKey((k) => k + 1);
+          }
+        }
       }
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
-  }, [refreshUser]);
+  }, [queryClient]);
 
-  // Cart query (AC-21: only when signedIn)
-  const cartQuery = useQuery({
-    queryKey: ["cart"],
-    queryFn: async () => {
-      const res = await api.get("/cart");
-      return res.data;
-    },
-    enabled: status === "signedIn",
-    staleTime: 1000 * 60,
-  });
+  // Cart query managed via dedicated query hook (AC-21)
+  const { cartCount } = useCartCount(status === "signedIn");
 
-  // Listen for cart:changed event (AC-21)
-  useEffect(() => {
-    const handleCartChanged = () => {
-      if (status === "signedIn") {
-        void queryClient.invalidateQueries({ queryKey: ["cart"] });
-      }
-    };
-    window.addEventListener("cart:changed", handleCartChanged);
-    return () => window.removeEventListener("cart:changed", handleCartChanged);
-  }, [status, queryClient]);
+  const logoutMutation = useLogoutMutation();
 
   const login = useCallback(
     async (tokens: { accessToken: string; refreshToken: string }) => {
       session.set(tokens);
       try {
-        const res = await api.get("/users/me");
-        setUser(res.data as unknown as UserProfile);
-        setStatus("signedIn");
-        void queryClient.invalidateQueries({ queryKey: ["cart"] });
+        const res = await userService.getMe();
+        queryClient.setQueryData(
+          queryKeys.user.me(),
+          res.data as unknown as UserProfile,
+        );
       } catch {
-        setStatus("signedIn");
+        void queryClient.invalidateQueries({ queryKey: queryKeys.user.all });
       }
+      setSessionKey((k) => k + 1);
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cart.all });
     },
     [queryClient],
   );
 
   const logout = useCallback(async () => {
-    try {
-      // AC-22: logout with silent: true; if it fails (offline), still clear locally
-      await api.post("/auth/logout", { silent: true });
-    } catch {
-      // ignore
-    } finally {
-      session.clear();
-      setUser(null);
-      setStatus("guest");
-      queryClient.clear();
-    }
-  }, [queryClient]);
-
-  const cartCount =
-    status === "signedIn" ? (cartQuery.data?.lineCount ?? 0) : 0;
+    await logoutMutation.mutateAsync();
+    setSessionKey((k) => k + 1);
+  }, [logoutMutation]);
 
   return (
     <AuthContext.Provider value={{ status, user, cartCount, login, logout }}>

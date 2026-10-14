@@ -1,20 +1,19 @@
-import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { Button, CodeInput } from "@ecom/ui";
-import { api, ApiError } from "@ecom/api";
-import { verifyEmailFormSchema, type VerifyEmailFormData } from "./schemas.ts";
-import { useAuth } from "./auth-context.ts";
+import { ApiError } from "@ecom/api";
+import { useCountdown } from "../../hooks/common/useCountdown.ts";
+import { useVerifyEmailMutation } from "../../hooks/mutations/useVerifyEmailMutation.ts";
+import { useResendCodeMutation } from "../../hooks/mutations/useResendCodeMutation.ts";
+import {
+  formatDurationMmSs,
+  secondsToMinutesCeil,
+} from "../../utils/format.ts";
 import { sanitizeReturnTo } from "../../utils/redirect.ts";
+import { verifyEmailFormSchema, type VerifyEmailFormData } from "./schemas.ts";
 import type { RegisterStep1SuccessPayload } from "./RegisterForm.tsx";
-
-function formatSeconds(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
 
 export function VerifyEmailStep({
   payload,
@@ -25,21 +24,16 @@ export function VerifyEmailStep({
   onBack: () => void;
   onSessionExpired: () => void;
 }) {
-  const { login } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnTo = sanitizeReturnTo(searchParams.get("returnTo"));
 
-  const [countdown, setCountdown] = useState(payload.resendAvailableInSeconds);
-  const [isResending, setIsResending] = useState(false);
+  const { countdown, isRunning, resetCountdown } = useCountdown(
+    payload.resendAvailableInSeconds,
+  );
 
-  useEffect(() => {
-    if (countdown <= 0) return;
-    const timer = setInterval(() => {
-      setCountdown((prev) => Math.max(0, prev - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [countdown]);
+  const verifyEmailMutation = useVerifyEmailMutation();
+  const resendCodeMutation = useResendCodeMutation();
 
   const {
     register,
@@ -55,15 +49,12 @@ export function VerifyEmailStep({
 
   const onSubmit = async (data: VerifyEmailFormData) => {
     try {
-      const res = await api.post("/auth/verify-email", {
-        body: {
-          email: payload.email,
-          code: data.code,
-          password: payload.password,
-        },
+      await verifyEmailMutation.mutateAsync({
+        email: payload.email,
+        code: data.code,
+        password: payload.password,
       });
 
-      await login(res.data);
       toast.success(
         `Chào mừng, ${payload.displayName || "bạn"}! Tài khoản đã sẵn sàng.`,
       );
@@ -76,19 +67,13 @@ export function VerifyEmailStep({
   };
 
   const handleResend = async () => {
-    if (countdown > 0 || isResending) return;
-    setIsResending(true);
+    if (isRunning || resendCodeMutation.isPending) return;
     try {
-      const res = await api.post("/auth/resend-verification", {
-        body: {
-          email: payload.email,
-        },
+      const resData = await resendCodeMutation.mutateAsync({
+        email: payload.email,
       });
       toast.success("Đã gửi mã mới");
-      const nextSeconds =
-        (res.data as { resendAvailableInSeconds?: number })
-          ?.resendAvailableInSeconds ?? 60;
-      setCountdown(nextSeconds);
+      resetCountdown(resData.resendAvailableInSeconds ?? 60);
     } catch (err) {
       if (
         err instanceof ApiError &&
@@ -96,12 +81,14 @@ export function VerifyEmailStep({
       ) {
         onSessionExpired();
       }
-    } finally {
-      setIsResending(false);
     }
   };
 
-  const expireMinutes = Math.ceil(payload.verificationExpiresInSeconds / 60);
+  const expireMinutes = secondsToMinutesCeil(
+    payload.verificationExpiresInSeconds,
+  );
+  const isVerifying = isSubmitting || verifyEmailMutation.isPending;
+  const isResending = resendCodeMutation.isPending;
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -140,14 +127,14 @@ export function VerifyEmailStep({
 
           <button
             type="button"
-            disabled={countdown > 0 || isResending}
+            disabled={isRunning || isResending}
             onClick={handleResend}
             className="text-sm font-semibold text-muted disabled:opacity-60 disabled:cursor-not-allowed hover:text-ink transition-colors cursor-pointer"
           >
-            {countdown > 0
-              ? `Gửi lại sau ${formatSeconds(countdown)}`
-              : isResending
-                ? "Đang gửi…"
+            {isResending
+              ? "Đang gửi…"
+              : isRunning
+                ? `Gửi lại sau ${formatDurationMmSs(countdown)}`
                 : "Gửi lại mã"}
           </button>
         </div>
@@ -156,10 +143,10 @@ export function VerifyEmailStep({
           type="submit"
           variant="primary"
           size="lg"
-          loading={isSubmitting}
+          loading={isVerifying}
           className="w-full mt-2"
         >
-          {isSubmitting ? "Đang xác minh…" : "Xác minh"}
+          {isVerifying ? "Đang xác minh…" : "Xác minh"}
         </Button>
       </form>
     </div>

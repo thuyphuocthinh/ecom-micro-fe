@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
-import { api } from "@ecom/api";
+import { useRegisterMutation } from "../../hooks/mutations/useRegisterMutation.ts";
 import { registerFormSchema, type RegisterFormData } from "./schemas.ts";
 
 export interface RegisterStep1SuccessPayload {
@@ -20,6 +20,7 @@ export function RegisterForm({
   onSuccess: (payload: RegisterStep1SuccessPayload) => void;
   initialValues?: { displayName?: string; email?: string };
 }) {
+  const registerMutation = useRegisterMutation();
   const [searchParams] = useSearchParams();
   const rawReturnTo = searchParams.get("returnTo");
 
@@ -40,18 +41,11 @@ export function RegisterForm({
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
-      const res = await api.post("/auth/register", {
-        body: {
-          displayName: data.displayName,
-          email: data.email,
-          password: data.password,
-        },
+      const resData = await registerMutation.mutateAsync({
+        displayName: data.displayName,
+        email: data.email,
+        password: data.password,
       });
-
-      const resData = (res.data || {}) as {
-        resendAvailableInSeconds?: number;
-        verificationExpiresInSeconds?: number;
-      };
 
       onSuccess({
         displayName: data.displayName,
@@ -62,9 +56,12 @@ export function RegisterForm({
           resData.verificationExpiresInSeconds ?? 900,
       });
     } catch {
-      // Backend error toast handled via api.onError
+      // Backend errors are handled centrally via api.onError (ToastHost)
+      // Form fields only display Zod errors (AC-4)
     }
   };
+
+  const isLoading = isSubmitting || registerMutation.isPending;
 
   return (
     <div className="w-full flex flex-col gap-6">
@@ -93,10 +90,11 @@ export function RegisterForm({
         className="flex flex-col gap-4.5"
       >
         <TextField
-          id="name"
+          id="displayName"
           label="Họ và tên"
+          type="text"
           autoComplete="name"
-          placeholder="Nguyễn Văn A…"
+          placeholder="Nguyễn Văn A"
           error={errors.displayName?.message}
           {...register("displayName")}
         />
@@ -124,44 +122,49 @@ export function RegisterForm({
         />
 
         <div className="flex flex-col gap-1.5 pt-1">
-          <label className="flex items-start gap-3 min-h-11 cursor-pointer select-none">
+          <label className="flex items-start gap-2.5 cursor-pointer select-none text-[14.5px] text-ink leading-relaxed">
             <input
-              id="terms"
               type="checkbox"
-              aria-describedby="terms-error"
-              aria-invalid={errors.termsAccepted ? true : undefined}
-              className="size-5 mt-0.5 rounded accent-brand flex-none cursor-pointer"
+              className="mt-1 size-4.5 rounded text-brand focus:ring-brand focus:ring-offset-2 border-line cursor-pointer"
               {...register("termsAccepted")}
             />
-            <span className="text-sm text-ink-2 leading-relaxed">
+            <span>
               Tôi đồng ý với{" "}
-              <span className="text-brand font-semibold underline underline-offset-3">
-                điều khoản sử dụng
-              </span>{" "}
+              <Link
+                to="/terms"
+                target="_blank"
+                rel="noreferrer"
+                className="text-brand underline underline-offset-2 hover:text-brand-dark"
+              >
+                Điều khoản dịch vụ
+              </Link>{" "}
               và{" "}
-              <span className="text-brand font-semibold underline underline-offset-3">
-                chính sách bảo mật
-              </span>
+              <Link
+                to="/privacy"
+                target="_blank"
+                rel="noreferrer"
+                className="text-brand underline underline-offset-2 hover:text-brand-dark"
+              >
+                Chính sách bảo mật
+              </Link>
               .
             </span>
           </label>
-          <p
-            id="terms-error"
-            aria-live="polite"
-            className="text-[13px] font-medium text-err"
-          >
-            {errors.termsAccepted?.message}
-          </p>
+          {errors.termsAccepted?.message && (
+            <p role="alert" className="text-xs text-err font-medium pl-7">
+              {errors.termsAccepted.message}
+            </p>
+          )}
         </div>
 
         <Button
           type="submit"
           variant="primary"
           size="lg"
-          loading={isSubmitting}
+          loading={isLoading}
           className="w-full mt-2"
         >
-          {isSubmitting ? "Đang tạo tài khoản…" : "Tạo tài khoản"}
+          {isLoading ? "Đang tạo tài khoản…" : "Tạo tài khoản"}
         </Button>
       </form>
     </div>
