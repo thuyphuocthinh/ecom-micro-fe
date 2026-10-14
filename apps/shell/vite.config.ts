@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => {
 
       federation({
         name: "shell",
+        hostInitInjectLocation: "entry",
         remotes: {
           catalog: {
             type: "module",
