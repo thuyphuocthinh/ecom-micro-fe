@@ -9,6 +9,7 @@ import { LockIcon } from "./lock.tsx";
 import { CheckIcon } from "./check.tsx";
 import { DeviceIcon } from "./device.tsx";
 import { CameraIcon } from "./camera.tsx";
+import { PlusIcon } from "./plus.tsx";
 
 export const icons = {
   google: GoogleIcon,
@@ -22,6 +23,7 @@ export const icons = {
   check: CheckIcon,
   device: DeviceIcon,
   camera: CameraIcon,
+  plus: PlusIcon,
 } as const;
 
 export type IconName = keyof typeof icons;
@@ -38,4 +40,5 @@ export {
   CheckIcon,
   DeviceIcon,
   CameraIcon,
+  PlusIcon,
 };

@@ -7,6 +7,7 @@ import { LoginPage } from "@/pages/LoginPage.tsx";
 import { RegisterPage } from "@/pages/RegisterPage.tsx";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage.tsx";
 import { ProfilePage } from "@/pages/ProfilePage.tsx";
+import { AddressesPage } from "@/pages/AddressesPage.tsx";
 import { NotFoundPage } from "@/pages/NotFoundPage.tsx";
 
 export const router = createBrowserRouter([
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
           {
             path: "profile",
             element: <ProfilePage />,
+          },
+          {
+            path: "addresses",
+            element: <AddressesPage />,
           },
         ],
       },
