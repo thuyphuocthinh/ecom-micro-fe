@@ -15,3 +15,4 @@ export * from "./src/Avatar";
 export * from "./src/Image";
 export * from "./src/DatePicker";
 export * from "./src/DateRangePicker";
+export * from "./src/Tooltip";

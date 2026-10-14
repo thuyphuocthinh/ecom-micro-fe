@@ -46,7 +46,7 @@ export function ProductGrid({
   return (
     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-7 gap-x-5 list-none m-0 p-0">
       {products.map((product) => (
-        <li key={product.id} className="h-full">
+        <li key={product.id} className="h-full flex flex-col">
           <ProductCard
             product={product}
             categoryName={categoryNames[product.categoryId]}
