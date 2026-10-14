@@ -24,6 +24,9 @@ export default defineConfig({
           import.meta.url,
         ),
       ),
+      "checkout/CartPage": fileURLToPath(
+        new URL("../checkout/src/pages/CartPage.tsx", import.meta.url),
+      ),
     },
   },
   test: {

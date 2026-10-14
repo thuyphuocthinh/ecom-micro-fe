@@ -33,3 +33,10 @@ declare module "catalog/ProductGrid" {
     className?: string;
   }>;
 }
+
+declare module "checkout/CartPage" {
+  import type { ComponentType } from "react";
+  const CartPage: ComponentType;
+  export default CartPage;
+  export { CartPage };
+}

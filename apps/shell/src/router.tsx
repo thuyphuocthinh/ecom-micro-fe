@@ -50,6 +50,11 @@ const ProductDetailPage = lazy(() =>
     default: m.ProductDetailPage || m.default,
   })),
 );
+const CartPage = lazy(() =>
+  import("checkout/CartPage").then((m) => ({
+    default: m.CartPage || m.default,
+  })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -66,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: "/products/:id",
         element: <ProductDetailPage />,
+      },
+      {
+        path: "/cart",
+        element: <CartPage />,
       },
       {
         path: "/products",

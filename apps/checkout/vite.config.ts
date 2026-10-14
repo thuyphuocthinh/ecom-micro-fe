@@ -1,7 +1,7 @@
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { federation } from "@module-federation/vite";
 
 // The same one copy of React as the host (see apps/shell/vite.config.ts)
@@ -12,19 +12,28 @@ export default defineConfig(({ mode }) => {
   const apiUrl = env.VITE_API_URL ?? "http://localhost:4000";
 
   return {
+    resolve: {
+      tsconfigPaths: true,
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
     plugins: [
-      tsconfigPaths(),
       react(),
       tailwindcss(),
       federation({
         name: "checkout",
         filename: "remoteEntry.js",
+        dts: false,
         exposes: {
           "./App": "./src/App.tsx",
+          "./CartPage": "./src/pages/CartPage.tsx",
         },
         shared: {
           react: { singleton: true, requiredVersion: REACT_RANGE },
           "react-dom": { singleton: true, requiredVersion: REACT_RANGE },
+          "react-router": { singleton: true },
+          "@tanstack/react-query": { singleton: true },
           // One login for every app: the same copy of the API client holds the token
           "@ecom/api": { singleton: true, requiredVersion: false },
         },

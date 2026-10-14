@@ -1,0 +1,32 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cartService } from "@/services/cart.service.ts";
+import {
+  isGuestSession,
+  updateGuestCartItemQuantity,
+} from "../utils/guest-cart.ts";
+import { CART_QUERY_KEY } from "./useCartQuery.ts";
+
+export interface UpdateCartItemArgs {
+  skuId: string;
+  quantity: number;
+}
+
+export function useUpdateCartItemMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ skuId, quantity }: UpdateCartItemArgs) => {
+      if (isGuestSession()) {
+        updateGuestCartItemQuantity(skuId, quantity);
+        return { skuId, quantity };
+      }
+      return cartService.setQuantity(skuId, quantity);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("cart:changed"));
+      }
+    },
+  });
+}
