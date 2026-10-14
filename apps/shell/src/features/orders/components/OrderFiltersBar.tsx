@@ -1,21 +1,14 @@
-import { type ChangeEvent } from "react";
+import { useState } from "react";
 import {
   Button,
+  DateRangePicker,
   Dropdown,
   type DropdownOption,
   SearchInput,
-  TextField,
 } from "@ecom/ui";
 import { Icon } from "@/components/common/Icon.tsx";
 import type { OrderRangeKey } from "@/types";
-
-const RANGE_OPTIONS: DropdownOption[] = [
-  { value: "all", label: "Tất cả" },
-  { value: "30d", label: "30 ngày qua" },
-  { value: "3m", label: "3 tháng qua" },
-  { value: "year", label: "Năm nay" },
-  { value: "custom", label: "Chọn khoảng ngày…" },
-];
+import { formatOrderDate } from "../utils/order-format.ts";
 
 export interface OrderFiltersBarProps {
   range: OrderRangeKey;
@@ -26,6 +19,7 @@ export interface OrderFiltersBarProps {
   onRangeChange: (range: OrderRangeKey) => void;
   onFromChange: (from: string) => void;
   onToChange: (to: string) => void;
+  onDateRangeApply?: (range: { from: string; to: string }) => void;
   onQChange: (q: string) => void;
   onClearFilters: () => void;
 }
@@ -39,10 +33,11 @@ export function OrderFiltersBar({
   onRangeChange,
   onFromChange,
   onToChange,
+  onDateRangeApply,
   onQChange,
   onClearFilters,
 }: OrderFiltersBarProps) {
-  const isCustom = range === "custom";
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const hasFilter =
     range !== "all" || Boolean(from) || Boolean(to) || Boolean(q.trim());
   const trimmedQ = q.trim();
@@ -51,53 +46,70 @@ export function OrderFiltersBar({
       ? "Nhập ít nhất 6 ký tự của mã đơn."
       : "Mã đơn là 8 ký tự đầu, như trên mỗi đơn.";
 
+  const customLabel =
+    from && to
+      ? `${formatOrderDate(from)} – ${formatOrderDate(to)}`
+      : from
+        ? `Từ ${formatOrderDate(from)}`
+        : to
+          ? `Đến ${formatOrderDate(to)}`
+          : "Chọn khoảng ngày…";
+
+  const rangeOptions: DropdownOption[] = [
+    { value: "all", label: "Tất cả" },
+    { value: "30d", label: "30 ngày qua" },
+    { value: "3m", label: "3 tháng qua" },
+    { value: "year", label: "Năm nay" },
+    { value: "custom", label: customLabel },
+  ];
+
+  const handleRangeChange = (val: string) => {
+    if (val === "custom") {
+      setIsDatePickerOpen(true);
+    } else {
+      setIsDatePickerOpen(false);
+      onRangeChange(val as OrderRangeKey);
+    }
+  };
+
+  const handleApplyDateRange = (newRange: { from: string; to: string }) => {
+    if (onDateRangeApply) {
+      onDateRangeApply(newRange);
+    } else {
+      onFromChange(newRange.from);
+      onToChange(newRange.to);
+      onRangeChange("custom");
+    }
+    setIsDatePickerOpen(false);
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <div
         role="search"
         aria-label="Lọc đơn hàng"
-        className="flex gap-3 flex-wrap items-end"
+        className="flex gap-3 flex-wrap items-start"
       >
         {/* Thời gian đặt */}
-        <div className="w-full sm:w-[200px]">
+        <div className="w-full sm:w-[220px]">
           <Dropdown
             id="rng"
             label="Thời gian đặt"
-            options={RANGE_OPTIONS}
+            options={rangeOptions}
             value={range}
-            onChange={(val) => onRangeChange(val as OrderRangeKey)}
+            onChange={handleRangeChange}
           />
         </div>
 
-        {/* Custom Date Range */}
-        {isCustom && (
-          <>
-            <div className="flex flex-col gap-1.5 w-full sm:w-[170px]">
-              <TextField
-                id="df"
-                label="Từ ngày"
-                type="date"
-                value={from}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  onFromChange(e.target.value)
-                }
-                error={rangeError || undefined}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5 w-full sm:w-[170px]">
-              <TextField
-                id="dt"
-                label="Đến ngày"
-                type="date"
-                value={to}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  onToChange(e.target.value)
-                }
-                error={rangeError || undefined}
-              />
-            </div>
-          </>
-        )}
+        {/* DateRangePicker Popup */}
+        <DateRangePicker
+          open={isDatePickerOpen}
+          from={from}
+          to={to}
+          error={rangeError}
+          onClose={() => setIsDatePickerOpen(false)}
+          onApply={handleApplyDateRange}
+        />
 
         {/* Tìm theo mã đơn */}
         <div className="flex-1 min-w-[220px] flex flex-col gap-1.5">
@@ -113,6 +125,7 @@ export function OrderFiltersBar({
             value={q}
             onChange={(e) => onQChange(e.target.value)}
             aria-describedby="oq-hint"
+            className="min-h-[46px]"
             startAdornment={
               <Icon name="search" size={18} className="size-4 text-muted" />
             }
@@ -127,8 +140,11 @@ export function OrderFiltersBar({
           <Button
             type="button"
             variant="ghost"
-            onClick={onClearFilters}
-            className="text-muted hover:text-ink min-h-[46px] self-end mb-[18px]"
+            onClick={() => {
+              setIsDatePickerOpen(false);
+              onClearFilters();
+            }}
+            className="text-muted hover:text-ink min-h-[46px] mt-[26px]"
           >
             Xoá bộ lọc
           </Button>

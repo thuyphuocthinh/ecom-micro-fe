@@ -1,5 +1,6 @@
 import type { ComponentProps } from "react";
 import { cx } from "./cx";
+import { Image } from "./Image";
 
 export type AvatarSize = "sm" | "md" | "lg";
 
@@ -28,7 +29,7 @@ export function Avatar({
 
   if (src) {
     return (
-      <img
+      <Image
         src={src}
         alt={alt}
         className={cx(
@@ -36,6 +37,20 @@ export function Avatar({
           "rounded-full object-cover shrink-0 border border-line",
           className,
         )}
+        fallback={
+          <div
+            aria-hidden="true"
+            className={cx(
+              container,
+              text,
+              "rounded-full bg-brand text-white inline-flex items-center justify-center font-head font-bold shrink-0 select-none",
+              className,
+            )}
+            {...props}
+          >
+            {fallback}
+          </div>
+        }
       />
     );
   }

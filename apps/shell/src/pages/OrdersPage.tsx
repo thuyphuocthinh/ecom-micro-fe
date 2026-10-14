@@ -27,7 +27,6 @@ export function OrdersPage() {
   const currentQ = searchParams.get("q") || "";
 
   // Local state
-  const [shownCount, setShownCount] = useState(4);
   const [cancelTarget, setCancelTarget] = useState<OrderSummary | null>(null);
 
   // Validate custom date range
@@ -56,14 +55,24 @@ export function OrdersPage() {
 
   // TanStack Queries
   const { data: counts } = useOrderCountsQuery({
+    range: filterParams.range,
     from: filterParams.from,
     to: filterParams.to,
     q: filterParams.q,
   });
 
-  const { data: ordersData, isLoading: isOrdersLoading } =
-    useOrdersQuery(filterParams);
-  const orders = ordersData?.orders ?? [];
+  const {
+    data: ordersData,
+    isLoading: isOrdersLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useOrdersQuery(filterParams, 4);
+
+  const orders = useMemo(
+    () => ordersData?.pages.flatMap((page) => page.orders) ?? [],
+    [ordersData],
+  );
 
   const cancelMutation = useCancelOrderMutation();
 
@@ -75,7 +84,6 @@ export function OrdersPage() {
       else next.set("tab", tab);
       return next;
     });
-    setShownCount(4);
   };
 
   const handleRangeChange = (range: OrderRangeKey) => {
@@ -89,7 +97,18 @@ export function OrdersPage() {
       }
       return next;
     });
-    setShownCount(4);
+  };
+
+  const handleDateRangeApply = ({ from, to }: { from: string; to: string }) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("range", "custom");
+      if (from) next.set("from", from);
+      else next.delete("from");
+      if (to) next.set("to", to);
+      else next.delete("to");
+      return next;
+    });
   };
 
   const handleFromChange = (from: string) => {
@@ -99,7 +118,6 @@ export function OrdersPage() {
       else next.set("from", from);
       return next;
     });
-    setShownCount(4);
   };
 
   const handleToChange = (to: string) => {
@@ -109,7 +127,6 @@ export function OrdersPage() {
       else next.set("to", to);
       return next;
     });
-    setShownCount(4);
   };
 
   const handleQChange = (q: string) => {
@@ -119,12 +136,10 @@ export function OrdersPage() {
       else next.set("q", q);
       return next;
     });
-    setShownCount(4);
   };
 
   const handleClearFilters = () => {
     setSearchParams(new URLSearchParams());
-    setShownCount(4);
   };
 
   // Order cancellation
@@ -146,10 +161,26 @@ export function OrdersPage() {
     }
   };
 
-  const visibleOrders = orders.slice(0, shownCount);
-  const canShowMore = orders.length > shownCount;
-  const countText = `${orders.length} đơn hàng`;
+  const totalTabCount = useMemo(() => {
+    if (!counts) return orders.length;
+    switch (currentTab) {
+      case "waiting":
+        return (counts.PENDING ?? 0) + (counts.PAYMENT_PROCESSING ?? 0);
+      case "confirmed":
+        return counts.CONFIRMED ?? 0;
+      case "shipping":
+        return counts.SHIPPING ?? 0;
+      case "delivered":
+        return counts.DELIVERED ?? 0;
+      case "closed":
+        return (counts.CANCELLED ?? 0) + (counts.EXPIRED ?? 0);
+      case "all":
+      default:
+        return Object.values(counts).reduce((sum, n) => sum + (n ?? 0), 0);
+    }
+  }, [counts, currentTab, orders.length]);
 
+  const countText = `${totalTabCount} đơn hàng`;
   const isLoading = isOrdersLoading;
 
   return (
@@ -174,6 +205,7 @@ export function OrdersPage() {
         onRangeChange={handleRangeChange}
         onFromChange={handleFromChange}
         onToChange={handleToChange}
+        onDateRangeApply={handleDateRangeApply}
         onQChange={handleQChange}
         onClearFilters={handleClearFilters}
       />
@@ -190,12 +222,12 @@ export function OrdersPage() {
         <div className="flex min-h-[240px] items-center justify-center p-8">
           <Spinner className="size-8 text-brand" />
         </div>
-      ) : visibleOrders.length === 0 ? (
+      ) : orders.length === 0 ? (
         <OrdersEmptyState />
       ) : (
         <div className="flex flex-col gap-4">
           <ul className="list-none m-0 p-0 flex flex-col gap-4">
-            {visibleOrders.map((order) => (
+            {orders.map((order) => (
               <li key={order.id}>
                 <OrderCard order={order} onCancel={handleOpenCancelModal} />
               </li>
@@ -203,13 +235,14 @@ export function OrdersPage() {
           </ul>
 
           {/* Show More Pagination Button */}
-          {canShowMore && (
+          {hasNextPage && (
             <div className="flex justify-center mt-3">
               <Button
                 type="button"
                 variant="secondary"
                 size="lg"
-                onClick={() => setShownCount((prev) => prev + 4)}
+                loading={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
                 className="w-full sm:w-auto min-w-[200px]"
               >
                 Xem thêm đơn hàng

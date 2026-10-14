@@ -188,4 +188,212 @@ describe("OrdersPage", () => {
       });
     });
   });
+
+  it("filters orders and counts by custom date range through popup and calls API", async () => {
+    const user = userEvent.setup();
+
+    const getSpy = vi.spyOn(api, "get").mockImplementation((async (
+      url: string,
+    ) => {
+      if (url.includes("counts")) return { data: mockCounts };
+      if (url.includes("orders"))
+        return { data: mockOrders, meta: { hasMore: false } };
+      return {};
+    }) as never);
+
+    renderOrdersPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("#3FA85F64")).toBeInTheDocument();
+    });
+
+    // Click dropdown to choose custom date range
+    const dropdownTrigger = screen.getByRole("button", {
+      name: /Thời gian đặt/i,
+    });
+    await user.click(dropdownTrigger);
+
+    const customOption = await screen.findByRole("option", {
+      name: "Chọn khoảng ngày…",
+    });
+    await user.click(customOption);
+
+    // DateRangePicker dialog opens
+    const dialog = await screen.findByRole("dialog", {
+      name: "Chọn khoảng ngày",
+    });
+    expect(dialog).toBeInTheDocument();
+
+    // Fill from and to
+    const fromInput = screen.getByLabelText("Từ ngày");
+    const toInput = screen.getByLabelText("Đến ngày");
+    await user.type(fromInput, "2026-10-01");
+    await user.type(toInput, "2026-10-14");
+
+    // Click Áp dụng
+    const applyBtn = screen.getByRole("button", { name: "Áp dụng" });
+    await user.click(applyBtn);
+
+    // Verify dialog closes
+    await waitFor(() => {
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    });
+
+    // Verify API called with createdFrom and createdTo
+    await waitFor(() => {
+      expect(getSpy).toHaveBeenCalledWith(
+        "/orders",
+        expect.objectContaining({
+          query: expect.objectContaining({
+            createdFrom: expect.any(String),
+            createdTo: expect.any(String),
+          }),
+        }),
+      );
+      expect(getSpy).toHaveBeenCalledWith(
+        "/orders/counts",
+        expect.objectContaining({
+          query: expect.objectContaining({
+            createdFrom: expect.any(String),
+            createdTo: expect.any(String),
+          }),
+        }),
+      );
+    });
+  });
+
+  it("filters orders by 30 days preset and resets on clear filters", async () => {
+    const user = userEvent.setup();
+
+    const getSpy = vi.spyOn(api, "get").mockImplementation((async (
+      url: string,
+    ) => {
+      if (url.includes("counts")) return { data: mockCounts };
+      if (url.includes("orders"))
+        return { data: mockOrders, meta: { hasMore: false } };
+      return {};
+    }) as never);
+
+    renderOrdersPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("#3FA85F64")).toBeInTheDocument();
+    });
+
+    // Select 30 days from dropdown
+    const dropdownTrigger = screen.getByRole("button", {
+      name: /Thời gian đặt/i,
+    });
+    await user.click(dropdownTrigger);
+
+    const option30d = await screen.findByRole("option", {
+      name: "30 ngày qua",
+    });
+    await user.click(option30d);
+
+    // Verify API called with createdFrom for 30d
+    await waitFor(() => {
+      expect(getSpy).toHaveBeenCalledWith(
+        "/orders",
+        expect.objectContaining({
+          query: expect.objectContaining({
+            createdFrom: expect.any(String),
+          }),
+        }),
+      );
+    });
+
+    // Clear filters button appears
+    const clearBtn = await screen.findByRole("button", {
+      name: "Xoá bộ lọc",
+    });
+    expect(clearBtn).toBeInTheDocument();
+    await user.click(clearBtn);
+
+    // Verify clear filters calls API with empty params
+    await waitFor(() => {
+      expect(getSpy).toHaveBeenCalledWith(
+        "/orders",
+        expect.objectContaining({
+          query: expect.not.objectContaining({
+            createdFrom: expect.anything(),
+          }),
+        }),
+      );
+    });
+  });
+
+  it("fetches next page with cursor when clicking Xem thêm đơn hàng", async () => {
+    const user = userEvent.setup();
+
+    const getSpy = vi.spyOn(api, "get").mockImplementation((async (
+      url: string,
+      config?: { query?: Record<string, unknown> },
+    ) => {
+      if (url.includes("counts")) return { data: mockCounts };
+      if (url.includes("orders")) {
+        if (config?.query?.cursor === "cursor-page-2") {
+          return {
+            data: [
+              {
+                id: "44444444-0000-0000-0000-000000000004",
+                status: "DELIVERED",
+                paymentMethod: "COD",
+                total: 100000,
+                itemCount: 1,
+                items: [
+                  {
+                    productName: "Sản phẩm trang 2",
+                    thumbnail: null,
+                    quantity: 1,
+                  },
+                ],
+                createdAt: "2026-10-01T08:00:00.000Z",
+              },
+            ],
+            meta: { hasMore: false },
+          };
+        }
+        return {
+          data: [mockOrders[0]],
+          meta: { nextCursor: "cursor-page-2", hasMore: true },
+        };
+      }
+      return {};
+    }) as never);
+
+    renderOrdersPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("#3FA85F64")).toBeInTheDocument();
+    });
+
+    // "Xem thêm đơn hàng" button is visible
+    const showMoreBtn = await screen.findByRole("button", {
+      name: "Xem thêm đơn hàng",
+    });
+    expect(showMoreBtn).toBeInTheDocument();
+
+    await user.click(showMoreBtn);
+
+    // Page 2 order appears
+    await waitFor(() => {
+      expect(screen.getByText("#44444444")).toBeInTheDocument();
+    });
+
+    // Button disappears because hasMore is now false
+    expect(
+      screen.queryByRole("button", { name: "Xem thêm đơn hàng" }),
+    ).not.toBeInTheDocument();
+
+    // Verify api was called with cursor
+    expect(getSpy).toHaveBeenCalledWith(
+      "/orders",
+      expect.objectContaining({
+        query: expect.objectContaining({
+          cursor: "cursor-page-2",
+        }),
+      }),
+    );
+  });
 });

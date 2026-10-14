@@ -12,3 +12,6 @@ export * from "./src/Dropdown";
 export * from "./src/SearchInput";
 export * from "./src/DropdownMenu";
 export * from "./src/Avatar";
+export * from "./src/Image";
+export * from "./src/DatePicker";
+export * from "./src/DateRangePicker";

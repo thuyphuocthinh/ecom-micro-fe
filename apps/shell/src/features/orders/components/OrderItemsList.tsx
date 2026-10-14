@@ -1,4 +1,4 @@
-import { Card } from "@ecom/ui";
+import { Card, Image } from "@ecom/ui";
 import { Icon } from "@/components/common/Icon.tsx";
 import type { OrderItem } from "@/types";
 import { formatVnd } from "../utils/order-format.ts";
@@ -56,15 +56,20 @@ export function OrderItemsList({
                 aria-hidden="true"
                 className="size-16 rounded-xl overflow-hidden bg-brand-tint border border-line/60 flex items-center justify-center shrink-0"
               >
-                {item.thumbnail ? (
-                  <img
-                    src={item.thumbnail}
-                    alt=""
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  <Icon name="package" size={24} className="text-brand/60" />
-                )}
+                <Image
+                  src={item.thumbnail}
+                  alt={item.productName}
+                  className="size-full object-cover"
+                  fallback={
+                    <div className="size-full flex items-center justify-center bg-brand-tint">
+                      <Icon
+                        name="package"
+                        size={24}
+                        className="text-brand/60"
+                      />
+                    </div>
+                  }
+                />
               </div>
 
               <div className="flex flex-col gap-0.5 min-w-0">

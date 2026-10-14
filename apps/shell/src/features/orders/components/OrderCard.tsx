@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Button, Card, Tag } from "@ecom/ui";
+import { Button, Card, Image, Tag } from "@ecom/ui";
 import { Icon } from "@/components/common/Icon.tsx";
 import type { OrderSummary } from "@/types";
 import {
@@ -68,15 +68,16 @@ export function OrderCard({ order, onCancel }: OrderCardProps) {
               key={idx}
               className="size-16 rounded-xl overflow-hidden bg-[#eaf0ff] border border-line/60 flex items-center justify-center shrink-0"
             >
-              {item.thumbnail ? (
-                <img
-                  src={item.thumbnail}
-                  alt=""
-                  className="size-full object-cover"
-                />
-              ) : (
-                <Icon name="cart" size={24} className="text-brand/60" />
-              )}
+              <Image
+                src={item.thumbnail}
+                alt={item.productName}
+                className="size-full object-cover"
+                fallback={
+                  <div className="size-full flex items-center justify-center bg-[#eaf0ff]">
+                    <Icon name="cart" size={24} className="text-brand/60" />
+                  </div>
+                }
+              />
             </div>
           ))}
           {remainingCount > 0 && (
