@@ -4,6 +4,7 @@ import { Button } from "@ecom/ui";
 import { useAuth } from "@/features/auth";
 import { getUserDisplayName, getUserInitial } from "@/utils/user.ts";
 import { formatCartAriaLabel } from "@/utils/cart.ts";
+import { Icon } from "@/components/common/Icon.tsx";
 
 export function Header() {
   const { status, user, cartCount, logout } = useAuth();
@@ -54,17 +55,11 @@ export function Header() {
             <label htmlFor="q" className="sr-only">
               Tìm sản phẩm
             </label>
-            <svg
+            <Icon
+              name="search"
+              size={20}
               className="absolute left-3.5 top-3.5 size-5 text-muted pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <path d="m20 20-3.5-3.5" />
-            </svg>
+            />
             <input
               id="q"
               type="search"
@@ -98,17 +93,7 @@ export function Header() {
                 to="/account/orders"
                 className="inline-flex items-center gap-2 min-h-11 px-3 rounded-control text-ink font-semibold text-[14.5px] hover:bg-ink/6 transition-colors"
               >
-                <svg
-                  className="size-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path d="M21 8 12 3 3 8v8l9 5 9-5z" />
-                  <path d="m3 8 9 5 9-5M12 13v8" />
-                </svg>
+                <Icon name="orders" size={20} className="size-5" />
                 <span className="hidden sm:inline">Đơn hàng</span>
               </Link>
 
@@ -141,17 +126,7 @@ export function Header() {
               to="/login"
               className="inline-flex items-center gap-2 min-h-11 px-3 rounded-control text-ink font-semibold text-[14.5px] hover:bg-ink/6 transition-colors"
             >
-              <svg
-                className="size-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-              </svg>
+              <Icon name="user" size={20} className="size-5" />
               <span>Đăng nhập</span>
             </Link>
           )}
@@ -161,18 +136,7 @@ export function Header() {
             aria-label={cartAriaLabel}
             className="inline-flex items-center gap-2 min-h-11 px-3 rounded-control text-ink font-semibold text-[14.5px] hover:bg-ink/6 transition-colors"
           >
-            <svg
-              className="size-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M3 4h2.2l2.1 11.2a2 2 0 0 0 2 1.6h7.6a2 2 0 0 0 2-1.5L20.5 8H6.2" />
-              <circle cx="10" cy="20" r="1.2" />
-              <circle cx="17" cy="20" r="1.2" />
-            </svg>
+            <Icon name="cart" size={20} className="size-5" />
             <span className="hidden sm:inline">Giỏ hàng</span>
             {status === "signedIn" && cartCount > 0 && (
               <span

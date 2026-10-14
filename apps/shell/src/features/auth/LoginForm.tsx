@@ -6,6 +6,7 @@ import { useLoginMutation } from "@/hooks/mutations/useLoginMutation.ts";
 import { loginFormSchema, type LoginFormData } from "./schemas.ts";
 import { sanitizeReturnTo } from "@/utils/redirect.ts";
 import { GoogleAuthButton } from "./GoogleAuthButton.tsx";
+import { Divider } from "@/components/common/Divider.tsx";
 
 export function LoginForm() {
   const loginMutation = useLoginMutation();
@@ -114,14 +115,7 @@ export function LoginForm() {
         </Button>
       </form>
 
-      <div className="relative my-1 flex items-center justify-center">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-line" />
-        </div>
-        <div className="relative bg-surface px-4 text-xs uppercase tracking-wider text-ink-3">
-          Hoặc
-        </div>
-      </div>
+      <Divider>Hoặc</Divider>
 
       <GoogleAuthButton returnTo={rawReturnTo} context="signin" />
     </div>

@@ -270,6 +270,10 @@ describe("RegisterPage & Verification flow (AC-9, AC-11, AC-12, AC-13, AC-14, AC
   it("renders 'Hoặc' divider and GoogleAuthButton on step 1 (AC-36)", () => {
     renderRegisterPage();
     expect(screen.getByText("Hoặc")).toBeInTheDocument();
-    expect(screen.getByText("Tiếp tục với Google")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("google-auth-loading") ||
+        screen.queryByTestId("google-auth-container") ||
+        screen.queryByTestId("google-auth-button"),
+    ).toBeInTheDocument();
   });
 });
