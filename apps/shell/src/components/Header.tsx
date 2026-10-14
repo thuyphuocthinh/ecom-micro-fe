@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams, useLocation } from "react-router";
 import {
   Button,
@@ -23,11 +23,13 @@ export function Header() {
   const urlQ =
     location.pathname === "/search" ? searchParams.get("q") || "" : "";
   const [searchQuery, setSearchQuery] = useState(urlQ);
+  const [prevUrlQ, setPrevUrlQ] = useState(urlQ);
 
-  // Synchronize search input with URL query param `q`
-  useEffect(() => {
+  // Synchronize search input with URL query param `q` during render without cascading renders
+  if (prevUrlQ !== urlQ) {
+    setPrevUrlQ(urlQ);
     setSearchQuery(urlQ);
-  }, [urlQ]);
+  }
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
