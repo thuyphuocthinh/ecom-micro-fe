@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
+import { Spinner } from "@ecom/ui";
 import { useAuth } from "@/features/auth";
 
 export function RequireAuth({ children }: { children: ReactNode }) {
@@ -12,7 +13,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
         className="flex min-h-[400px] items-center justify-center p-8"
         data-testid="auth-loading"
       >
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+        <Spinner className="size-8 text-brand" />
       </div>
     );
   }

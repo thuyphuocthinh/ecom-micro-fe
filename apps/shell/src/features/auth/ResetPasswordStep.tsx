@@ -141,26 +141,28 @@ export function ResetPasswordStep({
         />
 
         <div className="flex items-center justify-between gap-4 pt-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={onBack}
-            className="text-sm font-semibold text-brand hover:text-brand-dark underline underline-offset-3 cursor-pointer"
+            className="p-0 min-h-0 text-sm font-semibold text-brand hover:text-brand-dark hover:bg-transparent underline underline-offset-3"
           >
             Đổi email khác
-          </button>
+          </Button>
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
             disabled={isRunning || isResending}
             onClick={handleResend}
-            className="text-sm font-semibold text-muted disabled:opacity-60 disabled:cursor-not-allowed hover:text-ink transition-colors cursor-pointer"
+            className="p-0 min-h-0 text-sm font-semibold text-muted disabled:opacity-60 disabled:cursor-not-allowed hover:text-ink hover:bg-transparent transition-colors"
           >
             {isResending
               ? "Đang gửi…"
               : isRunning
                 ? `Gửi lại sau ${formatDurationMmSs(countdown)}`
                 : "Gửi lại mã"}
-          </button>
+          </Button>
         </div>
 
         <Button

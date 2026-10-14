@@ -113,6 +113,7 @@ describe("GoogleAuthButton (AC-36, AC-37, AC-38, AC-39, AC-40, AC-41)", () => {
     });
 
     expect(savedButtonOptions?.text).toBe("continue_with");
+    expect(savedButtonOptions?.width).toBe(400);
   });
 
   it("uses signup text option when context is signup (AC-36)", async () => {

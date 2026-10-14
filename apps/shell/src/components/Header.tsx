@@ -113,13 +113,14 @@ export function Header() {
                 </span>
               </Link>
 
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                size="md"
                 onClick={logout}
-                className="inline-flex items-center min-h-11 px-2.5 rounded-control text-muted hover:text-ink hover:bg-ink/6 text-sm font-medium transition-colors"
+                className="text-muted hover:text-ink px-2.5 text-sm font-medium"
               >
                 Đăng xuất
-              </button>
+              </Button>
             </>
           ) : (
             <Link

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import { Spinner } from "@ecom/ui";
+import { Button, Spinner } from "@ecom/ui";
 import { useGoogleLoginMutation } from "@/hooks/mutations/useGoogleLoginMutation.ts";
 import { sanitizeReturnTo } from "@/utils/redirect.ts";
 import { Icon } from "@/components/common/Icon.tsx";
@@ -78,6 +78,12 @@ export function GoogleAuthButton({
             context: context === "signup" ? "signup" : "signin",
           });
 
+          const containerWidth = containerRef.current.clientWidth;
+          const targetWidth =
+            containerWidth > 0
+              ? Math.min(400, Math.max(200, Math.floor(containerWidth)))
+              : 400;
+
           window.google.accounts.id.renderButton(containerRef.current, {
             type: "standard",
             theme: "outline",
@@ -85,7 +91,7 @@ export function GoogleAuthButton({
             text: context === "signup" ? "signup_with" : "continue_with",
             shape: "rectangular",
             logo_alignment: "left",
-            width: "100%",
+            width: targetWidth,
           });
 
           if (!isCancelled) setStatus("ready");
@@ -111,15 +117,17 @@ export function GoogleAuthButton({
         : "Không thể tải Google Sign-In. Vui lòng thử lại sau.";
 
     return (
-      <button
+      <Button
         type="button"
+        variant="secondary"
+        size="md"
         data-testid="google-auth-button"
         onClick={() => toast.error(errorMessage)}
-        className="w-full h-11 flex items-center justify-center gap-3 px-4 border border-line rounded-lg text-ink font-medium bg-surface hover:bg-surface-2 transition-colors cursor-pointer text-sm"
+        className="w-full min-h-11 justify-center gap-3 text-sm font-medium"
       >
         <Icon name="google" size={20} />
         <span>Tiếp tục với Google</span>
-      </button>
+      </Button>
     );
   }
 
@@ -128,7 +136,7 @@ export function GoogleAuthButton({
       {status === "loading" && (
         <div
           data-testid="google-auth-loading"
-          className="w-full h-11 flex items-center justify-center gap-3 px-4 border border-line rounded-lg bg-surface-2 animate-pulse text-sm text-ink-3"
+          className="w-full min-h-11 flex items-center justify-center gap-3 px-4 border border-line rounded-control bg-surface-2 animate-pulse text-sm text-ink-3"
         >
           <Icon name="google" size={20} />
           <span>Đang tải Google…</span>
@@ -138,7 +146,7 @@ export function GoogleAuthButton({
       {googleLoginMutation.isPending && (
         <div
           data-testid="google-auth-submitting"
-          className="w-full h-11 flex items-center justify-center gap-2 px-4 border border-line rounded-lg bg-surface-2 text-sm text-ink-2"
+          className="w-full min-h-11 flex items-center justify-center gap-2 px-4 border border-line rounded-control bg-surface-2 text-sm text-ink-2"
         >
           <Spinner />
           <span>Đang đăng nhập bằng Google…</span>
@@ -148,7 +156,7 @@ export function GoogleAuthButton({
       <div
         ref={containerRef}
         data-testid="google-auth-container"
-        className={`w-full flex justify-center min-h-[44px] ${
+        className={`w-full flex justify-center min-h-[44px] [&>div]:!w-full [&_iframe]:!w-full [&_iframe]:!max-w-none ${
           status !== "ready" || googleLoginMutation.isPending ? "hidden" : ""
         }`}
       />
