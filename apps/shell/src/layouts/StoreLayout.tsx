@@ -1,7 +1,20 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router";
-import { SkipLink } from "@ecom/ui";
+import { SkipLink, Spinner } from "@ecom/ui";
 import { Header } from "@/components/Header.tsx";
 import { Footer } from "@/components/Footer.tsx";
+
+function PageFallback() {
+  return (
+    <div
+      className="flex min-h-[50vh] items-center justify-center p-8"
+      role="status"
+      aria-label="Đang tải..."
+    >
+      <Spinner className="size-8 text-brand" />
+    </div>
+  );
+}
 
 export function StoreLayout() {
   return (
@@ -9,7 +22,9 @@ export function StoreLayout() {
       <SkipLink />
       <Header />
       <main id="main" className="flex-1">
-        <Outlet />
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
     </div>

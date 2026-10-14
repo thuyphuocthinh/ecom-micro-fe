@@ -1,17 +1,45 @@
+/* oxlint-disable react/only-export-components */
+import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
+
 import { StoreLayout } from "@/layouts/StoreLayout.tsx";
 import { AuthLayout } from "@/layouts/AuthLayout.tsx";
 import { AccountLayout } from "@/layouts/AccountLayout.tsx";
-import { HomePage } from "@/pages/HomePage.tsx";
-import { LoginPage } from "@/pages/LoginPage.tsx";
-import { RegisterPage } from "@/pages/RegisterPage.tsx";
-import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage.tsx";
-import { ProfilePage } from "@/pages/ProfilePage.tsx";
-import { AddressesPage } from "@/pages/AddressesPage.tsx";
-import { OrdersPage } from "@/pages/OrdersPage.tsx";
-import { OrderDetailPage } from "@/pages/OrderDetailPage.tsx";
 import { RequireAuth } from "@/components/RequireAuth.tsx";
-import { NotFoundPage } from "@/pages/NotFoundPage.tsx";
+
+const HomePage = lazy(() =>
+  import("@/pages/HomePage.tsx").then((m) => ({ default: m.HomePage })),
+);
+const LoginPage = lazy(() =>
+  import("@/pages/LoginPage.tsx").then((m) => ({ default: m.LoginPage })),
+);
+const RegisterPage = lazy(() =>
+  import("@/pages/RegisterPage.tsx").then((m) => ({ default: m.RegisterPage })),
+);
+const ForgotPasswordPage = lazy(() =>
+  import("@/pages/ForgotPasswordPage.tsx").then((m) => ({
+    default: m.ForgotPasswordPage,
+  })),
+);
+const ProfilePage = lazy(() =>
+  import("@/pages/ProfilePage.tsx").then((m) => ({ default: m.ProfilePage })),
+);
+const AddressesPage = lazy(() =>
+  import("@/pages/AddressesPage.tsx").then((m) => ({
+    default: m.AddressesPage,
+  })),
+);
+const OrdersPage = lazy(() =>
+  import("@/pages/OrdersPage.tsx").then((m) => ({ default: m.OrdersPage })),
+);
+const OrderDetailPage = lazy(() =>
+  import("@/pages/OrderDetailPage.tsx").then((m) => ({
+    default: m.OrderDetailPage,
+  })),
+);
+const NotFoundPage = lazy(() =>
+  import("@/pages/NotFoundPage.tsx").then((m) => ({ default: m.NotFoundPage })),
+);
 
 export const router = createBrowserRouter([
   {

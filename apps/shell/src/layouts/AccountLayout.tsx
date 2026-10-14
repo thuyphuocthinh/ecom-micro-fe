@@ -1,6 +1,20 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router";
+import { Spinner } from "@ecom/ui";
 import { RequireAuth } from "@/components/RequireAuth.tsx";
 import { AccountNav } from "./AccountNav.tsx";
+
+function AccountFallback() {
+  return (
+    <div
+      className="flex min-h-[300px] items-center justify-center p-8"
+      role="status"
+      aria-label="Đang tải..."
+    >
+      <Spinner className="size-8 text-brand" />
+    </div>
+  );
+}
 
 export function AccountLayout() {
   return (
@@ -13,7 +27,9 @@ export function AccountLayout() {
           <AccountNav />
         </aside>
         <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
-          <Outlet />
+          <Suspense fallback={<AccountFallback />}>
+            <Outlet />
+          </Suspense>
         </div>
       </div>
     </RequireAuth>

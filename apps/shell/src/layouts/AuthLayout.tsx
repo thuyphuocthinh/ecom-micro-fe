@@ -1,5 +1,18 @@
+import { Suspense } from "react";
 import { Outlet, Link } from "react-router";
-import { SkipLink } from "@ecom/ui";
+import { SkipLink, Spinner } from "@ecom/ui";
+
+function AuthFallback() {
+  return (
+    <div
+      className="flex min-h-[300px] items-center justify-center p-8"
+      role="status"
+      aria-label="Đang tải..."
+    >
+      <Spinner className="size-8 text-brand" />
+    </div>
+  );
+}
 
 export function AuthLayout({
   headline = "Giỏ hàng, địa chỉ và đơn hàng của bạn, ở mọi thiết bị.",
@@ -42,7 +55,9 @@ export function AuthLayout({
         className="flex items-center justify-center p-6 sm:p-12 bg-white"
       >
         <div className="w-full max-w-[420px] flex flex-col gap-6">
-          <Outlet />
+          <Suspense fallback={<AuthFallback />}>
+            <Outlet />
+          </Suspense>
         </div>
       </main>
     </div>
