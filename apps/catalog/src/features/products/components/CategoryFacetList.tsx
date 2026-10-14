@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { CategoryFacet } from "@/types";
 
 export interface CategoryFacetListProps {
@@ -14,6 +15,14 @@ export function CategoryFacetList({
   totalCount,
 }: CategoryFacetListProps) {
   const isAllSelected = !selectedCategoryId;
+
+  // Sum of all category facet counts, matching the options rendered below
+  const allCategoriesCount = useMemo(() => {
+    if (facets.length > 0) {
+      return facets.reduce((sum, f) => sum + (f.count || 0), 0);
+    }
+    return totalCount;
+  }, [facets, totalCount]);
 
   return (
     <fieldset className="border-0 p-0 m-0 flex flex-col">
@@ -51,9 +60,9 @@ export function CategoryFacetList({
           >
             Tất cả danh mục
           </span>
-          {typeof totalCount === "number" && (
+          {typeof allCategoriesCount === "number" && (
             <span className="tnum text-[#5b6472] text-[13.5px]">
-              {totalCount}
+              {allCategoriesCount}
             </span>
           )}
         </button>

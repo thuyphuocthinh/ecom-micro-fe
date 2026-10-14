@@ -247,8 +247,38 @@ export function SearchPage() {
     toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
   };
 
-  // Total products from latest page meta or products length
-  const totalCount = productsData?.pages[0]?.meta?.total ?? products.length;
+  // Category facets total count (sum of all category facet counts)
+  const facetsTotalCount = useMemo(
+    () => facets.reduce((sum, f) => sum + (f.count || 0), 0),
+    [facets],
+  );
+
+  // Active category facet count
+  const activeCategoryCount = useMemo(() => {
+    if (!currentCategory) return facetsTotalCount;
+    const matched = facets.find((f) => f.categoryId === currentCategory);
+    return matched ? matched.count : undefined;
+  }, [currentCategory, facets, facetsTotalCount]);
+
+  // Total products from latest page meta or facets or products length
+  const totalCount = useMemo(() => {
+    const metaTotal = productsData?.pages[0]?.meta?.total;
+    if (typeof metaTotal === "number") return metaTotal;
+    if (facets.length > 0) {
+      if (currentCategory) {
+        return activeCategoryCount ?? products.length;
+      }
+      return facetsTotalCount;
+    }
+    return products.length;
+  }, [
+    productsData,
+    facets,
+    currentCategory,
+    activeCategoryCount,
+    facetsTotalCount,
+    products.length,
+  ]);
 
   return (
     <div className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-20 flex flex-col gap-6">
@@ -417,7 +447,7 @@ export function SearchPage() {
           <ProductFiltersSidebar
             facets={facets}
             filters={filters}
-            totalProductsCount={totalCount}
+            totalProductsCount={facetsTotalCount}
             onCategoryChange={handleCategoryChange}
             onPriceRangeChange={handlePriceRangeChange}
             onInStockChange={handleInStockChange}
@@ -461,7 +491,7 @@ export function SearchPage() {
         onClose={() => setIsDrawerOpen(false)}
         facets={facets}
         filters={filters}
-        totalProductsCount={totalCount}
+        totalProductsCount={facetsTotalCount}
         onCategoryChange={handleCategoryChange}
         onPriceRangeChange={handlePriceRangeChange}
         onInStockChange={handleInStockChange}
