@@ -149,4 +149,14 @@ describe("LoginForm (AC-1, AC-2, AC-3, AC-4, AC-7, AC-8)", () => {
     await user.click(screen.getByRole("button", { name: "Ẩn mật khẩu" }));
     expect(passwordInput).toHaveAttribute("type", "password");
   });
+
+  it("renders forgot password link leading to /forgot-password (AC-29)", () => {
+    renderLoginForm("/login?returnTo=%2Fcheckout");
+    const link = screen.getByRole("link", { name: "Quên mật khẩu?" });
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute(
+      "href",
+      "/forgot-password?returnTo=%2Fcheckout",
+    );
+  });
 });

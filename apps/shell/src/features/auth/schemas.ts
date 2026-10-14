@@ -54,3 +54,16 @@ export const verifyEmailFormSchema = z.object({
 });
 
 export type VerifyEmailFormData = z.infer<typeof verifyEmailFormSchema>;
+
+export const forgotPasswordFormSchema = z.object({
+  email: emailSchema,
+});
+
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordFormSchema>;
+
+export const resetPasswordFormSchema = z.object({
+  code: verifyCodeSchema,
+  newPassword: registerPasswordSchema,
+});
+
+export type ResetPasswordFormData = z.infer<typeof resetPasswordFormSchema>;

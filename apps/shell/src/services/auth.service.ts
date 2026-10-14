@@ -4,6 +4,8 @@ import type {
   RegisterPayload,
   VerifyEmailPayload,
   ResendVerificationPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
 } from "@/types";
 
 export type {
@@ -14,6 +16,10 @@ export type {
   AuthTokens,
   RegisterResponseData,
   ResendVerificationResponseData,
+  ForgotPasswordPayload,
+  ForgotPasswordResponseData,
+  ResetPasswordPayload,
+  PendingPasswordResetSession,
 } from "@/types";
 
 export const authService = {
@@ -50,6 +56,24 @@ export const authService = {
     return api.post("/auth/resend-verification", {
       body: {
         email: payload.email,
+      },
+    });
+  },
+
+  forgotPassword(payload: ForgotPasswordPayload) {
+    return api.post("/auth/forgot-password", {
+      body: {
+        email: payload.email,
+      },
+    });
+  },
+
+  resetPassword(payload: ResetPasswordPayload) {
+    return api.post("/auth/reset-password", {
+      body: {
+        email: payload.email,
+        code: payload.code,
+        newPassword: payload.newPassword,
       },
     });
   },

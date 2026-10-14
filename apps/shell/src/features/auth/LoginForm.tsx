@@ -89,6 +89,19 @@ export function LoginForm() {
           {...register("password")}
         />
 
+        <div className="flex items-center justify-end -mt-1">
+          <Link
+            to={
+              rawReturnTo
+                ? `/forgot-password?returnTo=${encodeURIComponent(rawReturnTo)}`
+                : "/forgot-password"
+            }
+            className="text-sm font-semibold text-brand hover:text-brand-dark underline underline-offset-3"
+          >
+            Quên mật khẩu?
+          </Link>
+        </div>
+
         <Button
           type="submit"
           variant="primary"

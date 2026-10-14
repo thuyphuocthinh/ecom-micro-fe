@@ -9,6 +9,8 @@ import {
   loginFormSchema,
   registerFormSchema,
   verifyEmailFormSchema,
+  forgotPasswordFormSchema,
+  resetPasswordFormSchema,
 } from "./schemas.ts";
 
 describe("Auth Schemas (AC-10)", () => {
@@ -178,6 +180,31 @@ describe("Auth Schemas (AC-10)", () => {
       expect(verifyEmailFormSchema.safeParse({ code: "654321" }).success).toBe(
         true,
       );
+    });
+
+    it("validates forgotPasswordFormSchema", () => {
+      expect(
+        forgotPasswordFormSchema.safeParse({ email: "user@example.com" })
+          .success,
+      ).toBe(true);
+      expect(
+        forgotPasswordFormSchema.safeParse({ email: "not-an-email" }).success,
+      ).toBe(false);
+    });
+
+    it("validates resetPasswordFormSchema", () => {
+      expect(
+        resetPasswordFormSchema.safeParse({
+          code: "123456",
+          newPassword: "securePassword123",
+        }).success,
+      ).toBe(true);
+      expect(
+        resetPasswordFormSchema.safeParse({
+          code: "12345", // not 6 digits
+          newPassword: "short", // less than 8 chars
+        }).success,
+      ).toBe(false);
     });
   });
 });

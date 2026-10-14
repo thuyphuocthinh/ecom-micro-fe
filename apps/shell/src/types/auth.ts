@@ -51,3 +51,23 @@ export interface PendingRegistrationSession {
   resendAvailableAt: number; // Unix timestamp in ms
   verificationExpiresAt: number; // Unix timestamp in ms
 }
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ForgotPasswordResponseData {
+  resendAvailableInSeconds: number;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  code: string;
+  newPassword: string;
+}
+
+export interface PendingPasswordResetSession {
+  email: string;
+  resendAvailableAt: number; // Unix timestamp in ms
+  expiresAt: number; // Unix timestamp in ms
+}

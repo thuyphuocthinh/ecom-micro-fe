@@ -4,3 +4,5 @@ export * from "./schemas.ts";
 export * from "./LoginForm.tsx";
 export * from "./RegisterForm.tsx";
 export * from "./VerifyEmailStep.tsx";
+export * from "./ForgotPasswordForm.tsx";
+export * from "./ResetPasswordStep.tsx";
