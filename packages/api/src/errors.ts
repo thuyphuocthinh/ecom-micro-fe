@@ -1,3 +1,5 @@
+import { userMessageFor } from "./error-messages";
+
 /** Codes that do not come from the backend: the request never got a usable answer. */
 export const CLIENT_ERROR_CODES = {
   NETWORK: "NETWORK",
@@ -25,6 +27,8 @@ export class ApiError extends Error {
   readonly traceId?: string;
   /** Seconds to wait before trying again, when the backend said so (429). */
   readonly retryAfterSeconds?: number;
+  /** What to tell the customer: friendly Vietnamese, no codes. `message` stays the backend's English for logs. */
+  readonly userMessage: string;
 
   constructor(init: ApiErrorInit) {
     super(init.message);
@@ -34,5 +38,6 @@ export class ApiError extends Error {
     this.errors = init.errors;
     this.traceId = init.traceId;
     this.retryAfterSeconds = init.retryAfterSeconds;
+    this.userMessage = userMessageFor(init);
   }
 }

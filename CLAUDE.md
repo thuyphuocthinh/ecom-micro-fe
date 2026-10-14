@@ -23,7 +23,7 @@ packages/
               Idempotency-Key) and TypeScript types generated from the backend's Swagger
 ```
 
-**All backend calls go through `@ecom/api`** (`api.get("/orders")`, never a hand-written `fetch`). Use `createIdempotencyKey()` once per attempt to place an order or pay and send the same key on every retry. When the backend API changes: `pnpm --filter @ecom/api fetch-openapi` (backend running) then `pnpm --filter @ecom/api generate`.
+**All backend calls go through `@ecom/api`** (`api.get("/orders")`, never a hand-written `fetch`). **Errors are reported in one place:** every failed call goes to `api.onError` (the shell shows a toast) with `error.userMessage`, a friendly Vietnamese sentence with no codes or technical words. Pages never catch an API error just to show it; pass `silent: true` only when the page handles the failure itself. Form fields show only the Zod validation errors, never backend errors. A new backend error code a customer can meet needs a sentence in `packages/api/src/error-messages.ts`. Use `createIdempotencyKey()` once per attempt to place an order or pay and send the same key on every retry. When the backend API changes: `pnpm --filter @ecom/api fetch-openapi` (backend running) then `pnpm --filter @ecom/api generate`.
 
 ## Commands
 | Purpose | Command |
@@ -61,6 +61,8 @@ This project enforces SDD with `speckit-ai` (same flow as the backend), plus the
 - Nav, header, global auth state, cross-app shell → `apps/shell`
 - Home page, login/register, and the account pages (profile, my orders, order detail, address book) → `apps/shell`
 - Reusable, presentation-only components → `packages/ui` (never app-specific logic)
+
+**Design tokens and base components live in `@ecom/ui`** (`packages/ui`). Each app's `index.css` imports Tailwind, then `@import "@ecom/ui/theme.css";`. Use the token classes (`bg-brand`, `text-ink`, `rounded-control`, `font-head`...), never raw hex colours, and the components `Button`, `TextField`, `PasswordField`, `CodeInput`, `Tag`, `Card`, `SkipLink`, `Spinner` (and `buttonClasses()` / `linkClasses()` for links) instead of rebuilding them. The values are copied from `store.css` of the canvas "Ecom storefront"; change them in `packages/ui/src/theme.css` only. A link that must look like a button: `<Link className={buttonClasses({ variant: "primary" })}>`.
 
 ## Commit Convention
 Conventional Commits, enforced by commitlint + a Husky pre-commit hook that lints and formats staged files automatically.

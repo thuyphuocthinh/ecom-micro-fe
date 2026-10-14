@@ -117,20 +117,32 @@ describe("a login that cannot be renewed (AC-7)", () => {
     expect(expired).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["AUTH-001", "AUTH-003", "AUTH-004"])(
-    "does not try to renew for %s",
+  it("does not try to renew, nor end the login, for a wrong password (AUTH-001)", async () => {
+    const session = createSession();
+    session.set({ accessToken: "t", refreshToken: "R1" });
+    const expired = vi.fn();
+    session.onExpired(expired);
+    const { api, calls } = setup(() => failure(401, "AUTH-001"), session);
+
+    await expect(api.get("/orders")).rejects.toMatchObject({
+      code: "AUTH-001",
+    });
+
+    expect(calls).toHaveLength(1);
+    expect(expired).not.toHaveBeenCalled();
+    expect(session.getAccessToken()).toBe("t");
+  });
+
+  it.each(["AUTH-003", "AUTH-004"])(
+    "does not try to renew a token the backend refuses outright (%s)",
     async (code) => {
       const session = createSession();
       session.set({ accessToken: "t", refreshToken: "R1" });
-      const expired = vi.fn();
-      session.onExpired(expired);
       const { api, calls } = setup(() => failure(401, code), session);
 
       await expect(api.get("/orders")).rejects.toMatchObject({ code });
 
-      expect(calls).toHaveLength(1);
-      expect(expired).not.toHaveBeenCalled();
-      expect(session.getAccessToken()).toBe("t");
+      expect(calls).toHaveLength(1); // no /auth/refresh
     },
   );
 

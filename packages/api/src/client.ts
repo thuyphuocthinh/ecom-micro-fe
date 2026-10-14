@@ -27,10 +27,18 @@ interface UntypedOptions {
   body?: unknown;
   idempotencyKey?: string;
   signal?: AbortSignal;
+  /** The page handles the failure itself: do not report it to the error listeners. */
+  silent?: boolean;
 }
+
+/** The same sentence is reported once in this many milliseconds (five calls failing together show one message). */
+const REPORT_AGAIN_AFTER_MS = 3000;
 
 /** Only an expired access token is worth renewing: a wrong password or a revoked token will not get better. */
 const EXPIRED_TOKEN_CODE = "AUTH-002";
+
+/** A token the backend refuses outright (revoked, or not valid): the login is over, there is nothing to renew. */
+const DEAD_TOKEN_CODES = new Set(["AUTH-003", "AUTH-004"]);
 
 export function createApiClient(config: ApiClientConfig = {}) {
   const baseUrl = (config.baseUrl ?? "/api/v1").replace(/\/+$/, "");
@@ -41,6 +49,33 @@ export function createApiClient(config: ApiClientConfig = {}) {
 
   // One renewal at a time: calls that expire together wait for the same one
   let renewing: Promise<boolean> | null = null;
+
+  const errorListeners = new Set<(error: ApiError) => void>();
+  const reportedAt = new Map<string, number>();
+  // Errors that ended the login: the shell already tells the customer about that, so they are not reported again
+  const endedSession = new WeakSet<ApiError>();
+
+  /** Tells every listener about a failed call, once per sentence in a short time. A broken listener hurts nobody. */
+  function report(error: ApiError): void {
+    const now = Date.now();
+    for (const [sentence, at] of reportedAt) {
+      if (now - at >= REPORT_AGAIN_AFTER_MS) reportedAt.delete(sentence);
+    }
+    if (reportedAt.has(error.userMessage)) return;
+    reportedAt.set(error.userMessage, now);
+    for (const listener of [...errorListeners]) {
+      try {
+        listener(error);
+      } catch {
+        // The listener's own failure must not change what the call throws
+      }
+    }
+  }
+
+  function onError(listener: (error: ApiError) => void): () => void {
+    errorListeners.add(listener);
+    return () => errorListeners.delete(listener);
+  }
 
   function buildUrl(path: string, options: UntypedOptions): string {
     let resolved = path;
@@ -167,13 +202,14 @@ export function createApiClient(config: ApiClientConfig = {}) {
     return renewing;
   }
 
-  async function request<T>(
+  async function perform<T>(
     method: HttpMethod,
     path: string,
     options: UntypedOptions,
   ): Promise<ApiResult<T>> {
     const url = buildUrl(path, options);
-    let response = await send(method, url, options, session.getAccessToken());
+    let sentToken = session.getAccessToken();
+    let response = await send(method, url, options, sentToken);
     let body = await readJson(response);
 
     if (
@@ -181,13 +217,32 @@ export function createApiClient(config: ApiClientConfig = {}) {
       (body as { code?: string } | null)?.code === EXPIRED_TOKEN_CODE
     ) {
       const firstError = toApiError(response, body);
-      if (!(await renewOnce())) throw firstError;
+      if (!(await renewOnce())) {
+        endedSession.add(firstError);
+        throw firstError;
+      }
       // Once only: if the new token is refused too, that is the answer
-      response = await send(method, url, options, session.getAccessToken());
+      sentToken = session.getAccessToken();
+      response = await send(method, url, options, sentToken);
       body = await readJson(response);
     }
 
-    if (!response.ok) throw toApiError(response, body);
+    if (!response.ok) {
+      const error = toApiError(response, body);
+      if (
+        sentToken &&
+        response.status === 401 &&
+        DEAD_TOKEN_CODES.has(error.code)
+      ) {
+        // Only the first call to learn it ends the login; calls that come later already see another token
+        if (session.getAccessToken() === sentToken) {
+          session.clear();
+          session.notifyExpired();
+        }
+        endedSession.add(error);
+      }
+      throw error;
+    }
 
     const success = body as ApiSuccess<T>;
     return {
@@ -195,6 +250,26 @@ export function createApiClient(config: ApiClientConfig = {}) {
       meta: success.meta as PageMeta | undefined,
       replayed: response.headers.get("Idempotency-Replayed") === "true",
     };
+  }
+
+  async function request<T>(
+    method: HttpMethod,
+    path: string,
+    options: UntypedOptions,
+  ): Promise<ApiResult<T>> {
+    try {
+      return await perform<T>(method, path, options);
+    } catch (error) {
+      // A cancelled call is not an ApiError, so it is never reported
+      if (
+        error instanceof ApiError &&
+        !options.silent &&
+        !endedSession.has(error)
+      ) {
+        report(error);
+      }
+      throw error;
+    }
   }
 
   function call<M extends HttpMethod>(method: M) {
@@ -211,6 +286,8 @@ export function createApiClient(config: ApiClientConfig = {}) {
     put: call("put"),
     patch: call("patch"),
     delete: call("delete"),
+    /** Every failed call of every app comes here (one listener, usually the shell's toast). Returns a function that stops listening. */
+    onError,
   };
 }
 

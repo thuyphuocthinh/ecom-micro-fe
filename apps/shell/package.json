@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@ecom/api": "workspace:*",
+    "@ecom/ui": "workspace:*",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "sonner": "^2.0.8"
   },
   "devDependencies": {
     "@module-federation/vite": "^1.22.1",

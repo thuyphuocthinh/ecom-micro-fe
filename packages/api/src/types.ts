@@ -93,6 +93,8 @@ export type RequestOptions<P extends string, M extends HttpMethod> = Optional<
     /** One key per attempt, for placing an order and paying. Keep it the same on every retry. */
     idempotencyKey?: string;
     signal?: AbortSignal;
+    /** The page handles the failure itself: the error is not reported to `api.onError`. */
+    silent?: boolean;
   };
 
 /** The argument list of a call: the options are required as soon as one of them is. */

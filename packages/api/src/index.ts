@@ -16,6 +16,7 @@ export {
 } from "./session";
 export { ApiError, CLIENT_ERROR_CODES } from "./errors";
 export { createIdempotencyKey } from "./idempotency";
+export { userMessageFor, MESSAGES } from "./error-messages";
 export type {
   ApiResult,
   ApiSuccess,
