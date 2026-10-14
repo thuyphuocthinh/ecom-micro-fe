@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
 import { useRegisterMutation } from "@/hooks/mutations/useRegisterMutation.ts";
 import { registerFormSchema, type RegisterFormData } from "./schemas.ts";
+import { GoogleAuthButton } from "./GoogleAuthButton.tsx";
 import type { RegisterStep1SuccessPayload } from "@/types";
 
 export type { RegisterStep1SuccessPayload };
@@ -162,6 +163,17 @@ export function RegisterForm({
           {isLoading ? "Đang tạo tài khoản…" : "Tạo tài khoản"}
         </Button>
       </form>
+
+      <div className="relative my-1 flex items-center justify-center">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-line" />
+        </div>
+        <div className="relative bg-surface px-4 text-xs uppercase tracking-wider text-ink-3">
+          Hoặc
+        </div>
+      </div>
+
+      <GoogleAuthButton returnTo={rawReturnTo} context="signup" />
     </div>
   );
 }

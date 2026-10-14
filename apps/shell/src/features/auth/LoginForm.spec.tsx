@@ -159,4 +159,10 @@ describe("LoginForm (AC-1, AC-2, AC-3, AC-4, AC-7, AC-8)", () => {
       "/forgot-password?returnTo=%2Fcheckout",
     );
   });
+
+  it("renders 'Hoặc' divider and GoogleAuthButton (AC-36)", () => {
+    renderLoginForm();
+    expect(screen.getByText("Hoặc")).toBeInTheDocument();
+    expect(screen.getByText("Tiếp tục với Google")).toBeInTheDocument();
+  });
 });

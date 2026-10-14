@@ -5,3 +5,4 @@ export * from "./useResendCodeMutation.ts";
 export * from "./useLogoutMutation.ts";
 export * from "./useForgotPasswordMutation.ts";
 export * from "./useResetPasswordMutation.ts";
+export * from "./useGoogleLoginMutation.ts";

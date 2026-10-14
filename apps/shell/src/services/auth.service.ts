@@ -6,6 +6,7 @@ import type {
   ResendVerificationPayload,
   ForgotPasswordPayload,
   ResetPasswordPayload,
+  GoogleLoginPayload,
 } from "@/types";
 
 export type {
@@ -20,6 +21,8 @@ export type {
   ForgotPasswordResponseData,
   ResetPasswordPayload,
   PendingPasswordResetSession,
+  GoogleLoginPayload,
+  GoogleLoginResponseData,
 } from "@/types";
 
 export const authService = {
@@ -74,6 +77,15 @@ export const authService = {
         email: payload.email,
         code: payload.code,
         newPassword: payload.newPassword,
+      },
+    });
+  },
+
+  loginWithGoogle(payload: GoogleLoginPayload) {
+    return api.post("/auth/google", {
+      body: {
+        idToken: payload.idToken,
+        nonce: payload.nonce,
       },
     });
   },

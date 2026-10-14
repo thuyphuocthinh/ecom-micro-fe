@@ -71,3 +71,14 @@ export interface PendingPasswordResetSession {
   resendAvailableAt: number; // Unix timestamp in ms
   expiresAt: number; // Unix timestamp in ms
 }
+
+export interface GoogleLoginPayload {
+  idToken: string;
+  nonce?: string;
+}
+
+export interface GoogleLoginResponseData {
+  accessToken: string;
+  refreshToken: string;
+  isNewUser: boolean;
+}

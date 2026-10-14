@@ -6,3 +6,4 @@ export * from "./RegisterForm.tsx";
 export * from "./VerifyEmailStep.tsx";
 export * from "./ForgotPasswordForm.tsx";
 export * from "./ResetPasswordStep.tsx";
+export * from "./GoogleAuthButton.tsx";
