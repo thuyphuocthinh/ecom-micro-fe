@@ -69,7 +69,9 @@ type SuccessContent<Op> = Op extends { responses: infer R }
     ? D
     : R extends { 201: { content: { "application/json": infer D } } }
       ? D
-      : unknown
+      : R extends { 202: { content: { "application/json": infer D } } }
+        ? D
+        : unknown
   : unknown;
 
 export type ResponseData<

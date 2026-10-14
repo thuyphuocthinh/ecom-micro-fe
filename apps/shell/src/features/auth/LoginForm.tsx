@@ -1,0 +1,106 @@
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate, useSearchParams } from "react-router";
+import { Button, TextField, PasswordField } from "@ecom/ui";
+import { api } from "@ecom/api";
+import { loginFormSchema, type LoginFormData } from "./schemas.ts";
+import { useAuth } from "./auth-context.ts";
+import { sanitizeReturnTo } from "../../utils/redirect.ts";
+
+export function LoginForm() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const rawReturnTo = searchParams.get("returnTo");
+  const returnTo = sanitizeReturnTo(rawReturnTo);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginFormSchema),
+    mode: "onTouched",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const res = await api.post("/auth/login", {
+        body: {
+          email: data.email,
+          password: data.password,
+        },
+      });
+
+      await login(res.data);
+      navigate(returnTo, { replace: true });
+    } catch {
+      // Backend errors are handled centrally via api.onError (ToastHost)
+      // Form fields only display Zod errors (AC-4)
+    }
+  };
+
+  return (
+    <div className="w-full flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <h1 className="font-head text-3xl sm:text-4xl font-bold text-ink">
+          Đăng nhập
+        </h1>
+        <p className="text-ink-2 text-[15px]">
+          Chưa có tài khoản?{" "}
+          <Link
+            to={
+              rawReturnTo
+                ? `/register?returnTo=${encodeURIComponent(rawReturnTo)}`
+                : "/register"
+            }
+            className="text-brand font-semibold underline underline-offset-3 hover:text-brand-dark"
+          >
+            Đăng ký miễn phí
+          </Link>
+        </p>
+      </div>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        noValidate
+        className="flex flex-col gap-4.5"
+      >
+        <TextField
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          inputMode="email"
+          spellCheck={false}
+          placeholder="ban@vi-du.com"
+          error={errors.email?.message}
+          {...register("email")}
+        />
+
+        <PasswordField
+          id="password"
+          label="Mật khẩu"
+          autoComplete="current-password"
+          placeholder="Nhập mật khẩu…"
+          error={errors.password?.message}
+          {...register("password")}
+        />
+
+        <Button
+          type="submit"
+          variant="primary"
+          size="lg"
+          loading={isSubmitting}
+          className="w-full mt-2"
+        >
+          {isSubmitting ? "Đang đăng nhập…" : "Đăng nhập"}
+        </Button>
+      </form>
+    </div>
+  );
+}
