@@ -58,11 +58,15 @@ type PathParams<Op> = Op extends { parameters: { path: infer T } } ? T : never;
 type QueryParams<Op> = Op extends { parameters: { query?: infer T } }
   ? NonNullable<T>
   : never;
-type JsonBody<Op> = Op extends {
+type RequestBody<Op> = Op extends {
   requestBody: { content: { "application/json": infer B } };
 }
   ? B
-  : never;
+  : Op extends {
+        requestBody: { content: { "multipart/form-data": unknown } };
+      }
+    ? FormData
+    : never;
 
 type SuccessContent<Op> = Op extends { responses: infer R }
   ? R extends { 200: { content: { "application/json": infer D } } }
@@ -91,7 +95,7 @@ export type RequestOptions<P extends string, M extends HttpMethod> = Optional<
   PathParams<Operation<P, M>>
 > &
   Optional<"query", QueryParams<Operation<P, M>>> &
-  Optional<"body", JsonBody<Operation<P, M>>> & {
+  Optional<"body", RequestBody<Operation<P, M>>> & {
     /** One key per attempt, for placing an order and paying. Keep it the same on every retry. */
     idempotencyKey?: string;
     signal?: AbortSignal;

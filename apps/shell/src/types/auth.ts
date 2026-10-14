@@ -82,3 +82,8 @@ export interface GoogleLoginResponseData {
   refreshToken: string;
   isNewUser: boolean;
 }
+
+export interface ChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+}

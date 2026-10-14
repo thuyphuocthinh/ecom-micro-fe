@@ -6,3 +6,7 @@ export * from "./useLogoutMutation.ts";
 export * from "./useForgotPasswordMutation.ts";
 export * from "./useResetPasswordMutation.ts";
 export * from "./useGoogleLoginMutation.ts";
+export * from "./useUpdateProfileMutation.ts";
+export * from "./useUploadAvatarMutation.ts";
+export * from "./useRemoveAvatarMutation.ts";
+export * from "./useChangePasswordMutation.ts";

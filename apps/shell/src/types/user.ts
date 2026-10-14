@@ -6,6 +6,9 @@ export interface UserProfile {
   displayName?: string | null;
   avatarUrl?: string | null;
   email?: string | null;
+  createdAt?: string | Date;
+  hasPassword?: boolean;
+  googleLinked?: boolean;
 }
 
 export interface UserLike {

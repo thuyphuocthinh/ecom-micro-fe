@@ -90,6 +90,15 @@ export const authService = {
     });
   },
 
+  changePassword(payload: { currentPassword: string; newPassword: string }) {
+    return api.post("/auth/change-password", {
+      body: {
+        currentPassword: payload.currentPassword,
+        newPassword: payload.newPassword,
+      },
+    });
+  },
+
   logout() {
     return api.post("/auth/logout", { silent: true });
   },

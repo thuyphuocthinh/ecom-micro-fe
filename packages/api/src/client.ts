@@ -105,7 +105,10 @@ export function createApiClient(config: ApiClientConfig = {}) {
     if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
     if (options.idempotencyKey)
       headers["Idempotency-Key"] = options.idempotencyKey;
-    if (options.body !== undefined)
+    const isFormData =
+      typeof FormData !== "undefined" && options.body instanceof FormData;
+
+    if (options.body !== undefined && !isFormData)
       headers["Content-Type"] = "application/json";
 
     try {
@@ -113,7 +116,11 @@ export function createApiClient(config: ApiClientConfig = {}) {
         method: method.toUpperCase(),
         headers,
         body:
-          options.body === undefined ? undefined : JSON.stringify(options.body),
+          options.body === undefined
+            ? undefined
+            : isFormData
+              ? (options.body as BodyInit)
+              : JSON.stringify(options.body),
         signal: options.signal,
       });
     } catch (cause) {

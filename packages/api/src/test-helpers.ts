@@ -69,7 +69,7 @@ export function setup(
         method: init?.method ?? "GET",
         headers: { ...(init?.headers as Record<string, string> | undefined) },
         body:
-          typeof init?.body === "string" ? JSON.parse(init.body) : undefined,
+          typeof init?.body === "string" ? JSON.parse(init.body) : init?.body,
       };
       calls.push(call);
       const result = await reply(call, calls.length - 1);

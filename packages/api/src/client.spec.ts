@@ -51,6 +51,18 @@ describe("requests", () => {
     expect(calls[0].headers["Content-Type"]).toBe("application/json");
     expect(calls[1].headers["Content-Type"]).toBeUndefined();
   });
+
+  it("sends FormData without JSON stringifying and omits Content-Type header so the browser sets boundary", async () => {
+    const { api, calls } = setup(() => success({}));
+    const formData = new FormData();
+    formData.append("file", "fake-content");
+
+    await api.put("/users/me/avatar", { body: formData });
+
+    expect(calls[0].method).toBe("PUT");
+    expect(calls[0].body).toBe(formData);
+    expect(calls[0].headers["Content-Type"]).toBeUndefined();
+  });
 });
 
 describe("the login token (AC-2)", () => {
