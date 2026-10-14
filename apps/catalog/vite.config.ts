@@ -27,6 +27,9 @@ export default defineConfig(({ mode }) => {
         dts: false,
         exposes: {
           "./App": "./src/App.tsx",
+          "./SearchPage": "./src/pages/SearchPage.tsx",
+          "./ProductCard": "./src/features/products/components/ProductCard.tsx",
+          "./ProductGrid": "./src/features/products/components/ProductGrid.tsx",
         },
         shared: {
           react: { singleton: true, requiredVersion: REACT_RANGE },
