@@ -3,13 +3,17 @@ export type ProductSortOption =
 
 export interface Sku {
   id: string;
-  productId: string;
-  code: string;
-  name: string;
+  productId?: string;
+  code?: string;
+  skuCode?: string;
+  name?: string;
   price: number;
   originalPrice?: number | null;
+  compareAtPrice?: number | null;
+  discountPercent?: number;
   inStock?: boolean;
   stock?: number;
+  attributes?: Record<string, any>;
 }
 
 export interface Product {
@@ -24,6 +28,9 @@ export interface Product {
   onSale: boolean;
   discountPercent: number;
   inStock?: boolean;
+  rating?: number;
+  reviewsCount?: number;
+  specs?: Record<string, string>;
   createdAt: string;
   updatedAt: string;
 }

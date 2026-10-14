@@ -45,6 +45,11 @@ const SearchPage = lazy(() =>
     default: m.SearchPage || m.default,
   })),
 );
+const ProductDetailPage = lazy(() =>
+  import("catalog/ProductDetailPage").then((m) => ({
+    default: m.ProductDetailPage || m.default,
+  })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +62,10 @@ export const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchPage />,
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetailPage />,
       },
       {
         path: "/products",

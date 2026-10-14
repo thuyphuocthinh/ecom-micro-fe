@@ -10,6 +10,7 @@ describe("router configuration", () => {
     const storePaths = storeRoute?.children?.map((r) => r.path);
     expect(storePaths).toContain("/");
     expect(storePaths).toContain("/search");
+    expect(storePaths).toContain("/products/:id");
     expect(storePaths).toContain("/products");
     expect(storePaths).toContain("/account/orders/:id");
     expect(storePaths).toContain("/account");

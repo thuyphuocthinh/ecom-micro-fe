@@ -28,6 +28,7 @@ export default defineConfig(({ mode }) => {
         exposes: {
           "./App": "./src/App.tsx",
           "./SearchPage": "./src/pages/SearchPage.tsx",
+          "./ProductDetailPage": "./src/pages/ProductDetailPage.tsx",
           "./ProductCard": "./src/features/products/components/ProductCard.tsx",
           "./ProductGrid": "./src/features/products/components/ProductGrid.tsx",
         },

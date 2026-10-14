@@ -15,6 +15,12 @@ const SearchPage = lazy(() =>
   })),
 );
 
+const ProductDetailPage = lazy(() =>
+  import("@/pages/ProductDetailPage.tsx").then((m) => ({
+    default: m.ProductDetailPage,
+  })),
+);
+
 export const router = createBrowserRouter([
   {
     element: <CatalogLayout />,
@@ -26,6 +32,10 @@ export const router = createBrowserRouter([
       {
         path: "/search",
         element: <SearchPage />,
+      },
+      {
+        path: "/products/:id",
+        element: <ProductDetailPage />,
       },
       {
         path: "/products",

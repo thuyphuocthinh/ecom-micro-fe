@@ -64,9 +64,13 @@ export const productService = {
     >;
   },
 
-  getProductById(id: string) {
-    return api.get("/catalog/products/{id}", {
+  async getProductById(id: string): Promise<Product> {
+    const res = (await api.get("/catalog/products/{id}", {
       params: { id },
-    }) as unknown as Promise<{ data: Product }>;
+    })) as unknown as Product | { data: Product };
+    if (res && typeof res === "object" && "data" in res && res.data) {
+      return res.data;
+    }
+    return res as Product;
   },
 };

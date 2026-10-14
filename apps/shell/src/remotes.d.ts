@@ -5,6 +5,13 @@ declare module "catalog/SearchPage" {
   export { SearchPage };
 }
 
+declare module "catalog/ProductDetailPage" {
+  import type { ComponentType } from "react";
+  const ProductDetailPage: ComponentType;
+  export default ProductDetailPage;
+  export { ProductDetailPage };
+}
+
 declare module "catalog/ProductCard" {
   import type { ComponentType } from "react";
   export const ProductCard: ComponentType<{

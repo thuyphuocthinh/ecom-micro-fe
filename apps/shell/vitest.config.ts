@@ -9,6 +9,9 @@ export default defineConfig({
       "catalog/SearchPage": fileURLToPath(
         new URL("../catalog/src/pages/SearchPage.tsx", import.meta.url),
       ),
+      "catalog/ProductDetailPage": fileURLToPath(
+        new URL("../catalog/src/pages/ProductDetailPage.tsx", import.meta.url),
+      ),
       "catalog/ProductCard": fileURLToPath(
         new URL(
           "../catalog/src/features/products/components/ProductCard.tsx",
