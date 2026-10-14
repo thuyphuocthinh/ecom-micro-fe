@@ -91,12 +91,12 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
 
     // Province dropdown should load provinces
     await waitFor(() => {
-      expect(screen.getByText("Thành phố Hà Nội")).toBeInTheDocument();
+      expect(screen.getByText("Chọn tỉnh, thành phố")).toBeInTheDocument();
     });
 
     // Ward dropdown should be disabled when province is not yet selected
-    const wardSelect = screen.getByLabelText("Phường, xã");
-    expect(wardSelect).toBeDisabled();
+    const wardBtn = screen.getByRole("button", { name: /phường, xã/i });
+    expect(wardBtn).toBeDisabled();
   });
 
   it("loads wards and enables ward select when a province is chosen (AC-6)", async () => {
@@ -104,16 +104,22 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
     renderAddressForm();
 
     await waitFor(() => {
-      expect(screen.getByText("Thành phố Hà Nội")).toBeInTheDocument();
+      expect(screen.getByText("Chọn tỉnh, thành phố")).toBeInTheDocument();
     });
 
-    const provinceSelect = screen.getByLabelText("Tỉnh, thành phố");
-    await user.selectOptions(provinceSelect, "01");
+    const provinceBtn = screen.getByRole("button", {
+      name: /tỉnh, thành phố/i,
+    });
+    await user.click(provinceBtn);
+
+    const hanoiOption = screen.getByRole("option", {
+      name: "Thành phố Hà Nội",
+    });
+    await user.click(hanoiOption);
 
     await waitFor(() => {
-      const wardSelect = screen.getByLabelText("Phường, xã");
-      expect(wardSelect).not.toBeDisabled();
-      expect(screen.getByText("Phường Phúc Xá")).toBeInTheDocument();
+      const wardBtn = screen.getByRole("button", { name: /phường, xã/i });
+      expect(wardBtn).not.toBeDisabled();
     });
   });
 
@@ -149,7 +155,7 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
     const { onSubmitSuccess } = renderAddressForm();
 
     await waitFor(() => {
-      expect(screen.getByText("Thành phố Hà Nội")).toBeInTheDocument();
+      expect(screen.getByText("Chọn tỉnh, thành phố")).toBeInTheDocument();
     });
 
     await user.type(
@@ -158,15 +164,28 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
     );
     await user.type(screen.getByLabelText("Số điện thoại"), "0912345678");
 
-    const provinceSelect = screen.getByLabelText("Tỉnh, thành phố");
-    await user.selectOptions(provinceSelect, "01");
+    const provinceBtn = screen.getByRole("button", {
+      name: /tỉnh, thành phố/i,
+    });
+    await user.click(provinceBtn);
+
+    const hanoiOption = screen.getByRole("option", {
+      name: "Thành phố Hà Nội",
+    });
+    await user.click(hanoiOption);
 
     await waitFor(() => {
-      expect(screen.getByText("Phường Phúc Xá")).toBeInTheDocument();
+      const wardBtn = screen.getByRole("button", { name: /phường, xã/i });
+      expect(wardBtn).not.toBeDisabled();
     });
 
-    const wardSelect = screen.getByLabelText("Phường, xã");
-    await user.selectOptions(wardSelect, "00001");
+    const wardBtn = screen.getByRole("button", { name: /phường, xã/i });
+    await user.click(wardBtn);
+
+    const phucXaOption = screen.getByRole("option", {
+      name: "Phường Phúc Xá",
+    });
+    await user.click(phucXaOption);
 
     await user.type(
       screen.getByLabelText("Số nhà, tên đường"),
@@ -195,7 +214,7 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
     });
   });
 
-  it("renders 'Sửa địa chỉ' in edit mode and submits PATCH /users/me/addresses/:id (AC-5, AC-9)", async () => {
+  it("renders 'Sửa địa chỉ' in edit mode and submits PATCH without isDefault (AC-5, AC-9)", async () => {
     const user = userEvent.setup();
     const patchSpy = vi.spyOn(api, "patch").mockResolvedValueOnce({
       data: { ...mockExistingAddress, recipientName: "Nguyễn Văn B" },
@@ -227,7 +246,6 @@ describe("AddressForm (AC-5, AC-6, AC-7, AC-8, AC-9, AC-12)", () => {
           wardCode: "00001",
           street: "Số 123 Đường Láng",
           label: "Nhà",
-          isDefault: true,
         },
       });
       expect(onSubmitSuccess).toHaveBeenCalledTimes(1);

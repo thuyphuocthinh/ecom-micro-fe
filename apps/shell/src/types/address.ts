@@ -28,5 +28,4 @@ export interface UpdateAddressPayload {
   wardCode?: string;
   street?: string;
   label?: string | null;
-  isDefault?: boolean;
 }

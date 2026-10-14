@@ -1,6 +1,7 @@
+import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, Button, TextField } from "@ecom/ui";
+import { Card, Button, TextField, Dropdown } from "@ecom/ui";
 import { addressFormSchema, type AddressFormData } from "./schemas.ts";
 import {
   useProvincesQuery,
@@ -9,6 +10,7 @@ import {
 import {
   useCreateAddressMutation,
   useUpdateAddressMutation,
+  useSetDefaultAddressMutation,
 } from "@/hooks/mutations/useAddressMutations.ts";
 import type { Address } from "@/types";
 
@@ -27,6 +29,7 @@ export function AddressForm({
 
   const createMutation = useCreateAddressMutation();
   const updateMutation = useUpdateAddressMutation();
+  const setDefaultMutation = useSetDefaultAddressMutation();
 
   const { data: provinces = [], isLoading: isProvincesLoading } =
     useProvincesQuery();
@@ -52,20 +55,33 @@ export function AddressForm({
   });
 
   const selectedProvinceCode = useWatch({ control, name: "provinceCode" });
+  const selectedWardCode = useWatch({ control, name: "wardCode" });
 
   const { data: wards = [], isLoading: isWardsLoading } =
     useWardsQuery(selectedProvinceCode);
 
-  const provinceRegister = register("provinceCode");
+  const provinceOptions = useMemo(
+    () =>
+      provinces.map((p) => ({
+        value: p.code,
+        label: p.fullName || p.name,
+      })),
+    [provinces],
+  );
 
-  const handleProvinceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    provinceRegister.onChange(e);
-    setValue("wardCode", "");
-  };
+  const wardOptions = useMemo(
+    () =>
+      wards.map((w) => ({
+        value: w.code,
+        label: w.fullName || w.name,
+      })),
+    [wards],
+  );
 
   const onSubmit = async (data: AddressFormData) => {
     try {
       if (isEditing && initialData) {
+        // PATCH /users/me/addresses/:id does not accept isDefault in payload
         await updateMutation.mutateAsync({
           id: initialData.id,
           payload: {
@@ -74,9 +90,13 @@ export function AddressForm({
             phone: data.phone.trim(),
             wardCode: data.wardCode,
             street: data.street.trim(),
-            isDefault: data.isDefault,
           },
         });
+
+        // If user set this address to default, call PUT /users/me/addresses/:id/default
+        if (data.isDefault && !initialData.isDefault) {
+          await setDefaultMutation.mutateAsync(initialData.id);
+        }
       } else {
         await createMutation.mutateAsync({
           label: data.label?.trim() ? data.label.trim() : null,
@@ -94,7 +114,10 @@ export function AddressForm({
   };
 
   const isSaving =
-    createMutation.isPending || updateMutation.isPending || isSubmitting;
+    createMutation.isPending ||
+    updateMutation.isPending ||
+    setDefaultMutation.isPending ||
+    isSubmitting;
 
   return (
     <section aria-labelledby="form-address-title">
@@ -138,79 +161,45 @@ export function AddressForm({
               {...register("phone")}
             />
 
-            {/* Tỉnh, thành phố */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="select-province"
-                className="text-sm font-semibold text-ink"
-              >
-                Tỉnh, thành phố
-              </label>
-              <select
-                id="select-province"
-                className="w-full min-h-[46px] px-3.5 rounded-control border border-field-border bg-white text-[15px] text-ink focus-visible:outline-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/25 disabled:bg-canvas disabled:text-muted cursor-pointer transition-colors"
-                aria-invalid={errors.provinceCode ? true : undefined}
-                {...provinceRegister}
-                onChange={handleProvinceChange}
-              >
-                <option value="">
-                  {isProvincesLoading
-                    ? "Đang tải tỉnh, thành phố..."
-                    : "Chọn tỉnh, thành phố"}
-                </option>
-                {provinces.map((p) => (
-                  <option key={p.code} value={p.code}>
-                    {p.fullName || p.name}
-                  </option>
-                ))}
-              </select>
-              {errors.provinceCode?.message && (
-                <p
-                  className="text-[13px] font-medium text-err"
-                  aria-live="polite"
-                >
-                  {errors.provinceCode.message}
-                </p>
-              )}
-            </div>
+            {/* Tỉnh, thành phố searchable Dropdown */}
+            <Dropdown
+              label="Tỉnh, thành phố"
+              options={provinceOptions}
+              value={selectedProvinceCode || ""}
+              onChange={(val) => {
+                setValue("provinceCode", val, { shouldValidate: true });
+                setValue("wardCode", "", { shouldValidate: true });
+              }}
+              placeholder={
+                isProvincesLoading
+                  ? "Đang tải tỉnh, thành phố..."
+                  : "Chọn tỉnh, thành phố"
+              }
+              searchable={true}
+              searchPlaceholder="Tìm kiếm tỉnh, thành phố..."
+              error={errors.provinceCode?.message}
+            />
 
-            {/* Phường, xã */}
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="select-ward"
-                className="text-sm font-semibold text-ink"
-              >
-                Phường, xã
-              </label>
-              <select
-                id="select-ward"
-                disabled={!selectedProvinceCode || isWardsLoading}
-                className="w-full min-h-[46px] px-3.5 rounded-control border border-field-border bg-white text-[15px] text-ink focus-visible:outline-none focus-visible:border-brand focus-visible:ring-3 focus-visible:ring-brand/25 disabled:bg-canvas disabled:text-muted cursor-pointer transition-colors"
-                aria-invalid={errors.wardCode ? true : undefined}
-                {...register("wardCode")}
-              >
-                <option value="">
-                  {!selectedProvinceCode
-                    ? "Vui lòng chọn tỉnh, thành phố trước"
-                    : isWardsLoading
-                      ? "Đang tải phường, xã..."
-                      : "Chọn phường, xã"}
-                </option>
-                {wards.map((w) => (
-                  <option key={w.code} value={w.code}>
-                    {w.fullName || w.name}
-                  </option>
-                ))}
-              </select>
-              {errors.wardCode?.message && (
-                <p
-                  className="text-[13px] font-medium text-err"
-                  aria-live="polite"
-                >
-                  {errors.wardCode.message}
-                </p>
-              )}
-            </div>
+            {/* Phường, xã searchable Dropdown */}
+            <Dropdown
+              label="Phường, xã"
+              options={wardOptions}
+              value={selectedWardCode || ""}
+              onChange={(val) => {
+                setValue("wardCode", val, { shouldValidate: true });
+              }}
+              disabled={!selectedProvinceCode || isWardsLoading}
+              placeholder={
+                !selectedProvinceCode
+                  ? "Vui lòng chọn tỉnh, thành phố trước"
+                  : isWardsLoading
+                    ? "Đang tải phường, xã..."
+                    : "Chọn phường, xã"
+              }
+              searchable={true}
+              searchPlaceholder="Tìm kiếm phường, xã..."
+              error={errors.wardCode?.message}
+            />
 
             {/* Số nhà, tên đường */}
             <TextField
@@ -221,6 +210,24 @@ export function AddressForm({
               {...register("street")}
             />
           </div>
+
+          {/* Đặt làm mặc định */}
+          <label className="flex items-center gap-2.5 text-sm font-medium text-ink cursor-pointer select-none">
+            <input
+              type="checkbox"
+              className="size-4.5 rounded text-brand focus:ring-brand accent-brand cursor-pointer disabled:cursor-not-allowed"
+              disabled={initialData?.isDefault || isSaving}
+              {...register("isDefault")}
+            />
+            <span>
+              Đặt làm địa chỉ mặc định
+              {initialData?.isDefault && (
+                <span className="text-muted text-xs ml-1 font-normal">
+                  (Đây là địa chỉ mặc định)
+                </span>
+              )}
+            </span>
+          </label>
 
           {/* Form Actions */}
           <div className="flex items-center gap-3 pt-2 flex-wrap">
