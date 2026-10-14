@@ -3,6 +3,17 @@ export interface UserLike {
   email?: string | null;
 }
 
+export interface UserWithAvatar extends UserLike {
+  avatarUrl?: string | null;
+}
+
+export interface UserAvatarInfo {
+  avatarUrl: string | null;
+  initial: string;
+  hasCustomAvatar: boolean;
+  displayName: string;
+}
+
 /**
  * Returns a friendly display name for the user.
  * Priority: displayName > email prefix > "Tài khoản"
@@ -32,4 +43,23 @@ export function getUserInitial(user: UserLike | null | undefined): string {
   const lastWord = words[words.length - 1];
   const char = lastWord?.charAt(0) || name.charAt(0) || "U";
   return char.toUpperCase();
+}
+
+/**
+ * Common utility to extract avatar rendering information for a user.
+ * Checks whether user has a custom avatar URL, or falls back to the initial character.
+ */
+export function getUserAvatarInfo(
+  user: UserWithAvatar | null | undefined,
+): UserAvatarInfo {
+  const displayName = getUserDisplayName(user);
+  const initial = getUserInitial(user);
+  const avatarUrl = user?.avatarUrl?.trim() ? user.avatarUrl.trim() : null;
+
+  return {
+    avatarUrl,
+    initial,
+    hasCustomAvatar: Boolean(avatarUrl),
+    displayName,
+  };
 }

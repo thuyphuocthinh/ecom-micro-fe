@@ -10,3 +10,5 @@ export * from "./src/Tag";
 export * from "./src/TextField";
 export * from "./src/Dropdown";
 export * from "./src/SearchInput";
+export * from "./src/DropdownMenu";
+export * from "./src/Avatar";

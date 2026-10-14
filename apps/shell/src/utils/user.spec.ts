@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getUserDisplayName, getUserInitial } from "./user.ts";
+import {
+  getUserDisplayName,
+  getUserInitial,
+  getUserAvatarInfo,
+} from "./user.ts";
 
 describe("getUserDisplayName", () => {
   it("returns displayName when available", () => {
@@ -36,5 +40,32 @@ describe("getUserInitial", () => {
 
   it("returns uppercase 'U' fallback when empty", () => {
     expect(getUserInitial(null)).toBe("U");
+  });
+});
+
+describe("getUserAvatarInfo", () => {
+  it("detects custom avatar when avatarUrl is present", () => {
+    const info = getUserAvatarInfo({
+      displayName: "Thịnh Nguyễn",
+      email: "thinh@ecom.vn",
+      avatarUrl: "https://example.com/avatar.jpg",
+    });
+
+    expect(info.hasCustomAvatar).toBe(true);
+    expect(info.avatarUrl).toBe("https://example.com/avatar.jpg");
+    expect(info.initial).toBe("N");
+    expect(info.displayName).toBe("Thịnh Nguyễn");
+  });
+
+  it("falls back to initial when avatarUrl is missing or empty", () => {
+    const info = getUserAvatarInfo({
+      displayName: "Nguyễn Văn A",
+      email: "a@ecom.vn",
+      avatarUrl: null,
+    });
+
+    expect(info.hasCustomAvatar).toBe(false);
+    expect(info.avatarUrl).toBeNull();
+    expect(info.initial).toBe("A");
   });
 });

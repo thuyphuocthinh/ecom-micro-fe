@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router";
-import { Card, Button } from "@ecom/ui";
+import { Card, Button, Avatar } from "@ecom/ui";
 import { useAuth } from "@/features/auth";
-import { getUserDisplayName, getUserInitial } from "@/utils/user.ts";
+import { getUserAvatarInfo } from "@/utils/user.ts";
 import { Icon } from "@/components/common/Icon.tsx";
 
 export interface AccountNavProps {
@@ -12,8 +12,7 @@ export function AccountNav({ className }: AccountNavProps) {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  const displayName = getUserDisplayName(user);
-  const initial = getUserInitial(user);
+  const { displayName, initial, avatarUrl } = getUserAvatarInfo(user);
   const email = user?.email || "";
 
   const isProfile = location.pathname.startsWith("/account/profile");
@@ -25,20 +24,12 @@ export function AccountNav({ className }: AccountNavProps) {
       <Card className="p-4 flex flex-col gap-1 bg-white">
         {/* User Info Header */}
         <div className="flex items-center gap-3 p-2 pb-4 border-b border-line mb-2">
-          {user?.avatarUrl ? (
-            <img
-              src={user.avatarUrl}
-              alt={displayName}
-              className="size-12 rounded-full object-cover shrink-0 border border-line"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="size-12 rounded-full bg-brand text-white inline-flex items-center justify-center font-head font-bold text-xl shrink-0"
-            >
-              {initial}
-            </span>
-          )}
+          <Avatar
+            src={avatarUrl}
+            alt={displayName}
+            fallback={initial}
+            size="md"
+          />
           <div className="min-w-0 flex-1">
             <p className="font-bold text-ink truncate leading-tight">
               {displayName}

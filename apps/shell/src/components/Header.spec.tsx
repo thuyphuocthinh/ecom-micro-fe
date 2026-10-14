@@ -70,8 +70,8 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
 
     expect(screen.getByRole("menu")).toBeInTheDocument();
     expect(screen.getByText("Hồ sơ của tôi")).toBeInTheDocument();
-    expect(screen.getByText("Đơn hàng")).toBeInTheDocument();
-    expect(screen.getByText("Sổ địa chỉ")).toBeInTheDocument();
+    expect(screen.getByText("Đơn hàng của tôi")).toBeInTheDocument();
+    expect(screen.queryByText("Sổ địa chỉ")).not.toBeInTheDocument();
     expect(screen.getByText("Đăng xuất")).toBeInTheDocument();
 
     // Click logout calls logout
