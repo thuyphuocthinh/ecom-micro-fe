@@ -40,6 +40,21 @@ const EXPIRED_TOKEN_CODE = "AUTH-002";
 /** A token the backend refuses outright (revoked, or not valid): the login is over, there is nothing to renew. */
 const DEAD_TOKEN_CODES = new Set(["AUTH-003", "AUTH-004"]);
 
+function isTokenExpired(
+  code: string | undefined,
+  message: string | undefined,
+): boolean {
+  if (code === EXPIRED_TOKEN_CODE) return true;
+  if (
+    code === "AUTH-004" &&
+    typeof message === "string" &&
+    message.toLowerCase().includes("expired")
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function createApiClient(config: ApiClientConfig = {}) {
   const baseUrl = (config.baseUrl ?? "/api/v1").replace(/\/+$/, "");
   const session = config.session ?? sharedSession;
@@ -219,10 +234,12 @@ export function createApiClient(config: ApiClientConfig = {}) {
     let response = await send(method, url, options, sentToken);
     let body = await readJson(response);
 
-    if (
+    const errorBody = body as { code?: string; message?: string } | null;
+    const isExpired =
       response.status === 401 &&
-      (body as { code?: string } | null)?.code === EXPIRED_TOKEN_CODE
-    ) {
+      isTokenExpired(errorBody?.code, errorBody?.message);
+
+    if (isExpired) {
       const firstError = toApiError(response, body);
       if (!(await renewOnce())) {
         endedSession.add(firstError);
@@ -239,7 +256,8 @@ export function createApiClient(config: ApiClientConfig = {}) {
       if (
         sentToken &&
         response.status === 401 &&
-        DEAD_TOKEN_CODES.has(error.code)
+        DEAD_TOKEN_CODES.has(error.code) &&
+        !isTokenExpired(error.code, error.message)
       ) {
         // Only the first call to learn it ends the login; calls that come later already see another token
         if (session.getAccessToken() === sentToken) {

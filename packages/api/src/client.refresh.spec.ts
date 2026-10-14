@@ -47,6 +47,29 @@ describe("an expired access token (AC-5)", () => {
     expect(calls.filter(isRefresh)).toHaveLength(1);
     expect(calls).toHaveLength(3);
   });
+
+  it("renews tokens when 401 has AUTH-004 but message indicates expired", async () => {
+    const session = createSession();
+    session.set({ accessToken: "old", refreshToken: "R1" });
+    const { api, calls } = setup((call) => {
+      if (isRefresh(call))
+        return success({ accessToken: "new", refreshToken: "R2" });
+      return call.headers.Authorization === "Bearer new"
+        ? success([{ id: "o1" }])
+        : failure(401, "AUTH-004", "Invalid or expired token");
+    }, session);
+
+    const result = await api.get("/orders");
+
+    expect(result.data).toEqual([{ id: "o1" }]);
+    expect(calls.map((call) => `${call.method} ${call.url}`)).toEqual([
+      "GET /api/v1/orders",
+      "POST /api/v1/auth/refresh",
+      "GET /api/v1/orders",
+    ]);
+    expect(session.getAccessToken()).toBe("new");
+    expect(session.getRefreshToken()).toBe("R2");
+  });
 });
 
 describe("many calls expiring together (AC-6)", () => {
