@@ -84,6 +84,7 @@ export function SearchPage() {
   const {
     data: productsData,
     isLoading,
+    isFetching,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
@@ -431,6 +432,7 @@ export function SearchPage() {
             products={products}
             categoryNames={categoryNames}
             isLoading={isLoading}
+            isFetching={isFetching}
             onAddToCart={handleAddToCart}
             onClearFilters={handleClearAllFilters}
           />

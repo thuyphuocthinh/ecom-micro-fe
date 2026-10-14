@@ -77,7 +77,7 @@ export function ProductCard({
             </span>
           )}
           <Tooltip content={product.name} className="w-full">
-            <h2 className="product-name text-ink font-semibold text-[15.5px] leading-snug line-clamp-2 h-[44px] group-hover:text-brand transition-colors w-full text-left">
+            <h2 className="product-name text-ink font-medium text-[15px] leading-snug line-clamp-2 h-[44px] group-hover:text-brand transition-colors w-full text-left">
               {product.name}
             </h2>
           </Tooltip>
@@ -86,13 +86,17 @@ export function ProductCard({
 
       {/* Bottom Area: Price, Rating & Action Button (Aligned to bottom) */}
       <div className="mt-auto pt-2 flex flex-col">
-        {/* Price Area */}
-        <div className="flex flex-wrap items-baseline gap-2 min-h-[26px]">
-          <span className="tnum font-bold text-[17px] text-ink">
+        {/* Price Area: Distinctive, eye-catching pricing */}
+        <div className="flex flex-wrap items-baseline gap-2 min-h-[28px]">
+          <span
+            className={`tnum font-bold text-[18px] sm:text-[19px] tracking-tight ${
+              product.onSale ? "text-sale" : "text-brand"
+            }`}
+          >
             {priceLabel}
           </span>
           {product.onSale && maxOriginalPrice > (product.minPrice ?? 0) && (
-            <span className="tnum text-[13.5px] text-muted line-through">
+            <span className="tnum text-[13px] text-muted/80 line-through">
               {formatVnd(maxOriginalPrice)}
             </span>
           )}
