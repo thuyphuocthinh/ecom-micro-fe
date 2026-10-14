@@ -11,6 +11,13 @@ import { DeviceIcon } from "./device.tsx";
 import { CameraIcon } from "./camera.tsx";
 import { PlusIcon } from "./plus.tsx";
 import { ChevronDownIcon } from "./chevron-down.tsx";
+import { ClockIcon } from "./clock.tsx";
+import { TruckIcon } from "./truck.tsx";
+import { HomeIcon } from "./home.tsx";
+import { PackageIcon } from "./package.tsx";
+import { MapPinIcon } from "./map-pin.tsx";
+import { CreditCardIcon } from "./credit-card.tsx";
+import { XCircleIcon } from "./x-circle.tsx";
 
 export const icons = {
   google: GoogleIcon,
@@ -26,6 +33,13 @@ export const icons = {
   camera: CameraIcon,
   plus: PlusIcon,
   "chevron-down": ChevronDownIcon,
+  clock: ClockIcon,
+  truck: TruckIcon,
+  home: HomeIcon,
+  package: PackageIcon,
+  "map-pin": MapPinIcon,
+  "credit-card": CreditCardIcon,
+  "x-circle": XCircleIcon,
 } as const;
 
 export type IconName = keyof typeof icons;
@@ -44,4 +58,11 @@ export {
   CameraIcon,
   PlusIcon,
   ChevronDownIcon,
+  ClockIcon,
+  TruckIcon,
+  HomeIcon,
+  PackageIcon,
+  MapPinIcon,
+  CreditCardIcon,
+  XCircleIcon,
 };

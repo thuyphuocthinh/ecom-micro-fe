@@ -19,4 +19,12 @@ export const queryKeys = {
     wards: (provinceCode: string) =>
       [...queryKeys.locations.all, "wards", provinceCode] as const,
   },
+  orders: {
+    all: ["orders"] as const,
+    list: (filters?: Record<string, unknown>) =>
+      [...queryKeys.orders.all, "list", filters ?? {}] as const,
+    counts: (filters?: Record<string, unknown>) =>
+      [...queryKeys.orders.all, "counts", filters ?? {}] as const,
+    detail: (id: string) => [...queryKeys.orders.all, "detail", id] as const,
+  },
 } as const;

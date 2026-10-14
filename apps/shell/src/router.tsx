@@ -8,6 +8,9 @@ import { RegisterPage } from "@/pages/RegisterPage.tsx";
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage.tsx";
 import { ProfilePage } from "@/pages/ProfilePage.tsx";
 import { AddressesPage } from "@/pages/AddressesPage.tsx";
+import { OrdersPage } from "@/pages/OrdersPage.tsx";
+import { OrderDetailPage } from "@/pages/OrderDetailPage.tsx";
+import { RequireAuth } from "@/components/RequireAuth.tsx";
 import { NotFoundPage } from "@/pages/NotFoundPage.tsx";
 
 export const router = createBrowserRouter([
@@ -17,6 +20,14 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/account/orders/:id",
+        element: (
+          <RequireAuth>
+            <OrderDetailPage />
+          </RequireAuth>
+        ),
       },
       {
         path: "/account",
@@ -33,6 +44,10 @@ export const router = createBrowserRouter([
           {
             path: "addresses",
             element: <AddressesPage />,
+          },
+          {
+            path: "orders",
+            element: <OrdersPage />,
           },
         ],
       },
