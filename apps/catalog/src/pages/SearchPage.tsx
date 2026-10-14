@@ -66,9 +66,21 @@ export function SearchPage() {
     ],
   );
 
+  // Filter parameters for Facets Query (facets count across all categories matching search, price, stock, sale)
+  const facetFilters = useMemo<ProductFilterParams>(
+    () => ({
+      search: currentQ.trim() || undefined,
+      minPrice: currentMinPrice,
+      maxPrice: currentMaxPrice,
+      inStock: currentInStock ? "true" : undefined,
+      onSale: currentOnSale ? "true" : undefined,
+    }),
+    [currentQ, currentMinPrice, currentMaxPrice, currentInStock, currentOnSale],
+  );
+
   // TanStack Queries
   const { data: categories = [] } = useCategoriesQuery();
-  const { data: facets = [] } = useProductFacetsQuery(filters);
+  const { data: facets = [] } = useProductFacetsQuery(facetFilters);
   const {
     data: productsData,
     isLoading,

@@ -46,7 +46,6 @@ export const productService = {
     const query: Record<string, string | number> = {};
     if (parentId) query.parentId = parentId;
     if (params.search?.trim()) query.search = params.search.trim();
-    if (params.categoryId) query.categoryId = params.categoryId;
     if (typeof params.minPrice === "number" && !isNaN(params.minPrice)) {
       query.minPrice = params.minPrice;
     }
