@@ -1,0 +1,28 @@
+declare module "catalog/SearchPage" {
+  import type { ComponentType } from "react";
+  const SearchPage: ComponentType;
+  export default SearchPage;
+  export { SearchPage };
+}
+
+declare module "catalog/ProductCard" {
+  import type { ComponentType } from "react";
+  export const ProductCard: ComponentType<{
+    product: any;
+    categoryName?: string;
+    onAddToCart?: (product: any) => void;
+    className?: string;
+  }>;
+}
+
+declare module "catalog/ProductGrid" {
+  import type { ComponentType } from "react";
+  export const ProductGrid: ComponentType<{
+    products: any[];
+    categoryNames?: Record<string, string>;
+    isLoading?: boolean;
+    onAddToCart?: (product: any) => void;
+    onClearFilters?: () => void;
+    className?: string;
+  }>;
+}

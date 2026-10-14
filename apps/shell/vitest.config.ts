@@ -6,6 +6,21 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+      "catalog/SearchPage": fileURLToPath(
+        new URL("../catalog/src/pages/SearchPage.tsx", import.meta.url),
+      ),
+      "catalog/ProductCard": fileURLToPath(
+        new URL(
+          "../catalog/src/features/products/components/ProductCard.tsx",
+          import.meta.url,
+        ),
+      ),
+      "catalog/ProductGrid": fileURLToPath(
+        new URL(
+          "../catalog/src/features/products/components/ProductGrid.tsx",
+          import.meta.url,
+        ),
+      ),
     },
   },
   test: {

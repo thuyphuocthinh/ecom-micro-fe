@@ -40,6 +40,11 @@ const OrderDetailPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import("@/pages/NotFoundPage.tsx").then((m) => ({ default: m.NotFoundPage })),
 );
+const SearchPage = lazy(() =>
+  import("catalog/SearchPage").then((m) => ({
+    default: m.SearchPage || m.default,
+  })),
+);
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +53,14 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/search",
+        element: <SearchPage />,
+      },
+      {
+        path: "/products",
+        element: <Navigate to="/search" replace />,
       },
       {
         path: "/account/orders/:id",
