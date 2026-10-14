@@ -1,4 +1,4 @@
-import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { productService } from "@/services/product.service.ts";
 import { queryKeys } from "@/constants/queryKeys.ts";
 import type { Product, ProductFilterParams, ProductsPageMeta } from "@/types";
@@ -17,7 +17,6 @@ export function useProductsQuery(
   return useInfiniteQuery<ProductsPageData, Error>({
     queryKey: queryKeys.products.list(filters),
     initialPageParam: isNumberedPaging ? 1 : undefined,
-    placeholderData: keepPreviousData,
     queryFn: async ({ pageParam }) => {
       const res = await productService.getProducts({
         ...filters,

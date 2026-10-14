@@ -1,4 +1,4 @@
-import { useState, useMemo, type FormEvent } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router";
 import { Button } from "@ecom/ui";
 import { toast } from "sonner";
@@ -34,15 +34,6 @@ export function SearchPage() {
   const currentOnSale = searchParams.get("onSale") === "true";
   const currentSort =
     (searchParams.get("sort") as ProductSortOption) || "newest";
-
-  // Refinement keyword search state
-  const [keywordInput, setKeywordInput] = useState(currentQ);
-  // Keep keyword input in sync when URL changes
-  const [prevQ, setPrevQ] = useState(currentQ);
-  if (prevQ !== currentQ) {
-    setPrevQ(currentQ);
-    setKeywordInput(currentQ);
-  }
 
   // Filter parameters object for TanStack Query
   const filters = useMemo<ProductFilterParams>(
@@ -89,6 +80,8 @@ export function SearchPage() {
     isFetchingNextPage,
     fetchNextPage,
   } = useProductsQuery(filters, 12);
+
+  const isProductsLoading = isLoading || (isFetching && !isFetchingNextPage);
 
   // Flattened products array
   const products = useMemo(
@@ -155,19 +148,6 @@ export function SearchPage() {
   }, [currentMinPrice, currentMaxPrice]);
 
   // Handlers for URL Params updates
-  const handleKeywordSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (keywordInput.trim()) {
-        next.set("q", keywordInput.trim());
-      } else {
-        next.delete("q");
-      }
-      return next;
-    });
-  };
-
   const handleCategoryChange = (categoryId: string | undefined) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
@@ -226,7 +206,6 @@ export function SearchPage() {
 
   const handleClearAllFilters = () => {
     setSearchParams(new URLSearchParams());
-    setKeywordInput("");
   };
 
   const handleRemoveQuery = () => {
@@ -235,7 +214,6 @@ export function SearchPage() {
       next.delete("q");
       return next;
     });
-    setKeywordInput("");
   };
 
   // Cross-app Add to cart event
@@ -310,37 +288,18 @@ export function SearchPage() {
           </h1>
           <p
             aria-live="polite"
-            className="tnum text-[15px] text-[#5b6472] mt-1"
+            className="tnum text-[15px] text-[#5b6472] mt-1 flex items-center min-h-[22px]"
           >
-            {isLoading
-              ? "Đang tải sản phẩm..."
-              : `${totalCount} sản phẩm${hasActiveFilters ? " sau khi lọc" : ""}`}
+            {isProductsLoading ? (
+              <span className="inline-block h-4 w-28 bg-line/60 rounded animate-pulse" />
+            ) : (
+              `${totalCount} sản phẩm${hasActiveFilters ? " sau khi lọc" : ""}`
+            )}
           </p>
         </div>
 
-        {/* Toolbar: Refinement Input, Sort Select & Mobile Filter Toggle */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* Refine Search Input */}
-          <form
-            onSubmit={handleKeywordSubmit}
-            className="w-full sm:w-[240px] md:w-[260px]"
-          >
-            <label className="sr-only" htmlFor="kw">
-              Lọc theo từ khoá
-            </label>
-            <input
-              id="kw"
-              type="search"
-              name="q"
-              autoComplete="off"
-              spellCheck="false"
-              placeholder="Thu hẹp kết quả, ví dụ: tai nghe…"
-              value={keywordInput}
-              onChange={(e) => setKeywordInput(e.target.value)}
-              className="w-full min-h-[42px] px-3.5 rounded-[10px] border border-line bg-white text-ink text-[14.5px] placeholder:text-[#7a8392] focus:border-brand focus:outline-none transition-colors"
-            />
-          </form>
-
+        {/* Toolbar: Sort Select & Mobile Filter Toggle */}
+        <div className="flex items-center gap-3">
           {/* Sort Selector */}
           <ProductSortSelect
             value={currentSort}
@@ -461,14 +420,13 @@ export function SearchPage() {
           <ProductGrid
             products={products}
             categoryNames={categoryNames}
-            isLoading={isLoading}
-            isFetching={isFetching}
+            isLoading={isProductsLoading}
             onAddToCart={handleAddToCart}
             onClearFilters={handleClearAllFilters}
           />
 
           {/* Load More Pagination */}
-          {hasNextPage && (
+          {!isProductsLoading && hasNextPage && (
             <div className="flex justify-center pt-4">
               <Button
                 type="button"
