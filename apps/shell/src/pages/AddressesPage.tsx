@@ -7,11 +7,11 @@ import {
   AddressEmptyState,
   DeleteAddressModal,
 } from "@/features/addresses";
-import { useAddressesQuery } from "@/hooks/queries/useAddressesQuery.ts";
+import { useAddressesQuery } from "@/features/addresses/hooks/useAddressesQuery.ts";
 import {
   useSetDefaultAddressMutation,
   useDeleteAddressMutation,
-} from "@/hooks/mutations/useAddressMutations.ts";
+} from "@/features/addresses/hooks/useAddressMutations.ts";
 import type { Address } from "@/types";
 
 export function AddressesPage() {

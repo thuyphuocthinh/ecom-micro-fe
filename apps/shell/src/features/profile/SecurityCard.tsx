@@ -7,7 +7,7 @@ import {
   changePasswordSchema,
   type ChangePasswordFormData,
 } from "./schemas.ts";
-import { useChangePasswordMutation } from "@/hooks/mutations/useChangePasswordMutation.ts";
+import { useChangePasswordMutation } from "@/features/profile/hooks/useChangePasswordMutation.ts";
 
 export function SecurityCard() {
   const { user } = useAuth();

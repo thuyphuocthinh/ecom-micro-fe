@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { Button, CodeInput } from "@ecom/ui";
 import { ApiError } from "@ecom/api";
 import { useCountdown } from "@/hooks/common/useCountdown.ts";
-import { useVerifyEmailMutation } from "@/hooks/mutations/useVerifyEmailMutation.ts";
-import { useResendCodeMutation } from "@/hooks/mutations/useResendCodeMutation.ts";
+import { useVerifyEmailMutation } from "@/features/auth/hooks/useVerifyEmailMutation.ts";
+import { useResendCodeMutation } from "@/features/auth/hooks/useResendCodeMutation.ts";
 import { formatDurationMmSs, secondsToMinutesCeil } from "@/utils/format.ts";
 import { sanitizeReturnTo } from "@/utils/redirect.ts";
 import {

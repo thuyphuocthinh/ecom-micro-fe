@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Button, Spinner } from "@ecom/ui";
-import { useGoogleLoginMutation } from "@/hooks/mutations/useGoogleLoginMutation.ts";
+import { useGoogleLoginMutation } from "@/features/auth/hooks/useGoogleLoginMutation.ts";
 import { sanitizeReturnTo } from "@/utils/redirect.ts";
 import { Icon } from "@/components/common/Icon.tsx";
 import {

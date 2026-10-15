@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { Button, TextField } from "@ecom/ui";
-import { useForgotPasswordMutation } from "@/hooks/mutations";
+import { useForgotPasswordMutation } from "@/features/auth/hooks/useForgotPasswordMutation.ts";
 import {
   forgotPasswordFormSchema,
   type ForgotPasswordFormData,

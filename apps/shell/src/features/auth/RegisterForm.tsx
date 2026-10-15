@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useSearchParams } from "react-router";
 import { Button, TextField, PasswordField } from "@ecom/ui";
-import { useRegisterMutation } from "@/hooks/mutations/useRegisterMutation.ts";
+import { useRegisterMutation } from "@/features/auth/hooks/useRegisterMutation.ts";
 import { registerFormSchema, type RegisterFormData } from "./schemas.ts";
 import { GoogleAuthButton } from "./GoogleAuthButton.tsx";
 import { Divider } from "@/components/common/Divider.tsx";

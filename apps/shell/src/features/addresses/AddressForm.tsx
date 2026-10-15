@@ -6,12 +6,12 @@ import { addressFormSchema, type AddressFormData } from "./schemas.ts";
 import {
   useProvincesQuery,
   useWardsQuery,
-} from "@/hooks/queries/useLocationsQuery.ts";
+} from "@/features/addresses/hooks/useLocationsQuery.ts";
 import {
   useCreateAddressMutation,
   useUpdateAddressMutation,
   useSetDefaultAddressMutation,
-} from "@/hooks/mutations/useAddressMutations.ts";
+} from "@/features/addresses/hooks/useAddressMutations.ts";
 import type { Address } from "@/types";
 
 export interface AddressFormProps {

@@ -7,9 +7,9 @@ import { useAuth } from "@/features/auth";
 import { getUserDisplayName, getUserInitial } from "@/utils/user.ts";
 import { Icon } from "@/components/common/Icon.tsx";
 import { updateProfileSchema, type UpdateProfileFormData } from "./schemas.ts";
-import { useUpdateProfileMutation } from "@/hooks/mutations/useUpdateProfileMutation.ts";
-import { useUploadAvatarMutation } from "@/hooks/mutations/useUploadAvatarMutation.ts";
-import { useRemoveAvatarMutation } from "@/hooks/mutations/useRemoveAvatarMutation.ts";
+import { useUpdateProfileMutation } from "@/features/profile/hooks/useUpdateProfileMutation.ts";
+import { useUploadAvatarMutation } from "@/features/profile/hooks/useUploadAvatarMutation.ts";
+import { useRemoveAvatarMutation } from "@/features/profile/hooks/useRemoveAvatarMutation.ts";
 import { AvatarCropModal } from "./AvatarCropModal.tsx";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];

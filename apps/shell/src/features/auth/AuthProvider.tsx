@@ -4,9 +4,9 @@ import { toast } from "sonner";
 import { session } from "@ecom/api";
 import { queryKeys } from "@/constants/queryKeys.ts";
 import { userService } from "@/services/user.service.ts";
-import { useCurrentUser } from "@/hooks/queries/useCurrentUser.ts";
-import { useCartCount } from "@/hooks/queries/useCartCount.ts";
-import { useLogoutMutation } from "@/hooks/mutations/useLogoutMutation.ts";
+import { useCurrentUser } from "@/features/profile/hooks/useCurrentUser.ts";
+import { useCartCount } from "@/hooks/common/useCartCount.ts";
+import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation.ts";
 import { AuthContext } from "./auth-context.ts";
 import type { AuthStatus, UserProfile } from "@/types";
 

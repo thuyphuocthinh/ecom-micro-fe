@@ -9,7 +9,7 @@ import { useCountdown } from "@/hooks/common/useCountdown.ts";
 import {
   useResetPasswordMutation,
   useForgotPasswordMutation,
-} from "@/hooks/mutations";
+} from "@/features/auth/hooks/index.ts";
 import { formatDurationMmSs, secondsToMinutesCeil } from "@/utils/format.ts";
 import {
   updatePendingPasswordResetResend,
