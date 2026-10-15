@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { HomePage } from "./HomePage.tsx";
+import { HomePage } from "@/pages/HomePage.tsx";
 import { GUEST_CART_STORAGE_KEY } from "@/utils/cart.ts";
+import { catalogService, type ApiProduct } from "@/services/catalog.service.ts";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -13,6 +15,24 @@ vi.mock("sonner", () => ({
   },
 }));
 
+function renderHomePage() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+}
+
 describe("HomePage Integration (shell-home)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,11 +40,7 @@ describe("HomePage Integration (shell-home)", () => {
   });
 
   it("renders Hero Section with title, description, CTAs and featured card (AC-1)", () => {
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
-    );
+    renderHomePage();
 
     expect(
       screen.getByRole("heading", {
@@ -58,11 +74,7 @@ describe("HomePage Integration (shell-home)", () => {
   });
 
   it("renders Category Section with 4 category cards (AC-2)", () => {
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
-    );
+    renderHomePage();
 
     expect(
       screen.getByRole("heading", { name: "Mua theo nhóm" }),
@@ -88,11 +100,7 @@ describe("HomePage Integration (shell-home)", () => {
   });
 
   it("renders Best Sellers Section with 8 products and 'Xem tất cả sản phẩm' link (AC-3)", () => {
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
-    );
+    renderHomePage();
 
     expect(
       screen.getByRole("heading", { name: "Bán chạy tuần này" }),
@@ -125,12 +133,32 @@ describe("HomePage Integration (shell-home)", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders Value Propositions with 3 commitments (AC-6)", () => {
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
+  it("renders dynamically fetched products from catalog API", async () => {
+    const mockProducts: ApiProduct[] = [
+      {
+        id: "api-prod-1",
+        name: "Tai nghe chống ồn Pro Max",
+        minPrice: 5000000,
+        onSale: true,
+        rating: 5.0,
+        reviewsCount: 99,
+        skus: [{ id: "sku-api-1", price: 5000000, originalPrice: 6000000 }],
+      },
+    ];
+
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValueOnce(
+      mockProducts,
     );
+
+    renderHomePage();
+
+    expect(
+      await screen.findByRole("heading", { name: "Tai nghe chống ồn Pro Max" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders Value Propositions with 3 commitments (AC-6)", () => {
+    renderHomePage();
 
     expect(
       screen.getByRole("heading", { name: "Vì sao mua ở đây" }),
@@ -152,11 +180,7 @@ describe("HomePage Integration (shell-home)", () => {
     const cartChangedHandler = vi.fn();
     window.addEventListener("cart:changed", cartChangedHandler);
 
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
-    );
+    renderHomePage();
 
     const heroSection = screen.getByRole("region", {
       name: "Những món dùng mỗi ngày, giá rõ ràng ngay từ đầu.",
@@ -189,11 +213,7 @@ describe("HomePage Integration (shell-home)", () => {
   it("increments item quantity when added multiple times (AC-4)", async () => {
     const user = userEvent.setup();
 
-    render(
-      <MemoryRouter>
-        <HomePage />
-      </MemoryRouter>,
-    );
+    renderHomePage();
 
     const ganButton = screen.getByRole("button", {
       name: "Thêm vào giỏ: Sạc nhanh GaN 65W",

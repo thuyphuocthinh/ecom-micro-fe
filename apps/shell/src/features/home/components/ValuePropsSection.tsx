@@ -1,5 +1,5 @@
 import { Icon } from "@ecom/ui";
-import { VALUE_PROPS } from "../data/home-data";
+import { VALUE_PROPS } from "@/features/home/data/home-data.ts";
 
 export function ValuePropsSection() {
   return (

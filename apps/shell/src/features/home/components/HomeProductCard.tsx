@@ -1,12 +1,15 @@
 import { Link } from "react-router";
 import { Button, Tag, Icon } from "@ecom/ui";
-import type { HomeProduct, HomeCategoryKind } from "../types/home";
+import type {
+  HomeProduct,
+  HomeCategoryKind,
+} from "@/features/home/types/home.ts";
 import {
   formatVND,
   calculateDiscountPercent,
   formatRating,
   formatReviewCount,
-} from "../utils/format";
+} from "@/features/home/utils/format.ts";
 
 export interface HomeProductCardProps {
   product: HomeProduct;

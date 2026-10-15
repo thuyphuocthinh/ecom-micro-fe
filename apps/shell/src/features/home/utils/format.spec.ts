@@ -4,7 +4,7 @@ import {
   calculateDiscountPercent,
   formatReviewCount,
   formatRating,
-} from "./format";
+} from "@/features/home/utils/format.ts";
 
 describe("format utils", () => {
   it("formatVND formats valid numbers and edge cases", () => {

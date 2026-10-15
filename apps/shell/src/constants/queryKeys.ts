@@ -27,4 +27,10 @@ export const queryKeys = {
       [...queryKeys.orders.all, "counts", filters ?? {}] as const,
     detail: (id: string) => [...queryKeys.orders.all, "detail", id] as const,
   },
+  catalog: {
+    all: ["catalog"] as const,
+    bestsellers: (limit = 8) =>
+      [...queryKeys.catalog.all, "bestsellers", limit] as const,
+    categories: () => [...queryKeys.catalog.all, "categories"] as const,
+  },
 } as const;

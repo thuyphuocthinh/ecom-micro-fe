@@ -1,8 +1,11 @@
 import { Link } from "react-router";
 import { Button, Card, Tag } from "@ecom/ui";
-import { HERO_PRODUCT } from "../data/home-data";
-import { formatVND, calculateDiscountPercent } from "../utils/format";
-import type { HomeProduct } from "../types/home";
+import { HERO_PRODUCT } from "@/features/home/data/home-data.ts";
+import {
+  formatVND,
+  calculateDiscountPercent,
+} from "@/features/home/utils/format.ts";
+import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface HeroSectionProps {
   onAddToCart: (product: HomeProduct) => void;

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { GUEST_CART_STORAGE_KEY } from "@/utils/cart.ts";
-import type { HomeProduct } from "../types/home";
+import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface GuestCartItem {
   skuId: string;

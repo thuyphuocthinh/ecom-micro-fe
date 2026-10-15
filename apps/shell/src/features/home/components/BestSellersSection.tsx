@@ -1,17 +1,32 @@
 import { Link } from "react-router";
-import { BEST_SELLER_PRODUCTS } from "../data/home-data";
-import { HomeProductCard } from "./HomeProductCard";
-import type { HomeProduct } from "../types/home";
+import { useHomeBestsellersQuery } from "@/features/home/hooks/useHomeCatalog.ts";
+import { HomeProductCard } from "@/features/home/components/HomeProductCard.tsx";
+import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface BestSellersSectionProps {
   onAddToCart: (product: HomeProduct) => void;
   products?: HomeProduct[];
 }
 
+function ProductCardSkeleton() {
+  return (
+    <li className="flex flex-col gap-3 animate-pulse">
+      <div className="aspect-square rounded-[18px] bg-canvas-sunken" />
+      <div className="h-4 bg-canvas-sunken rounded w-3/4 mt-3" />
+      <div className="h-5 bg-canvas-sunken rounded w-1/2" />
+      <div className="h-4 bg-canvas-sunken rounded w-1/3" />
+      <div className="h-11 bg-canvas-sunken rounded-control mt-auto" />
+    </li>
+  );
+}
+
 export function BestSellersSection({
   onAddToCart,
-  products = BEST_SELLER_PRODUCTS,
+  products: propProducts,
 }: BestSellersSectionProps) {
+  const { products: queriedProducts, isLoading } = useHomeBestsellersQuery();
+  const products = propProducts ?? queriedProducts;
+
   return (
     <section
       aria-labelledby="hot-title"
@@ -34,13 +49,17 @@ export function BestSellersSection({
       </div>
 
       <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-5">
-        {products.map((product) => (
-          <HomeProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={onAddToCart}
-          />
-        ))}
+        {isLoading && !products.length
+          ? Array.from({ length: 8 }).map((_, idx) => (
+              <ProductCardSkeleton key={`skeleton-${idx}`} />
+            ))
+          : products.map((product) => (
+              <HomeProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={onAddToCart}
+              />
+            ))}
       </ul>
     </section>
   );

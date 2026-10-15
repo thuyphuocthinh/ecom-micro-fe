@@ -1,4 +1,8 @@
-import type { HomeProduct, HomeCategory, ValueProp } from "../types/home";
+import type {
+  HomeProduct,
+  HomeCategory,
+  ValueProp,
+} from "@/features/home/types/home.ts";
 
 export const HERO_PRODUCT: HomeProduct = {
   id: "prod-aero-2",

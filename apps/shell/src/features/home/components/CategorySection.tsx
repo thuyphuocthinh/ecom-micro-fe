@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import { HOME_CATEGORIES } from "../data/home-data";
-import type { HomeCategory } from "../types/home";
+import { useHomeCategoriesQuery } from "@/features/home/hooks/useHomeCatalog.ts";
+import type { HomeCategory } from "@/features/home/types/home.ts";
 
 function renderCategoryDecoration(cat: HomeCategory) {
   switch (cat.slug) {
@@ -36,10 +36,20 @@ function renderCategoryDecoration(cat: HomeCategory) {
           style={{ backgroundColor: cat.shapeBackground }}
         />
       );
+    default:
+      return (
+        <div
+          aria-hidden="true"
+          className="absolute -right-8 -top-8 w-48 h-48 rounded-full pointer-events-none transition-transform duration-300 group-hover:scale-105"
+          style={{ backgroundColor: cat.shapeBackground }}
+        />
+      );
   }
 }
 
 export function CategorySection() {
+  const { categories } = useHomeCategoriesQuery();
+
   return (
     <section
       aria-labelledby="cat-title"
@@ -53,7 +63,7 @@ export function CategorySection() {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-4 auto-rows-[190px] sm:auto-rows-[210px]">
-        {HOME_CATEGORIES.map((cat) => {
+        {categories.map((cat) => {
           let layoutClass = "";
           if (cat.slug === "audio") {
             layoutClass = "md:col-span-2 md:row-span-2";
