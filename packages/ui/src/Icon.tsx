@@ -25,7 +25,10 @@ export type IconName =
   | "map-pin"
   | "credit-card"
   | "external-link"
-  | "qr-code";
+  | "qr-code"
+  | "star"
+  | "shield-check"
+  | "rotate-ccw";
 
 export interface IconProps extends ComponentProps<"svg"> {
   name: IconName;
@@ -187,6 +190,21 @@ const iconPaths: Record<IconName, () => ReactNode> = {
       <path d="M16 12h1" />
       <path d="M21 12v.01" />
       <path d="M12 21v-1" />
+    </>
+  ),
+  star: () => (
+    <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />
+  ),
+  "shield-check": () => (
+    <>
+      <path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z" />
+      <path d="m9 12 2 2 4-4" />
+    </>
+  ),
+  "rotate-ccw": () => (
+    <>
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+      <path d="M3 3v5h5" />
     </>
   ),
 };

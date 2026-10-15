@@ -31,6 +31,20 @@ describe("Icon component", () => {
     expect(screen.getByTestId("check-icon")).toBeInTheDocument();
   });
 
+  it("renders star, shield-check, and rotate-ccw icons", () => {
+    render(
+      <>
+        <Icon name="star" data-testid="star-icon" fill="#f2a900" />
+        <Icon name="shield-check" data-testid="shield-icon" />
+        <Icon name="rotate-ccw" data-testid="rotate-icon" />
+      </>,
+    );
+    expect(screen.getByTestId("star-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("star-icon")).toHaveAttribute("fill", "#f2a900");
+    expect(screen.getByTestId("shield-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("rotate-icon")).toBeInTheDocument();
+  });
+
   it("returns null for non-existent icon", () => {
     // @ts-expect-error Testing invalid icon name
     const { container } = render(<Icon name="non_existent" />);
