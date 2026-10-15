@@ -57,11 +57,18 @@ frontend/ecom-ui/
 │   │   │   └── pages/          # SearchPage, ProductDetailPage
 │   │   └── vite.config.ts      # Remote federation exposing SearchPage, ProductDetailPage
 │   │
-│   └── checkout/               # [Port 3002] Checkout Remote MFE
+│   ├── checkout/               # [Port 3002] Checkout Remote MFE
+│   │   ├── src/
+│   │   │   ├── features/       # Cart, checkout flow, payment mutation, order success
+│   │   │   └── pages/          # CartPage, CheckoutPage, PaymentPage, OrderSuccessPage
+│   │   └── vite.config.ts      # Remote federation exposing CartPage, CheckoutPage, ...
+│   │
+│   └── seo-ssr/                # [Port 3003] Next.js 15 SEO & Public SSR Application
 │       ├── src/
-│       │   ├── features/       # Cart, checkout flow, payment mutation, order success
-│       │   └── pages/          # CartPage, CheckoutPage, PaymentPage, OrderSuccessPage
-│       └── vite.config.ts      # Remote federation exposing CartPage, CheckoutPage, ...
+│       │   ├── app/            # App Router: /, /products/[slug], /categories/[slug], /search, sitemap, robots
+│       │   ├── components/     # Header, Footer (SSR-friendly with transition boundaries)
+│       │   └── services/       # Server-side direct API fetchers with ISR caching
+│       └── next.config.ts
 │
 ├── packages/
 │   ├── ui/                     # Shared UI Components & Tailwind Design System
@@ -121,9 +128,26 @@ pnpm dev
 Sau khi khởi chạy:
 | Ứng dụng | Địa chỉ Local | Vai trò |
 | :--- | :--- | :--- |
+| **Nginx Gateway** | `http://localhost:8080` | Reverse Proxy kết hợp SSR + SPA (Bật qua `pnpm gateway:up`) |
+| **SEO SSR** | `http://localhost:3003` | Next.js 15 SSR cho Trang chủ, PDP, Search, Sitemap |
 | **Shell Host** | `http://localhost:3000` | Trang chủ, Auth, Account, Host chính |
 | **Catalog MFE** | `http://localhost:3001` | Remote Micro-frontend danh mục & sản phẩm |
 | **Checkout MFE** | `http://localhost:3002` | Remote Micro-frontend giỏ hàng & thanh toán |
+
+#### 🎛️ Bật / Tắt (Toggle) Nginx Gateway & SSR
+```bash
+# Bật Gateway Nginx Local
+pnpm gateway:up
+
+# Tắt Gateway Nginx Local
+pnpm gateway:down
+
+# Reload cấu hình Nginx sau khi sửa
+pnpm gateway:reload
+```
+* **Bật/Tắt SSR tức thì:**
+  * Mặc định truy cập `http://localhost:8080` $\rightarrow$ Bật SSR (dùng `apps/seo-ssr`).
+  * Thêm param `?ssr=0` hoặc cookie `disable_ssr=1` $\rightarrow$ Tắt SSR (tự động fallback 100% về Shell SPA `apps/shell`).
 
 > [!NOTE]
 > Để các tính năng call API hoạt động đầy đủ, hãy đảm bảo Backend (`ecom-ddd-be`) đang chạy tại cổng `http://localhost:4000`.
