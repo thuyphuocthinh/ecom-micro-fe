@@ -74,11 +74,7 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
             <span className="font-semibold text-sm sm:text-base text-ink line-clamp-1">
               {HERO_PRODUCT.name}
             </span>
-            {discountLabel && (
-              <Tag variant="sale" size="sm">
-                {discountLabel}
-              </Tag>
-            )}
+            {discountLabel && <Tag tone="sale">{discountLabel}</Tag>}
           </div>
 
           <div className="flex items-baseline gap-2.5">

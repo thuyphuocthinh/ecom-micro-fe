@@ -9,11 +9,7 @@ import {
   BEST_SELLER_PRODUCTS,
   HOME_CATEGORIES,
 } from "@/features/home/data/home-data.ts";
-import type {
-  HomeProduct,
-  HomeCategory,
-  HomeCategoryKind,
-} from "@/features/home/types/home.ts";
+import type { HomeProduct, HomeCategory } from "@/features/home/types/home.ts";
 
 function mapApiProductToHomeProduct(p: ApiProduct, index: number): HomeProduct {
   const fallback = BEST_SELLER_PRODUCTS[index % BEST_SELLER_PRODUCTS.length];

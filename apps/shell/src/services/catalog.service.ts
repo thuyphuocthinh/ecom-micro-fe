@@ -27,32 +27,18 @@ export interface ApiCategory {
 
 export const catalogService = {
   async getBestsellers(limit = 8): Promise<ApiProduct[]> {
-    const res = await api.get<ApiProduct[]>("/catalog/products", {
+    const res = await api.get("/catalog/products", {
       query: { limit, sort: "newest" },
     });
-    if (Array.isArray(res)) return res;
-    if (
-      res &&
-      typeof res === "object" &&
-      "data" in res &&
-      Array.isArray((res as { data: ApiProduct[] }).data)
-    ) {
-      return (res as { data: ApiProduct[] }).data;
-    }
+    const items = res?.data;
+    if (Array.isArray(items)) return items as unknown as ApiProduct[];
     return [];
   },
 
   async getCategories(): Promise<ApiCategory[]> {
-    const res = await api.get<ApiCategory[]>("/catalog/categories");
-    if (Array.isArray(res)) return res;
-    if (
-      res &&
-      typeof res === "object" &&
-      "data" in res &&
-      Array.isArray((res as { data: ApiCategory[] }).data)
-    ) {
-      return (res as { data: ApiCategory[] }).data;
-    }
+    const res = await api.get("/catalog/categories");
+    const items = res?.data;
+    if (Array.isArray(items)) return items as unknown as ApiCategory[];
     return [];
   },
 };

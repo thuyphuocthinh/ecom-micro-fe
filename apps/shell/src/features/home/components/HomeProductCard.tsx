@@ -81,9 +81,7 @@ export function HomeProductCard({
 
           {discountLabel && (
             <div className="absolute left-3 top-3">
-              <Tag variant="sale" size="sm">
-                {discountLabel}
-              </Tag>
+              <Tag tone="sale">{discountLabel}</Tag>
             </div>
           )}
         </div>

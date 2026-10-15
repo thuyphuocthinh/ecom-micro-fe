@@ -9,10 +9,6 @@ export function useProductFacetsQuery(
 ) {
   return useQuery<CategoryFacet[], Error>({
     queryKey: queryKeys.products.facets(filters),
-    queryFn: async () => {
-      const res = await productService.getProductFacets(filters, parentId);
-      if (Array.isArray(res)) return res;
-      return res?.data ?? [];
-    },
+    queryFn: () => productService.getProductFacets(filters, parentId),
   });
 }

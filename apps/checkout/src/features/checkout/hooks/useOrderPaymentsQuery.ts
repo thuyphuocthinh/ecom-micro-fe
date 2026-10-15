@@ -28,7 +28,7 @@ export function useStartPaymentMutation() {
       const idempotencyKey = createIdempotencyKey();
       return checkoutService.startPayment(orderId, idempotencyKey);
     },
-    onSuccess: (payment, { orderId }) => {
+    onSuccess: (_payment, { orderId }) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.checkout.payments(orderId),
       });

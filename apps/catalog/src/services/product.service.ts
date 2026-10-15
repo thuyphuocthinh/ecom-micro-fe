@@ -37,7 +37,7 @@ export const productService = {
       query.limit = params.limit;
     }
 
-    return api.get<Product[]>("/catalog/products", {
+    return api.get("/catalog/products", {
       query,
     }) as unknown as Promise<GetProductsResponse>;
   },

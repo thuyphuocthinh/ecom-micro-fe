@@ -133,7 +133,7 @@ export function CartItemRow({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
+            size="md"
             disabled={disabled}
             aria-label={`Xoá ${productName} khỏi giỏ hàng`}
             onClick={() => onRemove(item.skuId)}

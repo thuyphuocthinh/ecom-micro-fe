@@ -33,8 +33,9 @@ export function getSkuSwatchHex(sku: Sku): string {
   if (sku.attributes?.hex && typeof sku.attributes.hex === "string") {
     return sku.attributes.hex;
   }
-  const colorName =
-    sku.attributes?.color || sku.attributes?.colour || sku.name || "";
+  const colorAttr =
+    sku.attributes?.color ?? sku.attributes?.colour ?? sku.name ?? "";
+  const colorName = typeof colorAttr === "string" ? colorAttr : "";
   const normalized = colorName.toLowerCase().trim();
   for (const [key, hex] of Object.entries(COLOR_HEX_MAP)) {
     if (normalized.includes(key)) {
