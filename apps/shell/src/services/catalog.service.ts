@@ -9,19 +9,17 @@ export interface ApiProduct {
   minPrice: number | null;
   onSale: boolean;
   discountPercent?: number;
-  rating?: number;
-  reviewsCount?: number;
   skus?: Array<{
     id: string;
     price: number;
-    originalPrice?: number | null;
+    /** The price before the discount, shown crossed out. */
+    compareAtPrice?: number | null;
   }>;
 }
 
 export interface ApiCategory {
   id: string;
   name: string;
-  slug?: string;
   description?: string | null;
 }
 

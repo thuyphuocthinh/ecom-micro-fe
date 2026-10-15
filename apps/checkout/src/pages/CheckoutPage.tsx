@@ -137,7 +137,7 @@ export function CheckoutPage() {
     return (
       <div className="min-h-screen bg-canvas flex flex-col">
         <CheckoutStepper currentStep={2} />
-        <main className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <div className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
           <div className="size-16 rounded-full bg-surface-sunken flex items-center justify-center text-muted">
             <Icon name="cart" size={32} />
           </div>
@@ -152,7 +152,7 @@ export function CheckoutPage() {
               Quay lại giỏ hàng
             </Button>
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -164,7 +164,7 @@ export function CheckoutPage() {
     <div className="min-h-screen bg-canvas flex flex-col">
       <CheckoutStepper currentStep={2} />
 
-      <main className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-16 w-full">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-16 w-full">
         <h1 className="font-head text-3xl sm:text-4xl font-bold text-ink mb-7">
           Đặt hàng
         </h1>
@@ -201,7 +201,7 @@ export function CheckoutPage() {
             />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -2,8 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   formatVND,
   calculateDiscountPercent,
-  formatReviewCount,
-  formatRating,
 } from "@/features/home/utils/format.ts";
 
 describe("format utils", () => {
@@ -19,17 +17,5 @@ describe("format utils", () => {
     expect(calculateDiscountPercent(100, null)).toBeNull();
     expect(calculateDiscountPercent(100, 100)).toBeNull();
     expect(calculateDiscountPercent(120, 100)).toBeNull();
-  });
-
-  it("formatReviewCount formats numbers with thousands separators", () => {
-    expect(formatReviewCount(1240)).toMatch(/1[.,]240/);
-    expect(formatReviewCount(0)).toBe("0");
-    expect(formatReviewCount(-5)).toBe("0");
-  });
-
-  it("formatRating formats ratings with 1 decimal", () => {
-    expect(formatRating(4.8)).toMatch(/4[.,]8/);
-    expect(formatRating(5)).toMatch(/5[.,]0/);
-    expect(formatRating(NaN)).toMatch(/0[.,]0/);
   });
 });

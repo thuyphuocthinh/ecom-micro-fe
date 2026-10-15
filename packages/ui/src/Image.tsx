@@ -21,6 +21,7 @@ export interface ImageProps extends Omit<ComponentProps<"img">, "src"> {
 /**
  * Image component hỗ trợ fallback khi ảnh lỗi hoặc thiếu src,
  * hỗ trợ fallbackSrc và tùy chọn preload ảnh vào document head.
+ * Mặc định tải lười (`loading="lazy"`, `decoding="async"`); trang có thể đè bằng thuộc tính của riêng nó.
  */
 export function Image({
   src,
@@ -105,6 +106,10 @@ export function Image({
 
   return (
     <img
+      // Lazy by default: a picture outside the screen is not fetched until the customer scrolls near it.
+      // A page that must show it at once (the main photo of a product) passes loading="eager".
+      loading="lazy"
+      decoding="async"
       src={currentSrc}
       alt={alt}
       className={className}

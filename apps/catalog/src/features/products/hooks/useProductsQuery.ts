@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { productService } from "@/services/product.service.ts";
 import { queryKeys } from "@/constants/queryKeys.ts";
 import type { Product, ProductFilterParams, ProductsPageMeta } from "@/types";
@@ -16,6 +16,9 @@ export function useProductsQuery(
 
   return useInfiniteQuery<ProductsPageData, Error>({
     queryKey: queryKeys.products.list(filters),
+    // Changing a filter or the sort keeps showing the previous results (flagged `isPlaceholderData`)
+    // until the new ones arrive, instead of dropping the list for a skeleton (AC-10)
+    placeholderData: keepPreviousData,
     initialPageParam: isNumberedPaging ? 1 : undefined,
     queryFn: async ({ pageParam }) => {
       const res = await productService.getProducts({

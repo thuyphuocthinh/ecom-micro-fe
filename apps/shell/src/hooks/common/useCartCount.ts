@@ -14,7 +14,8 @@ export function useCartCount(enabled = true) {
   const query = useQuery({
     queryKey: queryKeys.cart.summary(),
     queryFn: async () => {
-      const res = await cartService.getCart();
+      // silent: a failure of this count is not worth a message (the shell restores the session quietly)
+      const res = await cartService.getCart({ silent: true });
       return (res.data || {}) as CartSummary;
     },
     enabled,

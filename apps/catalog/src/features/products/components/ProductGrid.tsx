@@ -6,6 +6,8 @@ export interface ProductGridProps {
   products: Product[];
   categoryNames?: Record<string, string>;
   isLoading?: boolean;
+  /** These are the previous results, shown while the new ones load: dimmed and marked busy. */
+  isStale?: boolean;
   skeletonCount?: number;
   onAddToCart?: (product: Product) => void;
   onClearFilters?: () => void;
@@ -15,6 +17,7 @@ export function ProductGrid({
   products,
   categoryNames = {},
   isLoading = false,
+  isStale = false,
   skeletonCount = 6,
   onAddToCart,
   onClearFilters,
@@ -44,7 +47,13 @@ export function ProductGrid({
   }
 
   return (
-    <div className="relative min-w-0">
+    <div
+      data-testid="product-grid"
+      aria-busy={isStale}
+      className={`relative min-w-0 transition-opacity duration-150 ${
+        isStale ? "opacity-60" : ""
+      }`}
+    >
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-7 gap-x-5 list-none m-0 p-0">
         {products.map((product) => (
           <li key={product.id} className="h-full flex flex-col">

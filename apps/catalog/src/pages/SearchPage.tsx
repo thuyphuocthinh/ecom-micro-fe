@@ -77,13 +77,17 @@ export function SearchPage() {
   const {
     data: productsData,
     isLoading,
-    isFetching,
+    isPlaceholderData,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
   } = useProductsQuery(filters, 12);
 
-  const isProductsLoading = isLoading || (isFetching && !isFetchingNextPage);
+  // The skeleton is only for the very first load, when there is nothing to show yet. A refresh in the
+  // background changes nothing on screen, and a new filter keeps the old results (dimmed) until the
+  // new ones arrive (AC-9, AC-10).
+  const isProductsLoading = isLoading;
+  const isProductsStale = isPlaceholderData;
 
   // Flattened products array
   const products = useMemo(
@@ -439,12 +443,13 @@ export function SearchPage() {
             products={products}
             categoryNames={categoryNames}
             isLoading={isProductsLoading}
+            isStale={isProductsStale}
             onAddToCart={handleAddToCart}
             onClearFilters={handleClearAllFilters}
           />
 
           {/* Load More Pagination */}
-          {!isProductsLoading && hasNextPage && (
+          {!isProductsLoading && !isProductsStale && hasNextPage && (
             <div className="flex justify-center pt-4">
               <Button
                 type="button"

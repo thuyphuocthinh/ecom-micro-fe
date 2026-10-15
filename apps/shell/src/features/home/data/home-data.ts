@@ -1,9 +1,14 @@
 import type {
+  HomeCategoryDecoration,
   HomeProduct,
-  HomeCategory,
+  HomeProductDecoration,
   ValueProp,
 } from "@/features/home/types/home.ts";
 
+/**
+ * The featured card of the hero. It is a showcase of the design, not a product of the catalog (the
+ * catalog has no such product), so it is not shown by the API-driven sections below.
+ */
 export const HERO_PRODUCT: HomeProduct = {
   id: "prod-aero-2",
   skuId: "sku-aero-2-navy",
@@ -13,144 +18,32 @@ export const HERO_PRODUCT: HomeProduct = {
   kind: "audio",
   tint: "#dce6ff",
   tone: "#101828",
-  rating: 4.8,
-  reviews: 1240,
 };
 
-export const BEST_SELLER_PRODUCTS: HomeProduct[] = [
-  {
-    id: "prod-aero-2",
-    skuId: "sku-aero-2-navy",
-    name: "Tai nghe không dây Aero 2",
-    price: 3990000,
-    oldPrice: 4590000,
-    kind: "audio",
-    tint: "#dce6ff",
-    tone: "#101828",
-    rating: 4.8,
-    reviews: 1240,
-  },
-  {
-    id: "prod-gan-65w",
-    skuId: "sku-gan-65w",
-    name: "Sạc nhanh GaN 65W",
-    price: 690000,
-    oldPrice: null,
-    kind: "tech",
-    tint: "#e3f1ea",
-    tone: "#a9d3bd",
-    rating: 4.7,
-    reviews: 860,
-  },
-  {
-    id: "prod-cotton-tee",
-    skuId: "sku-cotton-tee-black",
-    name: "Áo thun cotton cổ tròn",
-    price: 249000,
-    oldPrice: null,
-    kind: "fashion",
-    tint: "#fdeedd",
-    tone: "#f2c48f",
-    rating: 4.6,
-    reviews: 2310,
-  },
-  {
-    id: "prod-backpack-18l",
-    skuId: "sku-backpack-18l",
-    name: "Balo chống nước 18L",
-    price: 890000,
-    oldPrice: null,
-    kind: "fashion",
-    tint: "#e9edf3",
-    tone: "#b8c2d3",
-    rating: 4.7,
-    reviews: 530,
-  },
-  {
-    id: "prod-thermo-bottle",
-    skuId: "sku-thermo-bottle-500ml",
-    name: "Bình giữ nhiệt 500 ml",
-    price: 320000,
-    oldPrice: 390000,
-    kind: "life",
-    tint: "#ece8f8",
-    tone: "#cdc3ee",
-    rating: 4.9,
-    reviews: 1870,
-  },
-  {
-    id: "prod-desk-lamp",
-    skuId: "sku-desk-lamp-led",
-    name: "Đèn bàn LED cảm ứng",
-    price: 540000,
-    oldPrice: null,
-    kind: "life",
-    tint: "#fff3d6",
-    tone: "#f3d58a",
-    rating: 4.5,
-    reviews: 410,
-  },
-  {
-    id: "prod-speaker-mini",
-    skuId: "sku-speaker-mini-bt",
-    name: "Loa Bluetooth mini",
-    price: 1290000,
-    oldPrice: null,
-    kind: "audio",
-    tint: "#e0f2f6",
-    tone: "#9dd1dc",
-    rating: 4.6,
-    reviews: 690,
-  },
-  {
-    id: "prod-mech-keyboard",
-    skuId: "sku-mech-keyboard-wireless",
-    name: "Bàn phím cơ không dây",
-    price: 1850000,
-    oldPrice: null,
-    kind: "tech",
-    tint: "#f0e6ee",
-    tone: "#d9bdd3",
-    rating: 4.8,
-    reviews: 320,
-  },
+/**
+ * Only the look of a product card (the colour and the drawing that stands for the picture), taken in turn
+ * by position. Never a name, a price or a number: those come from the API.
+ */
+export const PRODUCT_DECORATIONS: HomeProductDecoration[] = [
+  { kind: "audio", tint: "#dce6ff", tone: "#101828" },
+  { kind: "tech", tint: "#e3f1ea", tone: "#a9d3bd" },
+  { kind: "fashion", tint: "#fdeedd", tone: "#f2c48f" },
+  { kind: "fashion", tint: "#e9edf3", tone: "#b8c2d3" },
+  { kind: "life", tint: "#ece8f8", tone: "#cdc3ee" },
+  { kind: "life", tint: "#fff3d6", tone: "#f3d58a" },
+  { kind: "audio", tint: "#e0f2f6", tone: "#9dd1dc" },
+  { kind: "tech", tint: "#f0e6ee", tone: "#d9bdd3" },
 ];
 
-export const HOME_CATEGORIES: HomeCategory[] = [
-  {
-    id: "cat-audio",
-    slug: "audio",
-    name: "Âm thanh",
-    description: "Tai nghe, loa Bluetooth",
-    tint: "#dce6ff",
-    shapeBackground: "#bcd0ff",
-    spanRow: "md:row-span-2",
-  },
-  {
-    id: "cat-tech",
-    slug: "tech",
-    name: "Phụ kiện công nghệ",
-    description: "Sạc nhanh, cáp, bàn phím, chuột",
-    tint: "#e3f1ea",
-    shapeBackground: "#b9dcc9",
-    spanCol: "md:col-span-2",
-  },
-  {
-    id: "cat-fashion",
-    slug: "fashion",
-    name: "Thời trang",
-    description: "Áo thun, áo khoác, ví",
-    tint: "#fdeedd",
-    shapeBackground: "#f6cfa3",
-  },
-  {
-    id: "cat-life",
-    slug: "life",
-    name: "Đời sống",
-    description: "Bình giữ nhiệt, đèn bàn",
-    tint: "#ece8f8",
-    shapeBackground: "#d3cbef",
-  },
+/**
+ * Only the look of a category tile (colours; the first tiles are bigger), taken in turn by position. The
+ * name and the link of a tile come from the API.
+ */
+export const HOME_CATEGORY_DECORATIONS: HomeCategoryDecoration[] = [
+  { tint: "#dce6ff", shapeBackground: "#bcd0ff", spanRow: "md:row-span-2" },
+  { tint: "#e3f1ea", shapeBackground: "#b9dcc9", spanCol: "md:col-span-2" },
+  { tint: "#fdeedd", shapeBackground: "#f6cfa3" },
+  { tint: "#ece8f8", shapeBackground: "#d3cbef" },
 ];
 
 export const VALUE_PROPS: ValueProp[] = [

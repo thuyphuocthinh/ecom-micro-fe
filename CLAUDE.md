@@ -64,5 +64,16 @@ This project enforces SDD with `speckit-ai` (same flow as the backend), plus the
 
 **Design tokens and base components live in `@ecom/ui`** (`packages/ui`). Each app's `index.css` imports Tailwind, then `@import "@ecom/ui/theme.css";`. Use the token classes (`bg-brand`, `text-ink`, `rounded-control`, `font-head`...), never raw hex colours, and the components `Button`, `TextField`, `PasswordField`, `CodeInput`, `Tag`, `Card`, `SkipLink`, `Spinner` (and `buttonClasses()` / `linkClasses()` for links) instead of rebuilding them. The values are copied from `store.css` of the canvas "Ecom storefront"; change them in `packages/ui/src/theme.css` only. A link that must look like a button: `<Link className={buttonClasses({ variant: "primary" })}>`.
 
+## Speed and correctness rules (from the `frontend-fixes` work)
+- **Images are lazy by default** (`Image` from `@ecom/ui` sets `loading="lazy"` and `decoding="async"`). A picture that is on screen at once (the main photo of a product) passes `loading="eager"` and `fetchPriority="high"`.
+- **A typed filter never writes the URL on every key.** Use `useDebouncedSearchParam(name)` (shell `hooks/common`): the box follows the keys, the URL is written once after 300 ms and with `replace`. `useDebouncedValue` is the plain version for a value that is not in the URL.
+- **Independent requests start together.** Do not make one query wait for another that it does not need (the cart count does not wait for `/users/me`).
+- **Leaving (logout, expired session) forgets only the person's data:** `clearUserData(queryClient)` (`utils/query-cache.ts`), never `queryClient.clear()`. A new query root that belongs to the person must be added to `USER_QUERY_ROOTS`.
+- **Lists keep the previous results while the next ones load** (`placeholderData: keepPreviousData`, the grid is dimmed and `aria-busy`); the skeleton is only for the first load. Slow-changing data gets a `staleTime`.
+- **Pages of other apps are loaded ahead** when the browser is idle and on hover or focus: `usePrefetchRemotes`, `prefetchOnIntent(path)` (shell `libs/remote-loaders.ts`). A new remote page is added to `REMOTE_KEYS` and to the loaders.
+- **Links of the store come from `utils/category-link.ts`** (`searchHrefForCategory(id)`, `SALE_HREF`, `productHref(id)`): a category link carries the id the API gave, never a made-up name. The search page reads `q`, `category`, `onSale`, `inStock`, `minPrice`, `maxPrice`, `sort`.
+- **One `<main id="main">` per page, owned by the layout** (`StoreLayout`, `AuthLayout`, `CatalogLayout`, `CheckoutLayout`). Pages use `<div>` or `<section>`.
+- **Nothing is made up.** No sample products, ratings or counts when the API has none: show an empty or an error state.
+
 ## Commit Convention
 Conventional Commits, enforced by commitlint + a Husky pre-commit hook that lints and formats staged files automatically.

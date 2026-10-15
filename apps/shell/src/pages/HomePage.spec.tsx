@@ -6,7 +6,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { HomePage } from "@/pages/HomePage.tsx";
 import { GUEST_CART_STORAGE_KEY } from "@/utils/cart.ts";
-import { catalogService, type ApiProduct } from "@/services/catalog.service.ts";
+import {
+  catalogService,
+  type ApiCategory,
+  type ApiProduct,
+} from "@/services/catalog.service.ts";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -33,10 +37,47 @@ function renderHomePage() {
   );
 }
 
+const API_CATEGORIES: ApiCategory[] = [
+  { id: "seed_cat_electronics", name: "Điện tử" },
+  { id: "seed_cat_fashion", name: "Thời trang" },
+  { id: "seed_cat_home", name: "Đời sống" },
+  {
+    id: "seed_cat_books",
+    name: "Sách",
+    description: "Sách giấy và sách điện tử",
+  },
+];
+
+function apiProduct(
+  index: number,
+  overrides: Partial<ApiProduct> = {},
+): ApiProduct {
+  return {
+    id: `prod-${index}`,
+    name: `Sản phẩm số ${index}`,
+    minPrice: 100000 * index,
+    onSale: false,
+    skus: [{ id: `sku-${index}`, price: 100000 * index }],
+    ...overrides,
+  };
+}
+
+const API_PRODUCTS: ApiProduct[] = Array.from({ length: 8 }, (_, i) =>
+  apiProduct(i + 1),
+);
+
+/** The API as it answers when everything is fine. */
+function mockHomeApi() {
+  vi.spyOn(catalogService, "getCategories").mockResolvedValue(API_CATEGORIES);
+  vi.spyOn(catalogService, "getBestsellers").mockResolvedValue(API_PRODUCTS);
+}
+
 describe("HomePage Integration (shell-home)", () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     vi.clearAllMocks();
     localStorage.clear();
+    mockHomeApi();
   });
 
   it("renders Hero Section with title, description, CTAs and featured card (AC-1)", () => {
@@ -73,82 +114,212 @@ describe("HomePage Integration (shell-home)", () => {
     expect(within(heroSection).getByText("Giảm 13%")).toBeInTheDocument();
   });
 
-  it("renders Category Section with 4 category cards (AC-2)", () => {
+  it("renders Category Section with the categories of the API (AC-2, AC-17)", async () => {
     renderHomePage();
 
     expect(
       screen.getByRole("heading", { name: "Mua theo nhóm" }),
     ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole("heading", { name: "Âm thanh" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Phụ kiện công nghệ" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Thời trang" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Đời sống" }),
-    ).toBeInTheDocument();
-
-    const audioLink = screen.getByRole("link", {
-      name: /Âm thanh Tai nghe, loa Bluetooth/i,
-    });
-    expect(audioLink).toHaveAttribute("href", "/search?category=audio");
+    for (const category of API_CATEGORIES) {
+      expect(
+        await screen.findByRole("heading", { name: category.name }),
+      ).toBeInTheDocument();
+    }
   });
 
-  it("renders Best Sellers Section with 8 products and 'Xem tất cả sản phẩm' link (AC-3)", () => {
+  it("each category tile leads to the search page by the id the API gave (AC-17)", async () => {
+    renderHomePage();
+
+    for (const category of API_CATEGORIES) {
+      const tile = (
+        await screen.findByRole("heading", { name: category.name })
+      ).closest("a");
+      expect(tile).toHaveAttribute("href", `/search?category=${category.id}`);
+    }
+    // nothing made up: no link by the old fake names
+    const hrefs = screen
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href"));
+    for (const fake of ["audio", "tech", "fashion", "lifestyle", "life"]) {
+      expect(hrefs).not.toContain(`/search?category=${fake}`);
+    }
+  });
+
+  it("shows a category description only when the API has one (AC-17)", async () => {
+    renderHomePage();
+
+    expect(
+      await screen.findByText("Sách giấy và sách điện tử"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Tai nghe, loa Bluetooth"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders Best Sellers Section with the 8 products of the API and the all-products link (AC-3)", async () => {
     renderHomePage();
 
     expect(
       screen.getByRole("heading", { name: "Bán chạy tuần này" }),
     ).toBeInTheDocument();
-
     expect(
       screen.getByRole("link", { name: "Xem tất cả sản phẩm" }),
     ).toHaveAttribute("href", "/search");
 
+    for (const product of API_PRODUCTS) {
+      expect(
+        await screen.findByRole("heading", { name: product.name }),
+      ).toBeInTheDocument();
+    }
+  });
+
+  it("a product card leads to the page of that product (AC-21)", async () => {
+    renderHomePage();
+
+    const card = (
+      await screen.findByRole("heading", { name: "Sản phẩm số 3" })
+    ).closest("a");
+
+    expect(card).toHaveAttribute("href", "/products/prod-3");
+  });
+
+  it("a product card has no star, no score and no review count (AC-19)", async () => {
+    renderHomePage();
+    await screen.findByRole("heading", { name: "Sản phẩm số 1" });
+
+    expect(screen.queryByText(/Đánh giá/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\(\d[\d.,]*\)/)).not.toBeInTheDocument();
+    const card = screen
+      .getByRole("heading", { name: "Sản phẩm số 1" })
+      .closest("li") as HTMLElement;
+    expect(card.querySelector("svg")).toBeNull();
+    // the price and the add button stay
+    expect(within(card).getByText(/100\.000/)).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Sạc nhanh GaN 65W" }),
+      within(card).getByRole("button", { name: "Thêm vào giỏ: Sản phẩm số 1" }),
+    ).toBeInTheDocument();
+  });
+
+  it("a product on sale shows the crossed-out price and the discount from compareAtPrice", async () => {
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValue([
+      apiProduct(1, {
+        name: "Áo giảm giá",
+        minPrice: 3990000,
+        onSale: true,
+        skus: [{ id: "sku-sale", price: 3990000, compareAtPrice: 4590000 }],
+      }),
+    ]);
+
+    renderHomePage();
+
+    const card = (
+      await screen.findByRole("heading", { name: "Áo giảm giá" })
+    ).closest("li") as HTMLElement;
+    expect(within(card).getByText("Giảm 13%")).toBeInTheDocument();
+    expect(within(card).getByText(/4\.590\.000/)).toBeInTheDocument();
+  });
+
+  it("shows skeleton cards while the products load (AC-20)", async () => {
+    let resolve!: (value: ApiProduct[]) => void;
+    vi.spyOn(catalogService, "getBestsellers").mockReturnValue(
+      new Promise<ApiProduct[]>((r) => {
+        resolve = r;
+      }),
+    );
+
+    renderHomePage();
+
+    expect(
+      document.querySelectorAll(".animate-pulse").length,
+    ).toBeGreaterThanOrEqual(8);
+    expect(screen.queryByText("Chưa có sản phẩm nào")).not.toBeInTheDocument();
+    resolve([]);
+    await screen.findByText("Chưa có sản phẩm nào");
+  });
+
+  it("when the API has no products it says so, and shows no sample product (AC-20)", async () => {
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValue([]);
+
+    renderHomePage();
+
+    expect(await screen.findByText("Chưa có sản phẩm nào")).toBeInTheDocument();
+    for (const sample of [
+      "Sạc nhanh GaN 65W",
+      "Áo thun cotton cổ tròn",
+      "Balo chống nước 18L",
+      "Loa Bluetooth mini",
+    ]) {
+      expect(screen.queryByText(sample)).not.toBeInTheDocument();
+    }
+  });
+
+  it("when the API has no categories it says so, and shows no sample category (AC-20)", async () => {
+    vi.spyOn(catalogService, "getCategories").mockResolvedValue([]);
+
+    renderHomePage();
+
+    expect(await screen.findByText("Chưa có danh mục nào")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Âm thanh" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Phụ kiện công nghệ" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the products fail to load it shows an error with a retry that asks again (AC-20)", async () => {
+    const user = userEvent.setup();
+    const getBestsellers = vi
+      .spyOn(catalogService, "getBestsellers")
+      .mockRejectedValueOnce(new Error("boom"));
+
+    renderHomePage();
+
+    expect(
+      await screen.findByText("Không tải được danh sách sản phẩm."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Sạc nhanh GaN 65W")).not.toBeInTheDocument();
+
+    getBestsellers.mockResolvedValue(API_PRODUCTS);
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
+
+    expect(
+      await screen.findByRole("heading", { name: "Sản phẩm số 1" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Áo thun cotton cổ tròn" }),
-    ).toBeInTheDocument();
+      screen.queryByText("Không tải được danh sách sản phẩm."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("when the categories fail to load it shows an error with a retry (AC-20)", async () => {
+    const user = userEvent.setup();
+    const getCategories = vi
+      .spyOn(catalogService, "getCategories")
+      .mockRejectedValueOnce(new Error("boom"));
+
+    renderHomePage();
     expect(
-      screen.getByRole("heading", { name: "Balo chống nước 18L" }),
+      await screen.findByText("Không tải được danh mục."),
     ).toBeInTheDocument();
+
+    getCategories.mockResolvedValue(API_CATEGORIES);
+    await user.click(screen.getByRole("button", { name: "Thử lại" }));
+
     expect(
-      screen.getByRole("heading", { name: "Bình giữ nhiệt 500 ml" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Đèn bàn LED cảm ứng" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Loa Bluetooth mini" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: "Bàn phím cơ không dây" }),
+      await screen.findByRole("heading", { name: "Điện tử" }),
     ).toBeInTheDocument();
   });
 
   it("renders dynamically fetched products from catalog API", async () => {
-    const mockProducts: ApiProduct[] = [
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValueOnce([
       {
         id: "api-prod-1",
         name: "Tai nghe chống ồn Pro Max",
         minPrice: 5000000,
         onSale: true,
-        rating: 5.0,
-        reviewsCount: 99,
-        skus: [{ id: "sku-api-1", price: 5000000, originalPrice: 6000000 }],
+        skus: [{ id: "sku-api-1", price: 5000000, compareAtPrice: 6000000 }],
       },
-    ];
-
-    vi.spyOn(catalogService, "getBestsellers").mockResolvedValueOnce(
-      mockProducts,
-    );
+    ]);
 
     renderHomePage();
 
@@ -215,19 +386,17 @@ describe("HomePage Integration (shell-home)", () => {
 
     renderHomePage();
 
-    const ganButton = screen.getByRole("button", {
-      name: "Thêm vào giỏ: Sạc nhanh GaN 65W",
+    const addButton = await screen.findByRole("button", {
+      name: "Thêm vào giỏ: Sản phẩm số 2",
     });
 
-    await user.click(ganButton);
-    await user.click(ganButton);
+    await user.click(addButton);
+    await user.click(addButton);
 
     const raw = localStorage.getItem(GUEST_CART_STORAGE_KEY);
     const cart = JSON.parse(raw!);
-    const ganItem = cart.find(
-      (i: { skuId: string }) => i.skuId === "sku-gan-65w",
-    );
-    expect(ganItem).toBeDefined();
-    expect(ganItem.quantity).toBe(2);
+    const item = cart.find((i: { skuId: string }) => i.skuId === "sku-2");
+    expect(item).toBeDefined();
+    expect(item.quantity).toBe(2);
   });
 });

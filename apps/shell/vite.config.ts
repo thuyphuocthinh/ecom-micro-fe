@@ -30,6 +30,8 @@ export default defineConfig(({ mode }) => {
       federation({
         name: "shell",
         hostInitInjectLocation: "entry",
+        // The types of the remotes are not used here (they are loaded at runtime): do not try to download them
+        dts: false,
         remotes: {
           catalog: {
             type: "module",

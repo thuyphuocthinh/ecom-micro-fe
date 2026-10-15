@@ -1,4 +1,11 @@
-import { useState, useEffect, useCallback, type ReactNode } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+  type ReactNode,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { session } from "@ecom/api";
@@ -7,6 +14,7 @@ import { userService } from "@/services/user.service.ts";
 import { useCurrentUser } from "@/features/profile/hooks/useCurrentUser.ts";
 import { useCartCount } from "@/hooks/common/useCartCount.ts";
 import { useLogoutMutation } from "@/features/auth/hooks/useLogoutMutation.ts";
+import { clearUserData } from "@/utils/query-cache.ts";
 import { AuthContext } from "./auth-context.ts";
 import type { AuthStatus, UserProfile } from "@/types";
 
@@ -35,14 +43,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     status = "guest";
   }
 
+  // Only a person who was shown as signed in is told the session expired. A token that was already dead
+  // when the page opened is a quiet return to guest (AC-19), not a message out of nowhere.
+  const wasSignedIn = useRef(false);
+  useEffect(() => {
+    if (status === "signedIn") wasSignedIn.current = true;
+  }, [status]);
+
   // Session expired listener (AC-23)
   useEffect(() => {
     return session.onExpired(() => {
+      const shouldTell = wasSignedIn.current;
+      wasSignedIn.current = false;
       session.clear();
-      queryClient.setQueryData(queryKeys.user.me(), null);
-      queryClient.clear();
+      clearUserData(queryClient);
       setSessionKey((k) => k + 1);
-      toast.info("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.");
+      if (shouldTell) {
+        toast.info("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại.");
+      }
     });
   }, [queryClient]);
 
@@ -53,8 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const token = session.getAccessToken() || session.getRefreshToken();
         if (!token) {
           session.clear();
-          queryClient.setQueryData(queryKeys.user.me(), null);
-          queryClient.clear();
+          clearUserData(queryClient);
           setSessionKey((k) => k + 1);
         } else {
           try {
@@ -69,8 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             });
           } catch {
             session.clear();
-            queryClient.setQueryData(queryKeys.user.me(), null);
-            queryClient.clear();
+            clearUserData(queryClient);
             setSessionKey((k) => k + 1);
           }
         }
@@ -80,10 +96,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("storage", handleStorage);
   }, [queryClient]);
 
-  // Cart query managed via dedicated query hook (AC-21)
-  const { cartCount } = useCartCount(status === "signedIn");
+  // The cart count is asked as soon as there is a token, at the same time as /users/me, not after it
+  // (AC-3): the two do not depend on each other, so waiting would only add a round trip.
+  const { cartCount } = useCartCount(hasToken);
 
-  const logoutMutation = useLogoutMutation();
+  // `mutateAsync` keeps the same identity between renders (the mutation object does not)
+  const { mutateAsync: logoutAsync } = useLogoutMutation();
 
   const login = useCallback(
     async (tokens: { accessToken: string; refreshToken: string }) => {
@@ -104,13 +122,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(async () => {
-    await logoutMutation.mutateAsync();
+    await logoutAsync();
     setSessionKey((k) => k + 1);
-  }, [logoutMutation]);
+  }, [logoutAsync]);
 
-  return (
-    <AuthContext.Provider value={{ status, user, cartCount, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+  // One object until something it holds changes: components that read the auth context are not
+  // re-rendered each time the provider renders for another reason (AC-6)
+  const value = useMemo(
+    () => ({ status, user, cartCount, login, logout }),
+    [status, user, cartCount, login, logout],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

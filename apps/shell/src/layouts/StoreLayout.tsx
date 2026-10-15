@@ -3,6 +3,7 @@ import { Outlet } from "react-router";
 import { SkipLink, Spinner, ErrorBoundary } from "@ecom/ui";
 import { Header } from "@/components/Header.tsx";
 import { Footer } from "@/components/Footer.tsx";
+import { usePrefetchRemotes } from "@/hooks/common/usePrefetchRemotes.ts";
 
 function PageFallback() {
   return (
@@ -17,6 +18,9 @@ function PageFallback() {
 }
 
 export function StoreLayout() {
+  // When the browser is idle, load the code of the other apps' pages ahead of time (AC-12)
+  usePrefetchRemotes();
+
   return (
     <div className="min-h-screen flex flex-col bg-bg text-ink font-body">
       <SkipLink />

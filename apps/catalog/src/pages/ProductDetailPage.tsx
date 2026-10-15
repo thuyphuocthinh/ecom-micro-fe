@@ -181,10 +181,7 @@ export function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      <main
-        id="main"
-        className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-8 pb-20"
-      >
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-8 pb-20">
         {/* Breadcrumb Navigation */}
         <nav
           aria-label="Đường dẫn"
@@ -251,7 +248,7 @@ export function ProductDetailPage() {
           categoryId={product.categoryId}
           categoryName={categoryName}
         />
-      </main>
+      </div>
     </div>
   );
 }

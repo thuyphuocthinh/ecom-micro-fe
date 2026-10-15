@@ -29,5 +29,8 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "yet-another-react-lightbox": "3.32.2"
   }
 }

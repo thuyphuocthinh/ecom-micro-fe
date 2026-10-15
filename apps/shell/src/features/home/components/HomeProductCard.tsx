@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { Button, Tag, Icon } from "@ecom/ui";
+import { Button, Tag } from "@ecom/ui";
 import type {
   HomeProduct,
   HomeCategoryKind,
@@ -7,9 +7,9 @@ import type {
 import {
   formatVND,
   calculateDiscountPercent,
-  formatRating,
-  formatReviewCount,
 } from "@/features/home/utils/format.ts";
+import { productHref } from "@/utils/category-link.ts";
+import { prefetchOnIntent } from "@/libs/remote-loaders.ts";
 
 export interface HomeProductCardProps {
   product: HomeProduct;
@@ -67,7 +67,8 @@ export function HomeProductCard({
   return (
     <li className="flex flex-col gap-3 group">
       <Link
-        to={`/search?search=${encodeURIComponent(product.name)}`}
+        to={productHref(product.id)}
+        {...prefetchOnIntent(productHref(product.id))}
         className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded-2xl"
       >
         <div className="relative aspect-square rounded-[18px] overflow-hidden transition-transform duration-200 group-hover:-translate-y-1">
@@ -100,23 +101,6 @@ export function HomeProductCard({
             {formatVND(product.oldPrice!)}
           </s>
         )}
-      </div>
-
-      <div className="flex items-center gap-1.5 text-[13.5px] text-muted">
-        <Icon
-          name="star"
-          size={16}
-          className="text-[#f2a900]"
-          fill="#f2a900"
-          stroke="#f2a900"
-        />
-        <span className="tabular-nums font-medium text-ink">
-          <span className="sr-only">Đánh giá </span>
-          {formatRating(product.rating)}
-        </span>
-        <span className="tabular-nums text-muted" aria-hidden="true">
-          ({formatReviewCount(product.reviews)})
-        </span>
       </div>
 
       <Button

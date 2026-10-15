@@ -1,4 +1,10 @@
-import { Image, Tag } from "@ecom/ui";
+import { useMemo, useState } from "react";
+import { Image, ImageViewer, Tag } from "@ecom/ui";
+import {
+  galleryIndexOf,
+  viewableImages,
+  viewerIndexOf,
+} from "../utils/gallery-viewer.ts";
 
 export interface GalleryImage {
   url?: string | null;
@@ -23,9 +29,30 @@ export function ProductGallery({
   discountBadge,
 }: ProductGalleryProps) {
   // Ensure we have at least 1 image
-  const displayImages =
-    images.length > 0 ? images : [{ url: null, label: "Mặt trước" }];
-  const currentImage = displayImages[activeIndex] ?? displayImages[0];
+  const displayImages = useMemo<GalleryImage[]>(
+    () => (images.length > 0 ? images : [{ url: null, label: "Mặt trước" }]),
+    [images],
+  );
+  const currentIndex = displayImages[activeIndex] ? activeIndex : 0;
+  const currentImage = displayImages[currentIndex];
+
+  // The popup shows the pictures that have an address; clicking the big photo opens it at that photo.
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const viewable = useMemo(
+    () => viewableImages(displayImages, productName),
+    [displayImages, productName],
+  );
+  const viewerIndex = viewerIndexOf(viewable, currentIndex);
+
+  const mainImage = (
+    <Image
+      src={currentImage.url || undefined}
+      alt={`${productName} - ${currentImage.label}`}
+      loading="eager"
+      fetchPriority="high"
+      className="size-full object-cover transition-opacity duration-200"
+    />
+  );
 
   return (
     <section
@@ -43,12 +70,32 @@ export function ProductGallery({
           </Tag>
         )}
 
-        <Image
-          src={currentImage.url || undefined}
-          alt={`${productName} - ${currentImage.label}`}
-          className="size-full object-cover transition-opacity duration-200"
-        />
+        {/* The big photo is what the customer came for and is on the screen at once: load it first
+            (see mainImage). The small ones below stay lazy (the default of Image). */}
+        {viewerIndex >= 0 ? (
+          <button
+            type="button"
+            aria-label="Phóng to ảnh"
+            onClick={() => setViewerOpen(true)}
+            className="size-full p-0 border-0 bg-transparent cursor-zoom-in"
+          >
+            {mainImage}
+          </button>
+        ) : (
+          mainImage
+        )}
       </div>
+
+      <ImageViewer
+        images={viewable}
+        open={viewerOpen}
+        index={Math.max(viewerIndex, 0)}
+        onIndexChange={(next) => {
+          const galleryIndex = galleryIndexOf(viewable, next);
+          if (galleryIndex >= 0) onSelectImage(galleryIndex);
+        }}
+        onClose={() => setViewerOpen(false)}
+      />
 
       {/* Thumbnails Navigation */}
       {displayImages.length > 1 && (

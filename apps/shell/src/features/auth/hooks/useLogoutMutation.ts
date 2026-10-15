@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { session } from "@ecom/api";
 import { authService } from "@/services/auth.service.ts";
+import { clearUserData } from "@/utils/query-cache.ts";
 
 export function useLogoutMutation() {
   const queryClient = useQueryClient();
@@ -13,7 +14,8 @@ export function useLogoutMutation() {
         // Ignore network / offline error on logout (AC-22)
       } finally {
         session.clear();
-        queryClient.clear();
+        // Only the person's data: the public pages keep what they have cached
+        clearUserData(queryClient);
       }
     },
   });

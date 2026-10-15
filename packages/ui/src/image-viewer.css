@@ -1,0 +1,16 @@
+/*
+ * Colours of the image viewer popup, taken from the project tokens instead of the library defaults.
+ * The fallback after each comma is the token's value, for an app that did not emit the token.
+ */
+.ecom-image-viewer {
+  --yarl__color_backdrop: rgb(16 24 40 / 0.92);
+  --yarl__color_button: rgb(255 255 255 / 0.85);
+  --yarl__color_button_active: #fff;
+  --yarl__color_button_disabled: rgb(255 255 255 / 0.3);
+  --yarl__counter_color: rgb(255 255 255 / 0.85);
+  --yarl__thumbnails_container_background_color: rgb(16 24 40 / 0.6);
+  --yarl__thumbnails_thumbnail_border_color: var(--color-line, #e3e6ec);
+  --yarl__thumbnails_thumbnail_active_border_color: var(--color-brand, #2f6fed);
+  --yarl__thumbnails_thumbnail_border_radius: var(--radius-control, 10px);
+  font-family: var(--font-body, system-ui, sans-serif);
+}

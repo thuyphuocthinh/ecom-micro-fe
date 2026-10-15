@@ -56,7 +56,7 @@ export function PaymentPage() {
     return (
       <div className="min-h-screen bg-canvas flex flex-col">
         <CheckoutStepper currentStep={3} />
-        <main className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <div className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
           <h1 className="font-head text-2xl font-bold text-ink">
             Không tìm thấy thông tin đơn hàng
           </h1>
@@ -68,7 +68,7 @@ export function PaymentPage() {
               Về giỏ hàng
             </Button>
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -88,7 +88,7 @@ export function PaymentPage() {
     return (
       <div className="min-h-screen bg-canvas flex flex-col">
         <CheckoutStepper currentStep={3} />
-        <main className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <div className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
           <h1 className="font-head text-2xl font-bold text-ink">
             Đơn hàng không tồn tại
           </h1>
@@ -97,7 +97,7 @@ export function PaymentPage() {
               Về giỏ hàng
             </Button>
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -123,7 +123,7 @@ export function PaymentPage() {
     <div className="min-h-screen bg-canvas flex flex-col">
       <CheckoutStepper currentStep={3} />
 
-      <main className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-16 w-full">
+      <div className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-16 w-full">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-10 items-start">
           {/* Main payment panel */}
           <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
@@ -325,7 +325,7 @@ export function PaymentPage() {
             </div>
           </aside>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

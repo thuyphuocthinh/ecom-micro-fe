@@ -7,11 +7,12 @@ import {
   mapTabToStatusParam,
 } from "../utils/order-status.ts";
 
-export const DEFAULT_PAGE_LIMIT = 4;
+/** Orders asked for in one call. The API answers 20 in about 30 ms, so a small page only adds round trips. */
+export const ORDERS_PAGE_SIZE = 10;
 
 export function useOrdersQuery(
   filters: OrderFilterParams = {},
-  limit: number = DEFAULT_PAGE_LIMIT,
+  limit: number = ORDERS_PAGE_SIZE,
 ) {
   const { tab = "all", range = "all", from, to, q } = filters;
 

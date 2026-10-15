@@ -21,22 +21,3 @@ export function calculateDiscountPercent(
   if (percent <= 0) return null;
   return `Giảm ${percent}%`;
 }
-
-/**
- * Formats count with thousands separator, e.g. 1240 -> "1.240"
- */
-export function formatReviewCount(count: number): string {
-  if (isNaN(count) || count < 0) return "0";
-  return new Intl.NumberFormat("vi-VN").format(count);
-}
-
-/**
- * Formats rating to 1 decimal place, e.g. 4.8 -> "4,8" or "4.8" depending on locale
- */
-export function formatRating(rating: number): string {
-  if (isNaN(rating) || rating < 0) return "0,0";
-  return new Intl.NumberFormat("vi-VN", {
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 1,
-  }).format(rating);
-}

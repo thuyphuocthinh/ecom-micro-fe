@@ -10,10 +10,12 @@ import {
   OrdersEmptyState,
 } from "@/features/orders/components";
 import {
+  ORDERS_PAGE_SIZE,
   useOrdersQuery,
   useOrderCountsQuery,
   useCancelOrderMutation,
 } from "@/features/orders/hooks";
+import { useDebouncedSearchParam } from "@/hooks/common/useDebouncedSearchParam.ts";
 import type { OrderRangeKey, OrderSummary, OrderTabKey } from "@/types";
 
 export function OrdersPage() {
@@ -24,7 +26,13 @@ export function OrdersPage() {
   const currentRange = (searchParams.get("range") as OrderRangeKey) || "all";
   const currentFrom = searchParams.get("from") || "";
   const currentTo = searchParams.get("to") || "";
-  const currentQ = searchParams.get("q") || "";
+  // The order code is typed: the box follows every key, the URL (and so the API calls) only after a
+  // pause, and without a history entry per letter (AC-7)
+  const {
+    input: qInput,
+    setInput: setQInput,
+    urlValue: currentQ,
+  } = useDebouncedSearchParam("q");
 
   // Local state
   const [cancelTarget, setCancelTarget] = useState<OrderSummary | null>(null);
@@ -67,7 +75,7 @@ export function OrdersPage() {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useOrdersQuery(filterParams, 4);
+  } = useOrdersQuery(filterParams, ORDERS_PAGE_SIZE);
 
   const orders = useMemo(
     () => ordersData?.pages.flatMap((page) => page.orders) ?? [],
@@ -125,15 +133,6 @@ export function OrdersPage() {
       const next = new URLSearchParams(prev);
       if (!to) next.delete("to");
       else next.set("to", to);
-      return next;
-    });
-  };
-
-  const handleQChange = (q: string) => {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      if (!q.trim()) next.delete("q");
-      else next.set("q", q);
       return next;
     });
   };
@@ -200,13 +199,13 @@ export function OrdersPage() {
         range={currentRange}
         from={currentFrom}
         to={currentTo}
-        q={currentQ}
+        q={qInput}
         rangeError={rangeError}
         onRangeChange={handleRangeChange}
         onFromChange={handleFromChange}
         onToChange={handleToChange}
         onDateRangeApply={handleDateRangeApply}
-        onQChange={handleQChange}
+        onQChange={setQInput}
         onClearFilters={handleClearFilters}
       />
 

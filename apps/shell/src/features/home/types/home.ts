@@ -11,19 +11,25 @@ export interface HomeProduct {
   kind: HomeCategoryKind;
   tint: string;
   tone: string;
-  rating: number;
-  reviews: number;
 }
 
-export interface HomeCategory {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
+/** What makes a product card look like a picture while there is none: a colour and a drawing. */
+export type HomeProductDecoration = Pick<HomeProduct, "kind" | "tint" | "tone">;
+
+/** The colours and size of a category tile. */
+export interface HomeCategoryDecoration {
   tint: string;
   shapeBackground: string;
   spanCol?: string;
   spanRow?: string;
+}
+
+export interface HomeCategory extends HomeCategoryDecoration {
+  /** The id the API gave: the link of the tile is made from it. */
+  id: string;
+  name: string;
+  /** Not every category has one; the tile shows it only when there is. */
+  description?: string;
 }
 
 export interface ValueProp {

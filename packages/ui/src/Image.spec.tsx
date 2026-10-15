@@ -65,4 +65,65 @@ describe("Image component", () => {
     expect(link).toBeInTheDocument();
     expect(link).toHaveAttribute("href", "https://example.com/preload.jpg");
   });
+
+  describe("loads lazily by default (AC-1)", () => {
+    it("has loading=lazy and decoding=async when the page says nothing", () => {
+      render(<Image src="https://example.com/a.jpg" alt="Sản phẩm" />);
+
+      const img = screen.getByRole("img", { name: "Sản phẩm" });
+      expect(img).toHaveAttribute("loading", "lazy");
+      expect(img).toHaveAttribute("decoding", "async");
+    });
+
+    it("keeps what the page asks for: an eager, high priority photo", () => {
+      render(
+        <Image
+          src="https://example.com/a.jpg"
+          alt="Ảnh chính"
+          loading="eager"
+          fetchPriority="high"
+          decoding="sync"
+        />,
+      );
+
+      const img = screen.getByRole("img", { name: "Ảnh chính" });
+      expect(img).toHaveAttribute("loading", "eager");
+      expect(img).toHaveAttribute("fetchpriority", "high");
+      expect(img).toHaveAttribute("decoding", "sync");
+    });
+
+    it("the page can also ask for loading=lazy or leave one of the two alone", () => {
+      render(
+        <Image src="https://example.com/a.jpg" alt="Ảnh" decoding="auto" />,
+      );
+
+      const img = screen.getByRole("img", { name: "Ảnh" });
+      expect(img).toHaveAttribute("loading", "lazy");
+      expect(img).toHaveAttribute("decoding", "auto");
+    });
+
+    it("the placeholder for a missing or broken picture has no <img> to load", () => {
+      const { container } = render(<Image src="" alt="Không có ảnh" />);
+
+      expect(container.querySelector("img")).toBeNull();
+    });
+
+    it("a list of 20 pictures asks the browser to defer every one of them", () => {
+      const { container } = render(
+        <ul>
+          {Array.from({ length: 20 }, (_, i) => (
+            <li key={i}>
+              <Image src={`https://example.com/${i}.jpg`} alt={`Ảnh ${i}`} />
+            </li>
+          ))}
+        </ul>,
+      );
+
+      const images = [...container.querySelectorAll("img")];
+      expect(images).toHaveLength(20);
+      expect(
+        images.every((img) => img.getAttribute("loading") === "lazy"),
+      ).toBe(true);
+    });
+  });
 });

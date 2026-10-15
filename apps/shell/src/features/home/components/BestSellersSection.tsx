@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { useHomeBestsellersQuery } from "@/features/home/hooks/useHomeCatalog.ts";
 import { HomeProductCard } from "@/features/home/components/HomeProductCard.tsx";
+import { SectionStatus } from "@/features/home/components/SectionStatus.tsx";
 import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface BestSellersSectionProps {
@@ -24,8 +25,15 @@ export function BestSellersSection({
   onAddToCart,
   products: propProducts,
 }: BestSellersSectionProps) {
-  const { products: queriedProducts, isLoading } = useHomeBestsellersQuery();
+  const {
+    products: queriedProducts,
+    isLoading,
+    isError,
+    refetch,
+  } = useHomeBestsellersQuery();
   const products = propProducts ?? queriedProducts;
+  const showSkeleton = propProducts === undefined && isLoading;
+  const showError = propProducts === undefined && isError && !isLoading;
 
   return (
     <section
@@ -48,19 +56,30 @@ export function BestSellersSection({
         </Link>
       </div>
 
-      <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-5">
-        {isLoading && !products.length
-          ? Array.from({ length: 8 }).map((_, idx) => (
-              <ProductCardSkeleton key={`skeleton-${idx}`} />
-            ))
-          : products.map((product) => (
-              <HomeProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={onAddToCart}
-              />
-            ))}
-      </ul>
+      {showError ? (
+        <SectionStatus
+          kind="error"
+          emptyText=""
+          errorText="Không tải được danh sách sản phẩm."
+          onRetry={() => void refetch()}
+        />
+      ) : !showSkeleton && products.length === 0 ? (
+        <SectionStatus kind="empty" emptyText="Chưa có sản phẩm nào" />
+      ) : (
+        <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-5">
+          {showSkeleton
+            ? Array.from({ length: 8 }).map((_, idx) => (
+                <ProductCardSkeleton key={`skeleton-${idx}`} />
+              ))
+            : products.map((product) => (
+                <HomeProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={onAddToCart}
+                />
+              ))}
+        </ul>
+      )}
     </section>
   );
 }

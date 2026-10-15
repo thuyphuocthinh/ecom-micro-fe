@@ -1,7 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { catalogService } from "@/services/catalog.service.ts";
 import { Header } from "./Header.tsx";
 import {
   AuthContext,
@@ -18,14 +20,26 @@ function renderHeader(authValue: Partial<AuthContextValue>, initialUrl = "/") {
     ...authValue,
   };
 
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+
   return render(
-    <AuthContext.Provider value={fullValue}>
-      <MemoryRouter initialEntries={[initialUrl]}>
-        <Header />
-      </MemoryRouter>
-    </AuthContext.Provider>,
+    <QueryClientProvider client={queryClient}>
+      <AuthContext.Provider value={fullValue}>
+        <MemoryRouter initialEntries={[initialUrl]}>
+          <Header />
+        </MemoryRouter>
+      </AuthContext.Provider>
+    </QueryClientProvider>,
   );
 }
+
+beforeEach(() => {
+  vi.restoreAllMocks();
+  // The header asks the API for the categories of its second row: here there are none
+  vi.spyOn(catalogService, "getCategories").mockResolvedValue([]);
+});
 
 describe("Header (AC-18, AC-20, AC-21)", () => {
   it("shows skeleton loader while checking session (AC-18)", () => {
@@ -107,19 +121,21 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
     expect(screen.getByLabelText("Giỏ hàng, 3 sản phẩm")).toBeInTheDocument();
 
     rerender(
-      <AuthContext.Provider
-        value={{
-          status: "guest",
-          user: null,
-          cartCount: 2,
-          login: vi.fn(),
-          logout: vi.fn(),
-        }}
-      >
-        <MemoryRouter>
-          <Header />
-        </MemoryRouter>
-      </AuthContext.Provider>,
+      <QueryClientProvider client={new QueryClient()}>
+        <AuthContext.Provider
+          value={{
+            status: "guest",
+            user: null,
+            cartCount: 2,
+            login: vi.fn(),
+            logout: vi.fn(),
+          }}
+        >
+          <MemoryRouter>
+            <Header />
+          </MemoryRouter>
+        </AuthContext.Provider>
+      </QueryClientProvider>,
     );
     expect(screen.getByText("2")).toBeInTheDocument();
     expect(screen.getByLabelText("Giỏ hàng, 2 sản phẩm")).toBeInTheDocument();

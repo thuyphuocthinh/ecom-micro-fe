@@ -95,8 +95,7 @@ export function CartPage() {
   const isEmpty = items.length === 0;
 
   return (
-    <main
-      id="main"
+    <div
       data-testid="cart-page"
       className="max-w-[1280px] mx-auto px-4 sm:px-10 py-8 pb-18 font-body text-ink"
     >
@@ -126,7 +125,7 @@ export function CartPage() {
           />
         </div>
       )}
-    </main>
+    </div>
   );
 }
 

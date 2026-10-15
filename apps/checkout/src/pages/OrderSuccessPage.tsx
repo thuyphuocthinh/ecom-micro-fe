@@ -17,7 +17,7 @@ export function OrderSuccessPage() {
     return (
       <div className="min-h-screen bg-canvas flex flex-col">
         <CheckoutStepper currentStep={3} />
-        <main className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <div className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
           <h1 className="font-head text-2xl font-bold text-ink">
             Không tìm thấy thông tin đơn hàng
           </h1>
@@ -26,7 +26,7 @@ export function OrderSuccessPage() {
               Về trang chủ
             </Button>
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -46,7 +46,7 @@ export function OrderSuccessPage() {
     return (
       <div className="min-h-screen bg-canvas flex flex-col">
         <CheckoutStepper currentStep={3} />
-        <main className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
+        <div className="max-w-[640px] mx-auto px-4 py-16 text-center flex flex-col items-center gap-4">
           <h1 className="font-head text-2xl font-bold text-ink">
             Đơn hàng không tồn tại
           </h1>
@@ -55,7 +55,7 @@ export function OrderSuccessPage() {
               Về trang chủ
             </Button>
           </Link>
-        </main>
+        </div>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export function OrderSuccessPage() {
     <div className="min-h-screen bg-canvas flex flex-col">
       <CheckoutStepper currentStep={3} />
 
-      <main className="max-w-[880px] mx-auto px-4 sm:px-10 py-10 pb-20 flex flex-col gap-8 w-full">
+      <div className="max-w-[880px] mx-auto px-4 sm:px-10 py-10 pb-20 flex flex-col gap-8 w-full">
         {/* Confirmation banner */}
         <div className="flex flex-col gap-3.5 items-center text-center">
           <span
@@ -227,7 +227,7 @@ export function OrderSuccessPage() {
             </Button>
           </Link>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

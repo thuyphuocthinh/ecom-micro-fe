@@ -50,22 +50,16 @@ export function OrderDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <main
-        id="main"
-        className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex items-center justify-center min-h-[400px]"
-      >
+      <div className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex items-center justify-center min-h-[400px]">
         <Spinner className="size-8 text-brand" />
-      </main>
+      </div>
     );
   }
 
   // Error / 404 Not Found state (AC-9)
   if (isError || !order) {
     return (
-      <main
-        id="main"
-        className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex flex-col items-center justify-center gap-4 text-center min-h-[400px]"
-      >
+      <div className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex flex-col items-center justify-center gap-4 text-center min-h-[400px]">
         <Card className="p-10 max-w-[500px] w-full flex flex-col items-center gap-3">
           <h1 className="font-head text-2xl font-bold text-ink">
             Không tìm thấy đơn hàng
@@ -81,7 +75,7 @@ export function OrderDetailPage() {
             Quay lại danh sách đơn hàng
           </Link>
         </Card>
-      </main>
+      </div>
     );
   }
 
@@ -104,10 +98,7 @@ export function OrderDetailPage() {
   const shippingFee = order.shippingFee ?? Math.max(0, order.total - subtotal);
 
   return (
-    <main
-      id="main"
-      className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex flex-col gap-6"
-    >
+    <div className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex flex-col gap-6">
       {/* Breadcrumb */}
       <nav
         aria-label="Đường dẫn"
@@ -218,7 +209,7 @@ export function OrderDetailPage() {
         onClose={handleCloseCancel}
         onConfirm={handleConfirmCancel}
       />
-    </main>
+    </div>
   );
 }
 

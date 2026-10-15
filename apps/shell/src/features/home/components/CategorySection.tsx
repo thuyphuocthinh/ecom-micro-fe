@@ -1,5 +1,8 @@
 import { Link } from "react-router";
+import { SectionStatus } from "@/features/home/components/SectionStatus.tsx";
 import { useHomeCategoriesQuery } from "@/features/home/hooks/useHomeCatalog.ts";
+import { searchHrefForCategory } from "@/utils/category-link.ts";
+import { prefetchOnIntent } from "@/libs/remote-loaders.ts";
 import type { HomeCategory } from "@/features/home/types/home.ts";
 
 function renderCategoryDecoration(cat: HomeCategory, index: number) {
@@ -63,7 +66,7 @@ function getCategoryLayoutClass(index: number): string {
 }
 
 export function CategorySection() {
-  const { categories } = useHomeCategoriesQuery();
+  const { categories, isLoading, isError, refetch } = useHomeCategoriesQuery();
 
   return (
     <section
@@ -77,29 +80,55 @@ export function CategorySection() {
         Mua theo nhóm
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-4 auto-rows-[190px] sm:auto-rows-[210px]">
-        {categories.map((cat, index) => {
-          const layoutClass = getCategoryLayoutClass(index);
+      {isLoading ? (
+        <div
+          aria-hidden="true"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[190px] sm:auto-rows-[210px]"
+        >
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div
+              key={index}
+              className="rounded-[20px] bg-canvas-sunken animate-pulse"
+            />
+          ))}
+        </div>
+      ) : isError ? (
+        <SectionStatus
+          kind="error"
+          emptyText=""
+          errorText="Không tải được danh mục."
+          onRetry={() => void refetch()}
+        />
+      ) : categories.length === 0 ? (
+        <SectionStatus kind="empty" emptyText="Chưa có danh mục nào" />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-4 auto-rows-[190px] sm:auto-rows-[210px]">
+          {categories.map((cat, index) => {
+            const layoutClass = getCategoryLayoutClass(index);
 
-          return (
-            <Link
-              key={cat.id}
-              to={`/search?category=${encodeURIComponent(cat.slug)}`}
-              className={`group relative flex flex-col justify-end gap-1 p-6 rounded-[20px] overflow-hidden text-ink transition-transform duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand ${layoutClass}`}
-              style={{ backgroundColor: cat.tint }}
-            >
-              {renderCategoryDecoration(cat, index)}
+            return (
+              <Link
+                key={cat.id}
+                to={searchHrefForCategory(cat.id)}
+                {...prefetchOnIntent("/search")}
+                className={`group relative flex flex-col justify-end gap-1 p-6 rounded-[20px] overflow-hidden text-ink transition-transform duration-200 hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-brand ${layoutClass}`}
+                style={{ backgroundColor: cat.tint }}
+              >
+                {renderCategoryDecoration(cat, index)}
 
-              <h3 className="font-head text-2xl sm:text-[26px] font-bold text-ink relative z-10">
-                {cat.name}
-              </h3>
-              <p className="text-sm sm:text-[14.5px] text-ink-2 relative z-10">
-                {cat.description}
-              </p>
-            </Link>
-          );
-        })}
-      </div>
+                <h3 className="font-head text-2xl sm:text-[26px] font-bold text-ink relative z-10">
+                  {cat.name}
+                </h3>
+                {cat.description && (
+                  <p className="text-sm sm:text-[14.5px] text-ink-2 relative z-10">
+                    {cat.description}
+                  </p>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

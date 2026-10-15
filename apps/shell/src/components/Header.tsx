@@ -13,6 +13,8 @@ import { useAuth } from "@/features/auth";
 import { getUserAvatarInfo } from "@/utils/user.ts";
 import { formatCartAriaLabel } from "@/utils/cart.ts";
 import { Icon } from "@/components/common/Icon.tsx";
+import { CategoryNav } from "@/components/CategoryNav.tsx";
+import { prefetchOnIntent } from "@/libs/remote-loaders.ts";
 
 export function Header() {
   const { status, user, cartCount, logout } = useAuth();
@@ -84,7 +86,11 @@ export function Header() {
             aria-label="Tìm sản phẩm"
             startAdornment={<Icon name="search" size={20} className="size-5" />}
           />
-          <Button type="submit" variant="primary">
+          <Button
+            type="submit"
+            variant="primary"
+            {...prefetchOnIntent("/search")}
+          >
             Tìm kiếm
           </Button>
         </form>
@@ -98,6 +104,7 @@ export function Header() {
           <Link
             to="/cart"
             aria-label={cartAriaLabel}
+            {...prefetchOnIntent("/cart")}
             className="inline-flex items-center gap-2 min-h-11 px-3 rounded-control text-ink font-semibold text-[14.5px] hover:bg-ink/6 transition-colors"
           >
             <Icon name="cart" size={20} className="size-5" />
@@ -183,48 +190,8 @@ export function Header() {
         </nav>
       </div>
 
-      {/* Category Nav */}
-      <nav
-        aria-label="Danh mục"
-        className="max-w-[1280px] mx-auto px-4 sm:px-10 flex gap-7 flex-wrap border-t border-line/60 overflow-x-auto"
-      >
-        <Link
-          to="/search"
-          className="inline-flex items-center min-h-11 px-1 text-ink-2 hover:text-brand font-medium text-[14.5px] border-b-2 border-transparent hover:border-brand transition-colors whitespace-nowrap"
-        >
-          Tất cả sản phẩm
-        </Link>
-        <Link
-          to="/search?category=audio"
-          className="inline-flex items-center min-h-11 px-1 text-ink-2 hover:text-brand font-medium text-[14.5px] border-b-2 border-transparent hover:border-brand transition-colors whitespace-nowrap"
-        >
-          Âm thanh
-        </Link>
-        <Link
-          to="/search?category=tech"
-          className="inline-flex items-center min-h-11 px-1 text-ink-2 hover:text-brand font-medium text-[14.5px] border-b-2 border-transparent hover:border-brand transition-colors whitespace-nowrap"
-        >
-          Phụ kiện công nghệ
-        </Link>
-        <Link
-          to="/search?category=fashion"
-          className="inline-flex items-center min-h-11 px-1 text-ink-2 hover:text-brand font-medium text-[14.5px] border-b-2 border-transparent hover:border-brand transition-colors whitespace-nowrap"
-        >
-          Thời trang
-        </Link>
-        <Link
-          to="/search?category=lifestyle"
-          className="inline-flex items-center min-h-11 px-1 text-ink-2 hover:text-brand font-medium text-[14.5px] border-b-2 border-transparent hover:border-brand transition-colors whitespace-nowrap"
-        >
-          Đời sống
-        </Link>
-        <Link
-          to="/search?sale=true"
-          className="inline-flex items-center min-h-11 px-1 text-sale hover:text-sale/80 font-medium text-[14.5px] border-b-2 border-transparent hover:border-sale transition-colors ml-auto whitespace-nowrap"
-        >
-          Đang giảm giá
-        </Link>
-      </nav>
+      {/* Category Nav: the categories come from the API */}
+      <CategoryNav />
     </header>
   );
 }

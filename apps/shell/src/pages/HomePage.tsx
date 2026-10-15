@@ -8,11 +8,11 @@ export function HomePage() {
   const { addToCart } = useHomeAddToCart();
 
   return (
-    <main id="main" className="min-h-screen">
+    <div className="min-h-screen">
       <HeroSection onAddToCart={addToCart} />
       <CategorySection />
       <BestSellersSection onAddToCart={addToCart} />
       <ValuePropsSection />
-    </main>
+    </div>
   );
 }
