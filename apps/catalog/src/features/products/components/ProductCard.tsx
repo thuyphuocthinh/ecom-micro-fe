@@ -6,7 +6,7 @@ import {
   formatProductPriceLabel,
   formatDiscountBadge,
   formatVnd,
-} from "../utils/product-format.ts";
+} from "@/features/products/utils/product-format.ts";
 
 export interface ProductCardProps {
   product: Product;

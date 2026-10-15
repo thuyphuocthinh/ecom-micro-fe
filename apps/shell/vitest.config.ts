@@ -27,6 +27,15 @@ export default defineConfig({
       "checkout/CartPage": fileURLToPath(
         new URL("../checkout/src/pages/CartPage.tsx", import.meta.url),
       ),
+      "checkout/CheckoutPage": fileURLToPath(
+        new URL("../checkout/src/pages/CheckoutPage.tsx", import.meta.url),
+      ),
+      "checkout/PaymentPage": fileURLToPath(
+        new URL("../checkout/src/pages/PaymentPage.tsx", import.meta.url),
+      ),
+      "checkout/OrderSuccessPage": fileURLToPath(
+        new URL("../checkout/src/pages/OrderSuccessPage.tsx", import.meta.url),
+      ),
     },
   },
   test: {

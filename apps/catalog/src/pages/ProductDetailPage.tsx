@@ -1,27 +1,29 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
-import { useCategoriesQuery } from "../features/products/hooks/useCategoriesQuery.ts";
-import { useProductDetailQuery } from "../features/products/hooks/useProductDetailQuery.ts";
-import { useRelatedProductsQuery } from "../features/products/hooks/useRelatedProductsQuery.ts";
+import { toast } from "sonner";
+import { useCategoriesQuery } from "@/features/products/hooks/useCategoriesQuery.ts";
+import { useProductDetailQuery } from "@/features/products/hooks/useProductDetailQuery.ts";
+import { useRelatedProductsQuery } from "@/features/products/hooks/useRelatedProductsQuery.ts";
 import {
   getProductSpecs,
   getSkuDisplayName,
-} from "../features/products/utils/product-detail-format.ts";
-import { formatDiscountBadge } from "../features/products/utils/product-format.ts";
+} from "@/features/products/utils/product-detail-format.ts";
+import { formatDiscountBadge } from "@/features/products/utils/product-format.ts";
 import {
   ProductGallery,
   type GalleryImage,
-} from "../features/products/components/ProductGallery.tsx";
-import { ProductBuyBox } from "../features/products/components/ProductBuyBox.tsx";
-import { ProductSpecs } from "../features/products/components/ProductSpecs.tsx";
-import { ProductRelatedSection } from "../features/products/components/ProductRelatedSection.tsx";
-import { ProductDetailSkeleton } from "../features/products/components/ProductDetailSkeleton.tsx";
-import { ProductNotFound } from "../features/products/components/ProductNotFound.tsx";
-import { ProductToast } from "../features/products/components/ProductToast.tsx";
+} from "@/features/products/components/ProductGallery.tsx";
+import { ProductBuyBox } from "@/features/products/components/ProductBuyBox.tsx";
+import { ProductSpecs } from "@/features/products/components/ProductSpecs.tsx";
+import { ProductRelatedSection } from "@/features/products/components/ProductRelatedSection.tsx";
+import { ProductDetailSkeleton } from "@/features/products/components/ProductDetailSkeleton.tsx";
+import { ProductNotFound } from "@/features/products/components/ProductNotFound.tsx";
+import { useAddToCart } from "@/features/cart/useAddToCart.ts";
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const addToCartMutation = useAddToCart();
 
   // Queries
   const { data: product, isLoading, isError } = useProductDetailQuery(id);
@@ -37,9 +39,6 @@ export function ProductDetailPage() {
   >(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Adjust state during render when ID changes (official React pattern)
   const [prevId, setPrevId] = useState(id);
@@ -54,13 +53,6 @@ export function ProductDetailPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
-
-  // Clean up timer on unmount
-  useEffect(() => {
-    return () => {
-      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    };
-  }, []);
 
   // Compute selected SKU declaratively
   const defaultSku = useMemo(() => {
@@ -121,60 +113,57 @@ export function ProductDetailPage() {
     setQuantity(1);
   };
 
-  // Handler: Show toast
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    toastTimerRef.current = setTimeout(() => {
-      setToastMessage(null);
-    }, 3500);
-  };
-
   // Handler: Add to cart
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product || !selectedSku) return;
 
-    setIsAddingToCart(true);
-
-    // Cross-app Add to cart events
-    window.dispatchEvent(
-      new CustomEvent("cart:add", {
-        detail: {
-          productId: product.id,
-          skuId: selectedSku.id,
-          quantity,
-        },
-      }),
-    );
-    window.dispatchEvent(new CustomEvent("cart:changed"));
-
     const skuName = getSkuDisplayName(selectedSku);
-    triggerToast(
-      `Đã thêm ${quantity} × ${product.name} (${skuName}) vào giỏ hàng`,
-    );
+    try {
+      await addToCartMutation.mutateAsync({
+        skuId: selectedSku.id,
+        quantity,
+        productId: product.id,
+        productName: product.name,
+        thumbnail: product.thumbnail,
+        attributes:
+          (selectedSku.attributes as Record<string, string> | null) ?? null,
+        price: selectedSku.price ?? product.minPrice ?? 0,
+        available: selectedSku.stock ?? 99,
+      });
 
-    setTimeout(() => {
-      setIsAddingToCart(false);
-    }, 300);
+      toast.success(
+        `Đã thêm ${quantity} × ${product.name} (${skuName}) vào giỏ hàng`,
+        {
+          action: {
+            label: "Xem giỏ hàng",
+            onClick: () => navigate("/cart"),
+          },
+        },
+      );
+    } catch {
+      toast.error("Không thể thêm vào giỏ hàng, vui lòng thử lại");
+    }
   };
 
   // Handler: Buy now
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!product || !selectedSku) return;
 
-    window.dispatchEvent(
-      new CustomEvent("cart:add", {
-        detail: {
-          productId: product.id,
-          skuId: selectedSku.id,
-          quantity,
-        },
-      }),
-    );
-    window.dispatchEvent(new CustomEvent("cart:changed"));
-
-    // Navigate to checkout or cart
-    navigate("/checkout");
+    try {
+      await addToCartMutation.mutateAsync({
+        skuId: selectedSku.id,
+        quantity,
+        productId: product.id,
+        productName: product.name,
+        thumbnail: product.thumbnail,
+        attributes:
+          (selectedSku.attributes as Record<string, string> | null) ?? null,
+        price: selectedSku.price ?? product.minPrice ?? 0,
+        available: selectedSku.stock ?? 99,
+      });
+    } finally {
+      navigate("/cart");
+    }
   };
 
   // Loading state
@@ -245,7 +234,7 @@ export function ProductDetailPage() {
             selectedSku={selectedSku}
             quantity={quantity}
             categoryName={categoryName}
-            isAddingToCart={isAddingToCart}
+            isAddingToCart={addToCartMutation.isPending}
             onSelectSku={handleSelectSku}
             onChangeQuantity={setQuantity}
             onAddToCart={handleAddToCart}
@@ -263,12 +252,6 @@ export function ProductDetailPage() {
           categoryName={categoryName}
         />
       </main>
-
-      {/* Floating Bottom Toast Notification */}
-      <ProductToast
-        message={toastMessage}
-        onClose={() => setToastMessage(null)}
-      />
     </div>
   );
 }

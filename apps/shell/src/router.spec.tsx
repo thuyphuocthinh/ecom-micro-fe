@@ -13,7 +13,10 @@ describe("router configuration", () => {
     expect(storePaths).toContain("/products/:id");
     expect(storePaths).toContain("/products");
     expect(storePaths).toContain("/account/orders/:id");
-    expect(storePaths).toContain("/account");
+    expect(storePaths).toContain("/cart");
+    expect(storePaths).toContain("/checkout");
+    expect(storePaths).toContain("/checkout/payment");
+    expect(storePaths).toContain("/checkout/success");
     expect(storePaths).toContain("*");
 
     const accountRoute = storeRoute?.children?.find(

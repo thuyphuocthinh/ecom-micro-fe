@@ -8,12 +8,6 @@ export function isGuestSession(): boolean {
   return !session.getAccessToken() && !session.getRefreshToken();
 }
 
-function notifyCartChanged(): void {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("cart:changed"));
-  }
-}
-
 export function getGuestCartItems(): GuestCartItem[] {
   if (typeof window === "undefined") return [];
   try {
@@ -26,11 +20,15 @@ export function getGuestCartItems(): GuestCartItem[] {
   }
 }
 
+export function getGuestCartCount(): number {
+  return getGuestCartItems().length;
+}
+
 export function saveGuestCartItems(items: GuestCartItem[]): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(GUEST_CART_STORAGE_KEY, JSON.stringify(items));
-    notifyCartChanged();
+    window.dispatchEvent(new CustomEvent("cart:changed"));
   } catch {
     // LocalStorage quota exceeded or disabled
   }
@@ -90,7 +88,7 @@ export function clearGuestCart(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(GUEST_CART_STORAGE_KEY);
-    notifyCartChanged();
+    window.dispatchEvent(new CustomEvent("cart:changed"));
   } catch {
     // Ignore
   }
@@ -102,12 +100,12 @@ export function toCartResponse(items: GuestCartItem[]): CartResponse {
     productId: item.productId ?? null,
     productName: item.productName,
     thumbnail: item.thumbnail ?? null,
-    attributes: item.attributes ?? null,
+    attributes: (item.attributes as Record<string, string> | null) ?? null,
     quantity: item.quantity,
     price: item.price,
     addedPrice: item.addedPrice ?? item.price,
     available: item.available ?? 99,
-    flags: item.flags ?? [],
+    flags: (item.flags as CartLineItem["flags"]) ?? [],
   }));
 
   const subtotal = lineItems.reduce((sum, item) => {

@@ -3,11 +3,16 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
+import { toast } from "sonner";
 import { createQueryClient } from "@/libs/queryClient.ts";
 import { CartPage } from "./CartPage.tsx";
 import { cartService } from "@/services/cart.service.ts";
-import { saveGuestCartItems } from "../features/cart/utils/guest-cart.ts";
+import { saveGuestCartItems } from "@/features/cart/utils/guest-cart.ts";
 import type { CartResponse } from "@/types";
+
+vi.mock("sonner", () => ({
+  toast: vi.fn(),
+}));
 
 vi.mock("@/services/cart.service.ts", () => ({
   cartService: {
@@ -149,16 +154,25 @@ describe("CartPage Integration", () => {
     });
     await user.click(removeBtn);
 
-    // Undo toast should appear
+    // Undo toast should be called
     await waitFor(() => {
-      expect(
-        screen.getByText("Đã xoá Bình giữ nhiệt Ecom"),
-      ).toBeInTheDocument();
+      expect(toast).toHaveBeenCalledWith(
+        "Đã xoá Bình giữ nhiệt Ecom",
+        expect.objectContaining({
+          action: expect.objectContaining({
+            label: "Hoàn tác",
+            onClick: expect.any(Function),
+          }),
+        }),
+      );
     });
 
-    // Click "Hoàn tác"
-    const undoBtn = screen.getByRole("button", { name: "Hoàn tác" });
-    await user.click(undoBtn);
+    // Execute undo action
+    const toastCalls = vi.mocked(toast).mock.calls;
+    const lastCall = toastCalls[toastCalls.length - 1];
+    const options = lastCall?.[1] as
+      { action?: { onClick?: () => void } } | undefined;
+    options?.action?.onClick?.();
 
     // Item should be restored
     await waitFor(() => {

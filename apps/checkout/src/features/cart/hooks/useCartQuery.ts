@@ -1,21 +1,22 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { cartService } from "@/services/cart.service.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
 import {
   isGuestSession,
   getGuestCartItems,
   toCartResponse,
-} from "../utils/guest-cart.ts";
+} from "@/features/cart/utils/guest-cart.ts";
 import type { CartResponse } from "@/types";
 
-export const CART_QUERY_KEY = ["cart"] as const;
+export const CART_QUERY_KEY = queryKeys.cart.all;
 
 export function useCartQuery() {
   const queryClient = useQueryClient();
   const isGuest = isGuestSession();
 
   const query = useQuery<CartResponse>({
-    queryKey: CART_QUERY_KEY,
+    queryKey: queryKeys.cart.all,
     queryFn: async () => {
       if (isGuestSession()) {
         const guestItems = getGuestCartItems();
@@ -28,7 +29,7 @@ export function useCartQuery() {
 
   useEffect(() => {
     const handleCartChanged = () => {
-      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cart.all });
     };
     window.addEventListener("cart:changed", handleCartChanged);
     return () => window.removeEventListener("cart:changed", handleCartChanged);

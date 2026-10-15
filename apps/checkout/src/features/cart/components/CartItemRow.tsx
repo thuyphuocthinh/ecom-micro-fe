@@ -1,12 +1,12 @@
 import { Link } from "react-router";
-import { Tag } from "@ecom/ui";
+import { Tag, Image, Button, Icon } from "@ecom/ui";
 import type { CartLineItem } from "@/types";
 import {
   formatCurrency,
   formatAttributes,
   formatPriceDrop,
   formatLowStock,
-} from "../utils/cart-format.ts";
+} from "@/features/cart/utils/cart-format.ts";
 
 export interface CartItemRowProps {
   item: CartLineItem;
@@ -60,28 +60,13 @@ export function CartItemRow({
       {/* Thumbnail */}
       <div
         aria-hidden="true"
-        className="w-24 h-24 rounded-[14px] overflow-hidden bg-slate-100 flex-shrink-0 relative border border-line/60"
+        className="w-24 h-24 rounded-[14px] overflow-hidden bg-canvas flex-shrink-0 relative border border-line/60"
       >
-        {item.thumbnail ? (
-          <img
-            src={item.thumbnail}
-            alt={productName}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-slate-100 text-muted">
-            <svg
-              className="size-8 stroke-current stroke-1.5 fill-none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <path d="M21 15l-5-5L5 21" />
-            </svg>
-          </div>
-        )}
+        <Image
+          src={item.thumbnail || undefined}
+          alt={productName}
+          className="w-full h-full object-cover"
+        />
       </div>
 
       {/* Middle: Details, Stepper & Remove */}
@@ -114,22 +99,16 @@ export function CartItemRow({
           <div
             role="group"
             aria-label={`Số lượng: ${productName}`}
-            className="inline-flex items-center border border-[#c9ced8] rounded-[10px] bg-white overflow-hidden shadow-2xs"
+            className="inline-flex items-center border border-line rounded-[10px] bg-white overflow-hidden shadow-2xs"
           >
             <button
               type="button"
               aria-label={`Giảm số lượng ${productName}`}
               disabled={disabled || isAtMin}
               onClick={() => onUpdateQuantity(item.skuId, item.quantity - 1)}
-              className="w-11 h-11 flex items-center justify-center border-0 bg-transparent text-ink hover:bg-ink/6 disabled:text-[#a3abb8] disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="w-11 h-11 flex items-center justify-center border-0 bg-transparent text-ink hover:bg-ink/6 disabled:text-muted/40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
-              <svg
-                className="size-4 stroke-current stroke-2 fill-none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14" strokeLinecap="round" />
-              </svg>
+              <Icon name="minus" size={16} strokeWidth={2} />
             </button>
 
             <span
@@ -144,28 +123,24 @@ export function CartItemRow({
               aria-label={`Tăng số lượng ${productName}`}
               disabled={disabled || isAtMax}
               onClick={() => onUpdateQuantity(item.skuId, item.quantity + 1)}
-              className="w-11 h-11 flex items-center justify-center border-0 bg-transparent text-ink hover:bg-ink/6 disabled:text-[#a3abb8] disabled:cursor-not-allowed transition-colors cursor-pointer"
+              className="w-11 h-11 flex items-center justify-center border-0 bg-transparent text-ink hover:bg-ink/6 disabled:text-muted/40 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
-              <svg
-                className="size-4 stroke-current stroke-2 fill-none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-              </svg>
+              <Icon name="plus" size={16} strokeWidth={2} />
             </button>
           </div>
 
           {/* Remove Button */}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             disabled={disabled}
             aria-label={`Xoá ${productName} khỏi giỏ hàng`}
             onClick={() => onRemove(item.skuId)}
-            className="min-h-11 px-2.5 text-err hover:underline font-semibold text-[14px] transition-colors cursor-pointer bg-transparent border-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="min-h-11 px-2.5 text-err hover:text-err hover:bg-err/10 font-semibold text-[14px]"
           >
             Xoá
-          </button>
+          </Button>
         </div>
       </div>
 

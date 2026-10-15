@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Outlet, Link } from "react-router";
-import { SkipLink, Spinner } from "@ecom/ui";
+import { SkipLink, Spinner, ErrorBoundary } from "@ecom/ui";
 
 function AuthFallback() {
   return (
@@ -55,9 +55,11 @@ export function AuthLayout({
         className="flex items-center justify-center p-6 sm:p-12 bg-white"
       >
         <div className="w-full max-w-[420px] flex flex-col gap-6">
-          <Suspense fallback={<AuthFallback />}>
-            <Outlet />
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<AuthFallback />}>
+              <Outlet />
+            </Suspense>
+          </ErrorBoundary>
         </div>
       </main>
     </div>

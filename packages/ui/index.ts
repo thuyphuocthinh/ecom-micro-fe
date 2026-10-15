@@ -16,3 +16,5 @@ export * from "./src/Image";
 export * from "./src/DatePicker";
 export * from "./src/DateRangePicker";
 export * from "./src/Tooltip";
+export * from "./src/Icon";
+export * from "./src/ErrorBoundary";

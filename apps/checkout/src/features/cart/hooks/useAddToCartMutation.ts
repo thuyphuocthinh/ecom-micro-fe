@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cartService } from "@/services/cart.service.ts";
-import { isGuestSession, addGuestCartItem } from "../utils/guest-cart.ts";
-import { CART_QUERY_KEY } from "./useCartQuery.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
+import {
+  isGuestSession,
+  addGuestCartItem,
+} from "@/features/cart/utils/guest-cart.ts";
 import type { GuestCartItem } from "@/types";
 
 export interface AddToCartArgs {
@@ -32,7 +35,7 @@ export function useAddToCartMutation() {
       return cartService.addItem(skuId, quantity);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.cart.all });
       if (typeof window !== "undefined") {
         window.dispatchEvent(new CustomEvent("cart:changed"));
       }

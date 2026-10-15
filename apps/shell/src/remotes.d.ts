@@ -40,3 +40,24 @@ declare module "checkout/CartPage" {
   export default CartPage;
   export { CartPage };
 }
+
+declare module "checkout/CheckoutPage" {
+  import type { ComponentType } from "react";
+  const CheckoutPage: ComponentType;
+  export default CheckoutPage;
+  export { CheckoutPage };
+}
+
+declare module "checkout/PaymentPage" {
+  import type { ComponentType } from "react";
+  const PaymentPage: ComponentType;
+  export default PaymentPage;
+  export { PaymentPage };
+}
+
+declare module "checkout/OrderSuccessPage" {
+  import type { ComponentType } from "react";
+  const OrderSuccessPage: ComponentType;
+  export default OrderSuccessPage;
+  export { OrderSuccessPage };
+}

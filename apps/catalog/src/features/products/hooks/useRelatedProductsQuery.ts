@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { productService } from "@/services/product.service.ts";
+import { queryKeys } from "@/constants/queryKeys.ts";
 import type { Product } from "@/types";
 
 export function useRelatedProductsQuery(
@@ -8,7 +9,7 @@ export function useRelatedProductsQuery(
   limit = 4,
 ) {
   return useQuery<Product[], Error>({
-    queryKey: ["products", "related", categoryId, currentProductId],
+    queryKey: queryKeys.products.related(categoryId, currentProductId),
     queryFn: async () => {
       if (!categoryId) return [];
       const res = await productService.getProducts({

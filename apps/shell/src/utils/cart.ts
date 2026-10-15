@@ -1,3 +1,17 @@
+export const GUEST_CART_STORAGE_KEY = "ecom_guest_cart";
+
+export function getGuestCartCount(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(GUEST_CART_STORAGE_KEY);
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
 /**
  * Returns an accessible label for the cart button/link.
  * E.g., 0 -> "Giỏ hàng, đang trống", 3 -> "Giỏ hàng, 3 sản phẩm"

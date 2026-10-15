@@ -1,7 +1,7 @@
 import { useState, type KeyboardEvent } from "react";
 import { Link } from "react-router";
 import { Button, buttonClasses } from "@ecom/ui";
-import { formatCurrency } from "../utils/cart-format.ts";
+import { formatCurrency } from "@/features/cart/utils/cart-format.ts";
 
 export interface CartOrderSummaryProps {
   subtotal: number;
@@ -75,7 +75,7 @@ export function CartOrderSummary({
             onKeyDown={handleKeyDown}
             aria-invalid={couponError}
             aria-describedby="coupon-msg"
-            className="w-full min-h-[44px] px-3.5 border border-[#c9ced8] rounded-[10px] bg-white text-ink text-[15px] focus:outline-none focus:border-brand focus:ring-3 focus:ring-brand/25 transition-colors aria-invalid:border-err"
+            className="w-full min-h-[44px] px-3.5 border border-field-border rounded-[10px] bg-white text-ink text-[15px] focus:outline-none focus:border-brand focus:ring-3 focus:ring-brand/25 transition-colors aria-invalid:border-err"
           />
           <Button
             type="button"

@@ -6,7 +6,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ProductDetailPage } from "./ProductDetailPage.tsx";
 import { productService } from "@/services/product.service.ts";
 import { categoryService } from "@/services/category.service.ts";
+import { toast } from "sonner";
 import type { Product, Category } from "@/types";
+
+vi.mock("sonner", () => ({
+  toast: {
+    success: vi.fn(),
+    error: vi.fn(),
+    info: vi.fn(),
+  },
+}));
 
 vi.mock("@/services/product.service.ts", () => ({
   productService: {
@@ -165,11 +174,14 @@ describe("ProductDetailPage (AC-1, AC-3, AC-6, AC-11)", () => {
     await user.click(addBtn);
 
     expect(cartAddSpy).toHaveBeenCalled();
-    expect(
-      screen.getByText(
+    expect(toast.success).toHaveBeenCalledWith(
+      expect.stringMatching(
         /Đã thêm 1 × Tai nghe không dây Aero 2 \(Xanh đen\) vào giỏ hàng/,
       ),
-    ).toBeInTheDocument();
+      expect.objectContaining({
+        action: expect.objectContaining({ label: "Xem giỏ hàng" }),
+      }),
+    );
   });
 
   it("renders ProductNotFound when product fails to load (AC-11)", async () => {

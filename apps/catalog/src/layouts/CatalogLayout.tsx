@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router";
-import { Spinner, SkipLink } from "@ecom/ui";
+import { Spinner, SkipLink, ErrorBoundary } from "@ecom/ui";
 
 function PageFallback() {
   return (
@@ -19,9 +19,11 @@ export function CatalogLayout() {
     <div className="min-h-screen flex flex-col bg-bg text-ink font-body">
       <SkipLink />
       <main id="main" className="flex-1">
-        <Suspense fallback={<PageFallback />}>
-          <Outlet />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
     </div>
   );

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ProductSpecs } from "./ProductSpecs.tsx";
-import type { ProductSpecItem } from "../utils/product-detail-format.ts";
+import type { ProductSpecItem } from "@/features/products/utils/product-detail-format.ts";
 
 const mockSpecs: ProductSpecItem[] = [
   { label: "Kiểu đeo", value: "Chụp tai" },

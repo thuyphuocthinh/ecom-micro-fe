@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router";
 import { Button } from "@ecom/ui";
+import { useAddToCart } from "@/features/cart/useAddToCart.ts";
 import { toast } from "sonner";
 import { Icon } from "@/components/common/Icon.tsx";
 import {
@@ -20,6 +21,7 @@ import type { Product, ProductFilterParams, ProductSortOption } from "@/types";
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const addToCartMutation = useAddToCart();
 
   // Read search params
   const currentQ = searchParams.get("q") || "";
@@ -217,12 +219,28 @@ export function SearchPage() {
   };
 
   // Cross-app Add to cart event
-  const handleAddToCart = (product: Product) => {
-    window.dispatchEvent(
-      new CustomEvent("cart:add", { detail: { productId: product.id } }),
-    );
-    window.dispatchEvent(new CustomEvent("cart:changed"));
-    toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
+  const handleAddToCart = async (product: Product) => {
+    const firstSku = product.skus?.[0];
+    const skuId = firstSku?.id || `sku_${product.id}`;
+    const price = firstSku?.price ?? product.minPrice ?? 0;
+    const available = firstSku?.stock ?? 99;
+
+    try {
+      await addToCartMutation.mutateAsync({
+        skuId,
+        productId: product.id,
+        productName: product.name,
+        thumbnail: product.thumbnail,
+        attributes:
+          (firstSku?.attributes as Record<string, string> | null) ?? null,
+        price,
+        available,
+        quantity: 1,
+      });
+      toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
+    } catch {
+      toast.error("Không thể thêm vào giỏ hàng, vui lòng thử lại");
+    }
   };
 
   // Category facets total count (sum of all category facet counts)

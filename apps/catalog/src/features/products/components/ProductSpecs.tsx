@@ -1,4 +1,4 @@
-import type { ProductSpecItem } from "../utils/product-detail-format.ts";
+import type { ProductSpecItem } from "@/features/products/utils/product-detail-format.ts";
 
 export interface ProductSpecsProps {
   description?: string | null;

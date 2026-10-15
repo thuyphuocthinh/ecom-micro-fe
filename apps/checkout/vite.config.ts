@@ -28,6 +28,9 @@ export default defineConfig(({ mode }) => {
         exposes: {
           "./App": "./src/App.tsx",
           "./CartPage": "./src/pages/CartPage.tsx",
+          "./CheckoutPage": "./src/pages/CheckoutPage.tsx",
+          "./PaymentPage": "./src/pages/PaymentPage.tsx",
+          "./OrderSuccessPage": "./src/pages/OrderSuccessPage.tsx",
         },
         shared: {
           react: { singleton: true, requiredVersion: REACT_RANGE },

@@ -102,7 +102,7 @@ export function Header() {
           >
             <Icon name="cart" size={20} className="size-5" />
             <span className="hidden sm:inline">Giỏ hàng</span>
-            {status === "signedIn" && cartCount > 0 && (
+            {cartCount > 0 && (
               <span
                 aria-hidden="true"
                 className="tnum min-w-[22px] h-[22px] px-1.5 rounded-full bg-brand text-white text-xs font-bold inline-flex items-center justify-center"

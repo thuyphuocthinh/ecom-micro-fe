@@ -37,12 +37,15 @@ export const productService = {
       query.limit = params.limit;
     }
 
-    return api.get("/catalog/products", {
+    return api.get<Product[]>("/catalog/products", {
       query,
     }) as unknown as Promise<GetProductsResponse>;
   },
 
-  getProductFacets(params: ProductFilterParams = {}, parentId?: string) {
+  async getProductFacets(
+    params: ProductFilterParams = {},
+    parentId?: string,
+  ): Promise<CategoryFacet[]> {
     const query: Record<string, string | number> = {};
     if (parentId) query.parentId = parentId;
     if (params.search?.trim()) query.search = params.search.trim();
@@ -59,18 +62,30 @@ export const productService = {
       query.onSale = "true";
     }
 
-    return api.get("/catalog/products/facets", { query }) as unknown as Promise<
-      CategoryFacet[] | { data: CategoryFacet[] }
-    >;
+    const res = (await api.get("/catalog/products/facets", {
+      query,
+    })) as unknown as CategoryFacet[] | { data: CategoryFacet[] };
+
+    if (Array.isArray(res)) return res;
+    if (
+      res &&
+      typeof res === "object" &&
+      "data" in res &&
+      Array.isArray(res.data)
+    ) {
+      return res.data;
+    }
+    return [];
   },
 
   async getProductById(id: string): Promise<Product> {
     const res = (await api.get("/catalog/products/{id}", {
       params: { id },
     })) as unknown as Product | { data: Product };
+
     if (res && typeof res === "object" && "data" in res && res.data) {
       return res.data;
     }
-    return res as Product;
+    return res as unknown as Product;
   },
 };

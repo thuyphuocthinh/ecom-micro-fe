@@ -97,27 +97,21 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
     expect(screen.queryByText("A")).not.toBeInTheDocument();
   });
 
-  it("shows cart badge when signed in and cart has items (AC-21)", () => {
-    renderHeader({
+  it("shows cart badge when cart has items (both guest and signedIn)", () => {
+    const { rerender } = renderHeader({
       status: "signedIn",
       cartCount: 3,
     });
 
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByLabelText("Giỏ hàng, 3 sản phẩm")).toBeInTheDocument();
-  });
-
-  it("hides cart badge when cartCount is 0 or user is guest (AC-21)", () => {
-    const { rerender } = renderHeader({ status: "signedIn", cartCount: 0 });
-    expect(screen.queryByText("0")).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Giỏ hàng, đang trống")).toBeInTheDocument();
 
     rerender(
       <AuthContext.Provider
         value={{
           status: "guest",
           user: null,
-          cartCount: 3,
+          cartCount: 2,
           login: vi.fn(),
           logout: vi.fn(),
         }}
@@ -127,7 +121,14 @@ describe("Header (AC-18, AC-20, AC-21)", () => {
         </MemoryRouter>
       </AuthContext.Provider>,
     );
-    expect(screen.queryByText("3")).not.toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(screen.getByLabelText("Giỏ hàng, 2 sản phẩm")).toBeInTheDocument();
+  });
+
+  it("hides cart badge when cartCount is 0", () => {
+    renderHeader({ status: "signedIn", cartCount: 0 });
+    expect(screen.queryByText("0")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Giỏ hàng, đang trống")).toBeInTheDocument();
   });
 
   it("synchronizes search input with url search parameter q when on /search", () => {

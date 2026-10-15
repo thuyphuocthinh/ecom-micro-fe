@@ -6,6 +6,7 @@ import { StoreLayout } from "@/layouts/StoreLayout.tsx";
 import { AuthLayout } from "@/layouts/AuthLayout.tsx";
 import { AccountLayout } from "@/layouts/AccountLayout.tsx";
 import { RequireAuth } from "@/components/RequireAuth.tsx";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary.tsx";
 
 const HomePage = lazy(() =>
   import("@/pages/HomePage.tsx").then((m) => ({ default: m.HomePage })),
@@ -55,10 +56,26 @@ const CartPage = lazy(() =>
     default: m.CartPage || m.default,
   })),
 );
+const CheckoutPage = lazy(() =>
+  import("checkout/CheckoutPage").then((m) => ({
+    default: m.CheckoutPage || m.default,
+  })),
+);
+const PaymentPage = lazy(() =>
+  import("checkout/PaymentPage").then((m) => ({
+    default: m.PaymentPage || m.default,
+  })),
+);
+const OrderSuccessPage = lazy(() =>
+  import("checkout/OrderSuccessPage").then((m) => ({
+    default: m.OrderSuccessPage || m.default,
+  })),
+);
 
 export const router = createBrowserRouter([
   {
     element: <StoreLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: "/",
@@ -75,6 +92,30 @@ export const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPage />,
+      },
+      {
+        path: "/checkout",
+        element: (
+          <RequireAuth>
+            <CheckoutPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "/checkout/payment",
+        element: (
+          <RequireAuth>
+            <PaymentPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "/checkout/success",
+        element: (
+          <RequireAuth>
+            <OrderSuccessPage />
+          </RequireAuth>
+        ),
       },
       {
         path: "/products",
@@ -118,6 +159,7 @@ export const router = createBrowserRouter([
   },
   {
     element: <AuthLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: "/login",

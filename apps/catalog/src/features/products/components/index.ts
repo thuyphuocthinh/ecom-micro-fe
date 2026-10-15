@@ -13,6 +13,5 @@ export * from "./ProductQuantityStepper.tsx";
 export * from "./ProductGuaranteesCard.tsx";
 export * from "./ProductSpecs.tsx";
 export * from "./ProductRelatedSection.tsx";
-export * from "./ProductToast.tsx";
 export * from "./ProductNotFound.tsx";
 export * from "./ProductDetailSkeleton.tsx";

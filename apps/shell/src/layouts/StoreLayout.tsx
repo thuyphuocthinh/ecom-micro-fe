@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Outlet } from "react-router";
-import { SkipLink, Spinner } from "@ecom/ui";
+import { SkipLink, Spinner, ErrorBoundary } from "@ecom/ui";
 import { Header } from "@/components/Header.tsx";
 import { Footer } from "@/components/Footer.tsx";
 
@@ -22,9 +22,11 @@ export function StoreLayout() {
       <SkipLink />
       <Header />
       <main id="main" className="flex-1">
-        <Suspense fallback={<PageFallback />}>
-          <Outlet />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<PageFallback />}>
+            <Outlet />
+          </Suspense>
+        </ErrorBoundary>
       </main>
       <Footer />
     </div>

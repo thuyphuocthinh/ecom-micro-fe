@@ -1,28 +1,24 @@
 import { useState, useCallback } from "react";
-import type { CartLineItem } from "@/types";
+import { toast } from "sonner";
 import {
   useCartQuery,
   useUpdateCartItemMutation,
   useRemoveCartItemMutation,
   useAddToCartMutation,
-} from "../features/cart/hooks";
+} from "@/features/cart/hooks";
 import {
   CartSkeleton,
   CartEmptyState,
   CartItemList,
   CartOrderSummary,
-  CartUndoToast,
-} from "../features/cart/components";
-import { formatCartHeaderCount } from "../features/cart/utils/cart-format.ts";
+} from "@/features/cart/components";
+import { formatCartHeaderCount } from "@/features/cart/utils/cart-format.ts";
 
 export function CartPage() {
   const { data: cart, isLoading, isGuest } = useCartQuery();
   const updateMutation = useUpdateCartItemMutation();
   const removeMutation = useRemoveCartItemMutation();
   const addMutation = useAddToCartMutation();
-
-  const [undoItem, setUndoItem] = useState<CartLineItem | null>(null);
-  const [undoProductName, setUndoProductName] = useState<string | null>(null);
 
   const [couponCode, setCouponCode] = useState<string>("");
 
@@ -56,40 +52,40 @@ export function CartPage() {
   const handleRemove = useCallback(
     (skuId: string) => {
       const itemToRemove = cart?.items.find((i) => i.skuId === skuId) ?? null;
-      if (itemToRemove) {
-        setUndoItem(itemToRemove);
-        setUndoProductName(itemToRemove.productName || "sản phẩm");
-      }
-      removeMutation.mutate({ skuId });
+      removeMutation.mutate(
+        { skuId },
+        {
+          onSuccess: () => {
+            if (itemToRemove) {
+              toast(`Đã xoá ${itemToRemove.productName || "sản phẩm"}`, {
+                action: {
+                  label: "Hoàn tác",
+                  onClick: () => {
+                    addMutation.mutate({
+                      skuId: itemToRemove.skuId,
+                      quantity: itemToRemove.quantity,
+                      item: {
+                        skuId: itemToRemove.skuId,
+                        productId: itemToRemove.productId,
+                        productName: itemToRemove.productName || "Sản phẩm",
+                        thumbnail: itemToRemove.thumbnail,
+                        attributes: itemToRemove.attributes,
+                        price: itemToRemove.price ?? itemToRemove.addedPrice,
+                        addedPrice: itemToRemove.addedPrice,
+                        available: itemToRemove.available,
+                        quantity: itemToRemove.quantity,
+                      },
+                    });
+                  },
+                },
+              });
+            }
+          },
+        },
+      );
     },
-    [cart?.items, removeMutation],
+    [cart?.items, removeMutation, addMutation],
   );
-
-  const handleUndo = useCallback(() => {
-    if (!undoItem) return;
-    addMutation.mutate({
-      skuId: undoItem.skuId,
-      quantity: undoItem.quantity,
-      item: {
-        skuId: undoItem.skuId,
-        productId: undoItem.productId,
-        productName: undoItem.productName || "Sản phẩm",
-        thumbnail: undoItem.thumbnail,
-        attributes: undoItem.attributes,
-        price: undoItem.price ?? undoItem.addedPrice,
-        addedPrice: undoItem.addedPrice,
-        available: undoItem.available,
-        quantity: undoItem.quantity,
-      },
-    });
-    setUndoItem(null);
-    setUndoProductName(null);
-  }, [undoItem, addMutation]);
-
-  const handleDismissUndo = useCallback(() => {
-    setUndoItem(null);
-    setUndoProductName(null);
-  }, []);
 
   if (isLoading) {
     return <CartSkeleton />;
@@ -130,12 +126,6 @@ export function CartPage() {
           />
         </div>
       )}
-
-      <CartUndoToast
-        productName={undoProductName}
-        onUndo={handleUndo}
-        onDismiss={handleDismissUndo}
-      />
     </main>
   );
 }

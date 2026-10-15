@@ -1,8 +1,11 @@
 import { Link } from "react-router";
 import { Tag, Button, buttonClasses } from "@ecom/ui";
 import type { Product, Sku } from "@/types";
-import { formatVnd, formatDiscountBadge } from "../utils/product-format.ts";
-import { getSkuStockStatus } from "../utils/product-detail-format.ts";
+import {
+  formatVnd,
+  formatDiscountBadge,
+} from "@/features/products/utils/product-format.ts";
+import { getSkuStockStatus } from "@/features/products/utils/product-detail-format.ts";
 import { ProductSkuSelector } from "./ProductSkuSelector.tsx";
 import { ProductQuantityStepper } from "./ProductQuantityStepper.tsx";
 import { ProductGuaranteesCard } from "./ProductGuaranteesCard.tsx";

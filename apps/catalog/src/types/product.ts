@@ -13,7 +13,7 @@ export interface Sku {
   discountPercent?: number;
   inStock?: boolean;
   stock?: number;
-  attributes?: Record<string, any>;
+  attributes?: Record<string, unknown>;
 }
 
 export interface Product {

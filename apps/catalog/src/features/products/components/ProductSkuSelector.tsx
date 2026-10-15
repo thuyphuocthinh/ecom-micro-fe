@@ -2,7 +2,7 @@ import type { Sku } from "@/types";
 import {
   getSkuSwatchHex,
   getSkuDisplayName,
-} from "../utils/product-detail-format.ts";
+} from "@/features/products/utils/product-detail-format.ts";
 
 export interface ProductSkuSelectorProps {
   skus: Sku[];

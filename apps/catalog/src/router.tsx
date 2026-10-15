@@ -2,6 +2,7 @@
 import { lazy } from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import { CatalogLayout } from "@/layouts/CatalogLayout.tsx";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary.tsx";
 
 const CatalogHomePage = lazy(() =>
   import("@/pages/CatalogHomePage.tsx").then((m) => ({
@@ -24,6 +25,7 @@ const ProductDetailPage = lazy(() =>
 export const router = createBrowserRouter([
   {
     element: <CatalogLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: "/",
