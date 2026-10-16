@@ -4,3623 +4,3645 @@
  */
 
 export interface paths {
-    "/api/v1/test-health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Check API health */
-        get: operations["AppController_testHealth"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/v1/test-health": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/users/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get current user profile */
-        get: operations["UserController_getMe"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Change the display name */
-        patch: operations["UserController_updateProfile"];
-        trace?: never;
+    /** Check API health */
+    get: operations["AppController_testHealth"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/users/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/users/me/avatar": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Upload the avatar (JPEG, PNG or WebP, at most 2 MB) */
-        put: operations["UserController_uploadAvatar"];
-        post?: never;
-        /** Remove the avatar */
-        delete: operations["UserController_removeAvatar"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get current user profile */
+    get: operations["UserController_getMe"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Change the display name */
+    patch: operations["UserController_updateProfile"];
+    trace?: never;
+  };
+  "/api/v1/users/me/avatar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/users/me/addresses": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** My addresses (default first, then newest) */
-        get: operations["AddressController_list"];
-        put?: never;
-        /** Add an address (at most 10) */
-        post: operations["AddressController_add"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    /** Upload the avatar (JPEG, PNG or WebP, at most 2 MB) */
+    put: operations["UserController_uploadAvatar"];
+    post?: never;
+    /** Remove the avatar */
+    delete: operations["UserController_removeAvatar"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/users/me/addresses": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/users/me/addresses/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete an address (the newest remaining becomes the default if needed) */
-        delete: operations["AddressController_remove"];
-        options?: never;
-        head?: never;
-        /** Change some fields of an address */
-        patch: operations["AddressController_update"];
-        trace?: never;
+    /** My addresses (default first, then newest) */
+    get: operations["AddressController_list"];
+    put?: never;
+    /** Add an address (at most 10) */
+    post: operations["AddressController_add"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/users/me/addresses/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/users/me/addresses/{id}/default": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Make an address my default */
-        put: operations["AddressController_setDefault"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete an address (the newest remaining becomes the default if needed) */
+    delete: operations["AddressController_remove"];
+    options?: never;
+    head?: never;
+    /** Change some fields of an address */
+    patch: operations["AddressController_update"];
+    trace?: never;
+  };
+  "/api/v1/users/me/addresses/{id}/default": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/locations/provinces": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** All provinces and cities (34), by name */
-        get: operations["LocationsController_listProvinces"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    /** Make an address my default */
+    put: operations["AddressController_setDefault"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/locations/provinces": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/locations/provinces/{code}/wards": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The wards, communes and special zones of a province */
-        get: operations["LocationsController_listWards"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** All provinces and cities (34), by name */
+    get: operations["LocationsController_listProvinces"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/locations/provinces/{code}/wards": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/register": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Start registration: emails a 6-digit code to confirm the address
-         * @description No account exists yet. Enter the code at POST /auth/verify-email to create it and log in.
-         */
-        post: operations["AuthController_register"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** The wards, communes and special zones of a province */
+    get: operations["LocationsController_listWards"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/register": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/verify-email": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Confirm the emailed code: creates the account and logs in
-         * @description The password must be the one sent to /auth/register. It proves the person confirming is the person who registered, so somebody who re-registered the address with their own password cannot take the account over.
-         */
-        post: operations["AuthController_verifyEmail"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Start registration: emails a 6-digit code to confirm the address
+     * @description No account exists yet. Enter the code at POST /auth/verify-email to create it and log in.
+     */
+    post: operations["AuthController_register"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/verify-email": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/resend-verification": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send the code again
-         * @description Only for a registration that is still waiting. When nothing is waiting (never registered, already has an account, or it timed out) it answers 404, and the user should register again.
-         */
-        post: operations["AuthController_resendVerification"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Confirm the emailed code: creates the account and logs in
+     * @description The password must be the one sent to /auth/register. It proves the person confirming is the person who registered, so somebody who re-registered the address with their own password cannot take the account over.
+     */
+    post: operations["AuthController_verifyEmail"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/resend-verification": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/forgot-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Forgot the password: email a code to reset it
-         * @description Always answers 202 with the same body, whether or not the address has an account, so it cannot be used to find out who is registered. If there is an account, a code arrives by email shortly. Call this again to get a new code (same cooldown).
-         */
-        post: operations["AuthController_forgotPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Send the code again
+     * @description Only for a registration that is still waiting. When nothing is waiting (never registered, already has an account, or it timed out) it answers 404, and the user should register again.
+     */
+    post: operations["AuthController_resendVerification"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/forgot-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/reset-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Set a new password with the emailed code
-         * @description Closes every session of the account and does not log anyone in: log in again with the new password.
-         */
-        post: operations["AuthController_resetPassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Forgot the password: email a code to reset it
+     * @description Always answers 202 with the same body, whether or not the address has an account, so it cannot be used to find out who is registered. If there is an account, a code arrives by email shortly. Call this again to get a new code (same cooldown).
+     */
+    post: operations["AuthController_forgotPassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/reset-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/change-password": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Change the password of the logged-in user
-         * @description Needs the current password. The other devices are logged out; this one stays logged in.
-         */
-        post: operations["AuthController_changePassword"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Set a new password with the emailed code
+     * @description Closes every session of the account and does not log anyone in: log in again with the new password.
+     */
+    post: operations["AuthController_resetPassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/change-password": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Login with email and password */
-        post: operations["AuthController_login"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Change the password of the logged-in user
+     * @description Needs the current password. The other devices are logged out; this one stays logged in.
+     */
+    post: operations["AuthController_changePassword"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/login": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Refresh access token */
-        post: operations["AuthController_refresh"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Login with email and password */
+    post: operations["AuthController_login"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/refresh": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Logout and invalidate current session */
-        post: operations["AuthController_logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Refresh access token */
+    post: operations["AuthController_refresh"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/logout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/logout-all": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Logout from all devices */
-        post: operations["AuthController_logoutAll"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Logout and invalidate current session */
+    post: operations["AuthController_logout"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/logout-all": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List the devices the current user is logged in on */
-        get: operations["SessionController_list"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Logout from all devices */
+    post: operations["AuthController_logoutAll"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/sessions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/sessions/revoke-others": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Log out every device except the current one */
-        post: operations["SessionController_revokeOthers"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** List the devices the current user is logged in on */
+    get: operations["SessionController_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/sessions/revoke-others": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/sessions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Log out one of the current user's devices */
-        delete: operations["SessionController_revoke"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Log out every device except the current one */
+    post: operations["SessionController_revokeOthers"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/sessions/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/google": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Sign in (or sign up) with a Google ID token
-         * @description Send the `credential` that Google Identity Services gives the page. A new person gets an account; a person whose Google account is linked is logged in; a person whose verified email already has an account gets Google linked to it (and an email telling them).
-         */
-        post: operations["GoogleAuthController_login"];
-        /** Unlink the Google account from the logged-in account */
-        delete: operations["GoogleAuthController_unlink"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Log out one of the current user's devices */
+    delete: operations["SessionController_revoke"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/google/link": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Link a Google account to the logged-in account
-         * @description An account that has a password must send it as `currentPassword` (a stolen access token alone cannot add a way to log in). The owner is emailed.
-         */
-        post: operations["GoogleAuthController_link"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Sign in (or sign up) with a Google ID token
+     * @description Send the `credential` that Google Identity Services gives the page. A new person gets an account; a person whose Google account is linked is logged in; a person whose verified email already has an account gets Google linked to it (and an email telling them).
+     */
+    post: operations["GoogleAuthController_login"];
+    /** Unlink the Google account from the logged-in account */
+    delete: operations["GoogleAuthController_unlink"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/google/link": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/users/{id}/suspend": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Suspend an account and end every session it has */
-        post: operations["AdminUserController_suspend"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Link a Google account to the logged-in account
+     * @description An account that has a password must send it as `currentPassword` (a stolen access token alone cannot add a way to log in). The owner is emailed.
+     */
+    post: operations["GoogleAuthController_link"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/users/{id}/suspend": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/users/{id}/reinstate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Let a suspended account log in again */
-        post: operations["AdminUserController_reinstate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Suspend an account and end every session it has */
+    post: operations["AdminUserController_suspend"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/users/{id}/reinstate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/catalog/products": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Get list of published products
-         * @description Newest first unless `sort` says otherwise. Read it by `cursor` ("load more", newest only; `meta` has `hasMore` and `nextCursor`) or by `page` (a numbered page, any sort; `meta` has `page`, `limit`, `hasMore`, `total` counted up to 1000, and `totalCapped`). Each SKU and each product says whether it is in stock.
-         */
-        get: operations["ProductController_getProducts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Let a suspended account log in again */
+    post: operations["AdminUserController_reinstate"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/products": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/catalog/products/facets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * How many published products each category holds
-         * @description The categories directly under `parentId` (the root categories when left out), each with the products in it and in every category below it, inside the filters.
-         */
-        get: operations["ProductController_getFacets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Get list of published products
+     * @description Newest first unless `sort` says otherwise. Read it by `cursor` ("load more", newest only; `meta` has `hasMore` and `nextCursor`) or by `page` (a numbered page, any sort; `meta` has `page`, `limit`, `hasMore`, `total` counted up to 1000, and `totalCapped`). Each SKU and each product says whether it is in stock.
+     */
+    get: operations["ProductController_getProducts"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/products/facets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/catalog/products/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get a published product by ID */
-        get: operations["ProductController_getProductById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * How many published products each category holds
+     * @description The categories directly under `parentId` (the root categories when left out), each with the products in it and in every category below it, inside the filters.
+     */
+    get: operations["ProductController_getFacets"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/products/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/catalog/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get list of categories */
-        get: operations["CategoryController_getCategories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get a published product by ID */
+    get: operations["ProductController_getProductById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/categories": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/catalog/categories/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get category by ID */
-        get: operations["CategoryController_getCategoryById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get list of categories */
+    get: operations["CategoryController_getCategories"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/categories/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get list of products in any status (draft included) */
-        get: operations["AdminProductController_getProducts"];
-        put?: never;
-        /** Create a new product */
-        post: operations["AdminProductController_createProduct"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Get category by ID */
+    get: operations["CategoryController_getCategoryById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get product by ID in any status */
-        get: operations["AdminProductController_getProductById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update product details */
-        patch: operations["AdminProductController_updateProduct"];
-        trace?: never;
+    /** Get list of products in any status (draft included) */
+    get: operations["AdminProductController_getProducts"];
+    put?: never;
+    /** Create a new product */
+    post: operations["AdminProductController_createProduct"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}/publish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Publish a product */
-        patch: operations["AdminProductController_publishProduct"];
-        trace?: never;
+    /** Get product by ID in any status */
+    get: operations["AdminProductController_getProductById"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update product details */
+    patch: operations["AdminProductController_updateProduct"];
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}/publish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}/unpublish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Unpublish a product */
-        patch: operations["AdminProductController_unpublishProduct"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Publish a product */
+    patch: operations["AdminProductController_publishProduct"];
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}/unpublish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}/skus": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add a SKU to a product */
-        post: operations["AdminProductController_addSku"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Unpublish a product */
+    patch: operations["AdminProductController_unpublishProduct"];
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}/skus": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}/skus/{skuId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Remove a SKU from a product */
-        delete: operations["AdminProductController_removeSku"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Add a SKU to a product */
+    post: operations["AdminProductController_addSku"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}/skus/{skuId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/products/{id}/skus/{skuId}/price": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update price of a SKU */
-        patch: operations["AdminProductController_updateSkuPrice"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Remove a SKU from a product */
+    delete: operations["AdminProductController_removeSku"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/products/{id}/skus/{skuId}/price": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Create a new category */
-        post: operations["AdminCategoryController_createCategory"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Update price of a SKU */
+    patch: operations["AdminProductController_updateSkuPrice"];
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/categories": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/categories/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Delete a category */
-        delete: operations["AdminCategoryController_deleteCategory"];
-        options?: never;
-        head?: never;
-        /** Update category details */
-        patch: operations["AdminCategoryController_updateCategory"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Create a new category */
+    post: operations["AdminCategoryController_createCategory"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/categories/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/catalog/categories/{id}/move": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Move a category to a new parent */
-        patch: operations["AdminCategoryController_moveCategory"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete a category */
+    delete: operations["AdminCategoryController_deleteCategory"];
+    options?: never;
+    head?: never;
+    /** Update category details */
+    patch: operations["AdminCategoryController_updateCategory"];
+    trace?: never;
+  };
+  "/api/v1/admin/catalog/categories/{id}/move": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/cart": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** My cart, with the price, stock and flags looked up again (newest item first) */
-        get: operations["CartController_get"];
-        put?: never;
-        post?: never;
-        /** Empty the cart (also when it is already empty) */
-        delete: operations["CartController_clear"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Move a category to a new parent */
+    patch: operations["AdminCategoryController_moveCategory"];
+    trace?: never;
+  };
+  "/api/v1/cart": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/cart/items": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Add units of a SKU to the cart (added to what is already there, so sending it twice adds twice) */
-        post: operations["CartController_add"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** My cart, with the price, stock and flags looked up again (newest item first) */
+    get: operations["CartController_get"];
+    put?: never;
+    post?: never;
+    /** Empty the cart (also when it is already empty) */
+    delete: operations["CartController_clear"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/cart/items": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/cart/items/{skuId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /** Set the units of a SKU already in the cart (sending it again changes nothing) */
-        put: operations["CartController_setQuantity"];
-        post?: never;
-        /** Take a SKU out of the cart (also when it is not there) */
-        delete: operations["CartController_removeItem"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Add units of a SKU to the cart (added to what is already there, so sending it twice adds twice) */
+    post: operations["CartController_add"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/cart/items/{skuId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/orders": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * My orders, newest first (cursor pagination)
-         * @description Narrow the list with `status` (one or more, separated by commas), `createdFrom` and `createdTo` (ISO 8601 with a time zone), and `q` (the start of the order id, for example the 8-character order code).
-         */
-        get: operations["OrderController_list"];
-        put?: never;
-        /**
-         * Place an order from my cart
-         * @description The same Idempotency-Key from the same user always gives the same order: sending the request again returns that order with 200 and `Idempotency-Replayed: true`.
-         */
-        post: operations["OrderController_place"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    /** Set the units of a SKU already in the cart (sending it again changes nothing) */
+    put: operations["CartController_setQuantity"];
+    post?: never;
+    /** Take a SKU out of the cart (also when it is not there) */
+    delete: operations["CartController_removeItem"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orders": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/orders/counts": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * How many of my orders are in each status
-         * @description The same `createdFrom`, `createdTo` and `q` as the list narrow what is counted. Every status is there, 0 when there are none.
-         */
-        get: operations["OrderController_counts"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * My orders, newest first (cursor pagination)
+     * @description Narrow the list with `status` (one or more, separated by commas), `createdFrom` and `createdTo` (ISO 8601 with a time zone), and `q` (the start of the order id, for example the 8-character order code).
+     */
+    get: operations["OrderController_list"];
+    put?: never;
+    /**
+     * Place an order from my cart
+     * @description The same Idempotency-Key from the same user always gives the same order: sending the request again returns that order with 200 and `Idempotency-Replayed: true`.
+     */
+    post: operations["OrderController_place"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orders/counts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/orders/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One of my orders */
-        get: operations["OrderController_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * How many of my orders are in each status
+     * @description The same `createdFrom`, `createdTo` and `q` as the list narrow what is counted. Every status is there, 0 when there are none.
+     */
+    get: operations["OrderController_counts"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orders/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/orders/{id}/cancel": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Cancel one of my orders before it ships (PENDING or CONFIRMED) */
-        post: operations["OrderController_cancel"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** One of my orders */
+    get: operations["OrderController_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orders/{id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/orders/{id}/ship": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** CONFIRMED to SHIPPING */
-        post: operations["AdminOrderController_ship"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Cancel one of my orders before it ships (PENDING or CONFIRMED) */
+    post: operations["OrderController_cancel"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/orders/{id}/ship": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/orders/{id}/deliver": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** SHIPPING to DELIVERED */
-        post: operations["AdminOrderController_deliver"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** CONFIRMED to SHIPPING */
+    post: operations["AdminOrderController_ship"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/admin/orders/{id}/deliver": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/orders/{orderId}/payments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** The payments of one of my orders, newest first */
-        get: operations["PaymentController_list"];
-        put?: never;
-        /**
-         * Start paying one of my online orders
-         * @description The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Send the customer to `payUrl`.
-         */
-        post: operations["PaymentController_start"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** SHIPPING to DELIVERED */
+    post: operations["AdminOrderController_deliver"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orders/{orderId}/payments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/payments/webhook/{provider}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Webhook of the payment gateway (called by the gateway, not by a customer)
-         * @description Public, but only a message with a valid signature is accepted. `:provider` must be the gateway this server is set up with.
-         */
-        post: operations["PaymentWebhookController_receive"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** The payments of one of my orders, newest first */
+    get: operations["PaymentController_list"];
+    put?: never;
+    /**
+     * Start paying one of my online orders
+     * @description The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Send the customer to `payUrl`.
+     */
+    post: operations["PaymentController_start"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/payments/webhook/{provider}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/dev/fake-gateway/charges/{providerRef}/pay": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Dev only: the customer paid this charge at the fake gateway */
-        post: operations["DevFakeGatewayController_pay"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Webhook of the payment gateway (called by the gateway, not by a customer)
+     * @description Public, but only a message with a valid signature is accepted. `:provider` must be the gateway this server is set up with.
+     */
+    post: operations["PaymentWebhookController_receive"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/dev/fake-gateway/charges/{providerRef}/pay": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/dev/fake-gateway/charges/{providerRef}/fail": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Dev only: this charge failed at the fake gateway */
-        post: operations["DevFakeGatewayController_fail"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Dev only: the customer paid this charge at the fake gateway */
+    post: operations["DevFakeGatewayController_pay"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/dev/fake-gateway/charges/{providerRef}/fail": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get?: never;
+    put?: never;
+    /** Dev only: this charge failed at the fake gateway */
+    post: operations["DevFakeGatewayController_fail"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        UserResponseDto: {
-            /** @description User ID */
-            id: string;
-            /**
-             * @description User role
-             * @enum {string}
-             */
-            role: "CUSTOMER" | "ADMIN";
-            /** @description User display name */
-            displayName?: Record<string, never>;
-            /** @description User avatar URL */
-            avatarUrl?: Record<string, never>;
-            /**
-             * Format: date-time
-             * @description Account creation time
-             */
-            createdAt: string;
-            /** @description Email address of the account */
-            email: Record<string, never> | null;
-            /** @description Whether the account can log in with a password */
-            hasPassword: boolean;
-            /** @description Whether a Google account is linked */
-            googleLinked: boolean;
-        };
-        UpdateProfileDto: {
-            /**
-             * @description New display name: 1 to 100 visible characters (spaces are tidied)
-             * @example Nguyễn Văn A
-             */
-            displayName: string;
-        };
-        AddressResponseDto: {
-            id: string;
-            /** @example Nguyễn Văn A */
-            recipientName: string;
-            /** @example 0912345678 */
-            phone: string;
-            /** @example 01 */
-            provinceCode: string;
-            /** @example Thành phố Hà Nội */
-            provinceName: string;
-            /** @example 00004 */
-            wardCode: string;
-            /** @example Phường Ba Đình */
-            wardName: string;
-            /** @example 12 Bạch Đằng */
-            street: string;
-            /** @example Nhà */
-            label: Record<string, never> | null;
-            isDefault: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        CreateAddressDto: {
-            /**
-             * @description Who receives the parcel
-             * @example Nguyễn Văn A
-             */
-            recipientName: string;
-            /**
-             * @description 10 digits starting with 0; +84 and separators are accepted
-             * @example 0912345678
-             */
-            phone: string;
-            /**
-             * @description Code of the ward, commune or special zone (from GET /locations/provinces/:code/wards); the province follows from it
-             * @example 00004
-             */
-            wardCode: string;
-            /**
-             * @description House number and street
-             * @example 12 Bạch Đằng
-             */
-            street: string;
-            /**
-             * @description A name for the address, such as "Nhà" or "Công ty" (at most 50 characters)
-             * @example Nhà
-             */
-            label?: Record<string, never> | null;
-            /** @description Make this the default address (the first address is always the default) */
-            isDefault?: boolean;
-        };
-        UpdateAddressDto: {
-            /** @example Nguyễn Văn A */
-            recipientName?: string;
-            /** @example 0912345678 */
-            phone?: string;
-            /**
-             * @description Another ward; the province follows from it
-             * @example 00004
-             */
-            wardCode?: string;
-            /** @example 12 Bạch Đằng */
-            street?: string;
-            /**
-             * @description null removes the label
-             * @example Công ty
-             */
-            label?: Record<string, never> | null;
-        };
-        ProvinceDto: {
-            /**
-             * @description Code of the province: 2 digits
-             * @example 01
-             */
-            code: string;
-            /**
-             * @description Name without the kind
-             * @example Hà Nội
-             */
-            name: string;
-            /**
-             * @description Name with the kind
-             * @example Thành phố Hà Nội
-             */
-            fullName: string;
-            /** @enum {string} */
-            type: "CITY" | "PROVINCE";
-        };
-        WardDto: {
-            /**
-             * @description Code of the ward: 5 digits
-             * @example 00004
-             */
-            code: string;
-            /**
-             * @description Name without the kind
-             * @example Ba Đình
-             */
-            name: string;
-            /**
-             * @description Name with the kind
-             * @example Phường Ba Đình
-             */
-            fullName: string;
-            /** @enum {string} */
-            type: "WARD" | "COMMUNE" | "SPECIAL_ZONE";
-        };
-        RegisterDto: {
-            /** @example user@example.com */
-            email: string;
-            /** @example k9#Tq2$vLm8x */
-            password: string;
-            /** @example John Doe */
-            displayName?: string;
-        };
-        RegisterResponseDto: {
-            /**
-             * @description Always true: the account is created only after the emailed code is entered (POST /auth/verify-email)
-             * @example true
-             */
-            verificationRequired: boolean;
-            /**
-             * @description Seconds to wait before another code can be requested
-             * @example 300
-             */
-            resendAvailableInSeconds: number;
-            /**
-             * @description Seconds the registration is kept. After that the user must register again; asking for another code will not help
-             * @example 1800
-             */
-            verificationExpiresInSeconds: number;
-        };
-        VerifyEmailDto: {
-            /** @example user@example.com */
-            email: string;
-            /**
-             * @description The 6-digit code sent to the email address
-             * @example 482915
-             */
-            code: string;
-            /**
-             * @description The password given when registering
-             * @example k9#Tq2$vLm8x
-             */
-            password: string;
-        };
-        AuthResponseDto: {
-            /** @description JWT Access Token */
-            accessToken: string;
-            /** @description Opaque Refresh Token */
-            refreshToken: string;
-        };
-        ResendVerificationDto: {
-            /** @example user@example.com */
-            email: string;
-        };
-        ResendVerificationResponseDto: {
-            /**
-             * @description Seconds to wait before another code can be requested
-             * @example 300
-             */
-            resendAvailableInSeconds: number;
-        };
-        ForgotPasswordDto: {
-            /** @example user@example.com */
-            email: string;
-        };
-        ForgotPasswordResponseDto: {
-            /**
-             * @description Seconds to wait before another reset code can be requested. The same answer is given whether or not the address has an account
-             * @example 300
-             */
-            resendAvailableInSeconds: number;
-        };
-        ResetPasswordDto: {
-            /** @example user@example.com */
-            email: string;
-            /**
-             * @description The 6-digit code sent to the email address
-             * @example 482915
-             */
-            code: string;
-            /** @example k9#Tq2$vLm8x */
-            newPassword: string;
-        };
-        ChangePasswordDto: {
-            /** @example the-password-in-use-now */
-            currentPassword: string;
-            /** @example k9#Tq2$vLm8x */
-            newPassword: string;
-        };
-        LoginDto: {
-            /** @example user@example.com */
-            email: string;
-            /** @example k9#Tq2$vLm8x */
-            password: string;
-        };
-        RefreshTokenDto: {
-            /** @example some-random-hex-string */
-            refreshToken: string;
-        };
-        LogoutDto: {
-            /** @description Ignored. Kept so existing clients keep working. */
-            refreshToken?: string;
-        };
-        SessionResponseDto: {
-            /** @description Session ID */
-            id: string;
-            /**
-             * @description Device, as the User-Agent it logged in with
-             * @example Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0
-             */
-            deviceName: string;
-            /** @description IP of the most recent use */
-            ipAddress: string;
-            /**
-             * Format: date-time
-             * @description When this device logged in
-             */
-            createdAt: string;
-            /**
-             * Format: date-time
-             * @description Last time this device refreshed its token
-             */
-            lastUsedAt: string;
-            /** @description True for the session making this request */
-            current: boolean;
-        };
-        GoogleTokenDto: {
-            /** @description The `credential` Google Identity Services hands to the page (a JWT signed by Google) */
-            idToken: string;
-            /** @description The nonce given to Google when signing in, if any. Required to match when the token carries one */
-            nonce?: string;
-        };
-        GoogleLoginResponseDto: {
-            /** @description JWT Access Token */
-            accessToken: string;
-            /** @description Opaque Refresh Token */
-            refreshToken: string;
-            /** @description True when this sign-in created the account (a good moment to ask for a profile) */
-            isNewUser: boolean;
-        };
-        LinkGoogleDto: {
-            /** @description The `credential` Google Identity Services hands to the page (a JWT signed by Google) */
-            idToken: string;
-            /** @description The nonce given to Google when signing in, if any. Required to match when the token carries one */
-            nonce?: string;
-            /** @description The password of the account. Required when the account has one: it proves the owner is asking, which a stolen access token cannot */
-            currentPassword?: string;
-        };
-        PaginatedMetaDto: {
-            hasMore: boolean;
-            nextCursor: Record<string, never> | null;
-        };
-        PaginatedResponseDto: {
-            meta: components["schemas"]["PaginatedMetaDto"];
-        };
-        PageMetaResponseDto: {
-            page: number;
-            limit: number;
-            hasMore: boolean;
-            /** @description How many products match, counted only up to 1000 */
-            total: number;
-            /** @description More than total products match */
-            totalCapped: boolean;
-        };
-        SkuResponseDto: {
-            id: string;
-            skuCode: string;
-            /** @description The selling price: the price that is charged */
-            price: number;
-            /** @description The price before a discount, shown crossed out. Display only: money is always charged at price */
-            compareAtPrice: Record<string, never> | null;
-            /** @description How much cheaper than compareAtPrice, in whole percent; 0 when not discounted */
-            discountPercent: number;
-            /** @description In stock now (onHand above 0; units held for orders are not taken off). Only in the public endpoints. */
-            inStock?: boolean;
-            attributes: Record<string, never>;
-        };
-        ProductResponseDto: {
-            id: string;
-            categoryId: string;
-            name: string;
-            description?: Record<string, never> | null;
-            thumbnail?: Record<string, never> | null;
-            status: string;
-            skus: components["schemas"]["SkuResponseDto"][];
-            /** @description The lowest price among the SKUs ("from ... VND") */
-            minPrice: Record<string, never> | null;
-            /** @description Some SKU is sold below its original price */
-            onSale: boolean;
-            /** @description The biggest discount among the SKUs, in whole percent; 0 when none */
-            discountPercent: number;
-            /** @description Some SKU is in stock now. Only in the public endpoints; false means "out of stock". */
-            inStock?: boolean;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        CategoryProductCountResponseDto: {
-            categoryId: string;
-            name: string;
-            /** @description Published products in the category and every category below it, inside the filters */
-            count: number;
-        };
-        SkuDto: {
-            /**
-             * @description Giá của SKU (VND)
-             * @example 150000
-             */
-            price: number;
-            /**
-             * @description Giá trước khi giảm (hiển thị gạch ngang); phải lớn hơn price. Chỉ để hiển thị, tiền vẫn tính theo price
-             * @example 180000
-             */
-            compareAtPrice?: number;
-            /**
-             * @description Thuộc tính cấu hình của SKU
-             * @example {
-             *       "color": "Red",
-             *       "size": "XL"
-             *     }
-             */
-            attributes: Record<string, never>;
-            /**
-             * @description Mã SKU duy nhất
-             * @example SKU-RED-XL
-             */
-            skuCode: string;
-            /**
-             * @description Mã vạch (Barcode)
-             * @example 8931234567890
-             */
-            barcode?: string;
-        };
-        CreateProductDto: {
-            /**
-             * @description ID của danh mục
-             * @example cat_123
-             */
-            categoryId: string;
-            /**
-             * @description Tên sản phẩm
-             * @example Áo thun nam
-             */
-            name: string;
-            /**
-             * @description Mô tả chi tiết sản phẩm
-             * @example Áo thun cotton 100%...
-             */
-            description?: string;
-            /**
-             * @description URL ảnh đại diện
-             * @example https://example.com/image.png
-             */
-            thumbnail?: string;
-            /** @description Danh sách các phiên bản (SKU) của sản phẩm */
-            skus?: components["schemas"]["SkuDto"][];
-        };
-        UpdateProductDto: {
-            name?: string;
-            description?: string;
-            thumbnail?: string;
-        };
-        AddSkuDto: {
-            skuCode: string;
-            price: number;
-            /** @description The price before a discount (shown crossed out); must be greater than price. Display only: money is always charged at price */
-            compareAtPrice?: number;
-            attributes: Record<string, never>;
-            barcode?: string;
-        };
-        UpdateSkuPriceDto: {
-            /** @description New price for the SKU */
-            price: number;
-            /** @description The price before a discount (shown crossed out), greater than price. A number sets it, null removes the discount, leaving it out keeps what is there. Display only: money is always charged at price */
-            compareAtPrice?: Record<string, never> | null;
-        };
-        CreateCategoryDto: {
-            /**
-             * @description Tên danh mục
-             * @example Áo Nam
-             */
-            name: string;
-            /**
-             * @description ID của danh mục cha (nếu có)
-             * @example cat_12345
-             */
-            parentId?: string;
-        };
-        UpdateCategoryDto: {
-            name?: string;
-            isActive?: boolean;
-        };
-        MoveCategoryDto: {
-            /** @description ID of the new parent category. Send null or omit to move to root. */
-            newParentId?: Record<string, never>;
-        };
-        CartLineResponseDto: {
-            skuId: string;
-            productId: Record<string, never> | null;
-            productName: Record<string, never> | null;
-            thumbnail: Record<string, never> | null;
-            attributes: {
-                [key: string]: unknown;
-            } | null;
-            quantity: number;
-            /** @description The price now; null when the item is no longer on sale */
-            price: Record<string, never> | null;
-            /** @description The price when it was put in the cart */
-            addedPrice: number;
-            /** @description Units that can be sold now; null when the item is no longer on sale */
-            available: Record<string, never> | null;
-            flags: ("priceChanged" | "unpublished" | "outOfStock" | "notEnoughStock")[];
-        };
-        CartResponseDto: {
-            items: components["schemas"]["CartLineResponseDto"][];
-            /** @description Total of the lines that can be ordered as they are */
-            subtotal: number;
-            lineCount: number;
-            quantityCount: number;
-        };
-        AddCartItemDto: {
-            /**
-             * @description The SKU to add
-             * @example seed_sku_flash
-             */
-            skuId: string;
-            /**
-             * @description Units to ADD to what the cart already holds for this SKU
-             * @example 1
-             */
-            quantity: number;
-        };
-        CartItemResponseDto: {
-            skuId: string;
-            /** @description Units in the cart for this SKU after the change */
-            quantity: number;
-            /** @description The price the cart recorded for this SKU */
-            addedPrice: number;
-        };
-        SetCartItemQuantityDto: {
-            /**
-             * @description The units the cart should hold for this SKU (it replaces the old number; sending it again changes nothing)
-             * @example 3
-             */
-            quantity: number;
-        };
-        PlaceOrderDto: {
-            /**
-             * @description One of the addresses in your address book
-             * @example 0b6f3d3a-2f6b-4a53-8f0e-1d6f2f6f0c11
-             */
-            addressId: string;
-            /**
-             * @description ONLINE: pay before delivery, 15 minutes from now. COD: pay in cash on delivery; the order is confirmed at once.
-             * @enum {string}
-             */
-            paymentMethod: "ONLINE" | "COD";
-        };
-        OrderItemResponseDto: {
-            skuId: string;
-            productName: string;
-            thumbnail: Record<string, never> | null;
-            attributes: {
-                [key: string]: string;
-            };
-            /** @description The price when the order was placed */
-            unitPrice: number;
-            quantity: number;
-            lineTotal: number;
-        };
-        ShippingAddressResponseDto: {
-            recipientName: string;
-            phone: string;
-            provinceCode: string;
-            provinceName: string;
-            wardCode: string;
-            wardName: string;
-            street: string;
-            label: Record<string, never> | null;
-        };
-        OrderTimelineResponseDto: {
-            /**
-             * Format: date-time
-             * @description When the order was placed
-             */
-            placedAt: string;
-            confirmedAt: Record<string, never> | null;
-            shippedAt: Record<string, never> | null;
-            deliveredAt: Record<string, never> | null;
-            cancelledAt: Record<string, never> | null;
-            expiredAt: Record<string, never> | null;
-        };
-        OrderResponseDto: {
-            id: string;
-            /** @enum {string} */
-            status: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
-            /** @enum {string} */
-            paymentMethod: "ONLINE" | "COD";
-            total: number;
-            items: components["schemas"]["OrderItemResponseDto"][];
-            shippingAddress: components["schemas"]["ShippingAddressResponseDto"];
-            /**
-             * Format: date-time
-             * @description Online orders: when the time to pay runs out. Meaningless for cash on delivery.
-             */
-            expiresAt: string;
-            timeline: components["schemas"]["OrderTimelineResponseDto"];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        OrderSummaryItemResponseDto: {
-            productName: string;
-            thumbnail: Record<string, never> | null;
-            quantity: number;
-        };
-        OrderSummaryResponseDto: {
-            id: string;
-            /** @enum {string} */
-            status: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
-            /** @enum {string} */
-            paymentMethod: "ONLINE" | "COD";
-            total: number;
-            /** @description How many lines the order has */
-            itemCount: number;
-            /** @description The first 3 items, enough to show what the order is about */
-            items: components["schemas"]["OrderSummaryItemResponseDto"][];
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            expiresAt: string;
-        };
-        OrderCountsResponseDto: {
-            PENDING: number;
-            PAYMENT_PROCESSING: number;
-            CONFIRMED: number;
-            SHIPPING: number;
-            DELIVERED: number;
-            CANCELLED: number;
-            EXPIRED: number;
-        };
-        PaymentResponseDto: {
-            id: string;
-            orderId: string;
-            /** @enum {string} */
-            status: "INITIATED" | "SUCCEEDED" | "FAILED" | "EXPIRED" | "REFUND_PENDING" | "REFUNDED";
-            /** @description What the customer has to pay (VND) */
-            amount: number;
-            /** @description Where to pay. Only while the payment is INITIATED; null in every other state. */
-            payUrl: Record<string, never> | null;
-            /**
-             * Format: date-time
-             * @description The customer has until this moment to pay
-             */
-            expiresAt: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-        };
-        FakePayDto: {
-            /** @description What the fake gateway says it collected. Leave it out to pay the right amount; send another number to try a wrong amount. */
-            amount?: number;
-        };
-        FakeGatewayResultDto: {
-            /** @description The HTTP status our own webhook endpoint answered */
-            webhookStatus: number;
-            /** @description The id of the webhook message that was sent */
-            eventId: string;
-        };
+  schemas: {
+    UserResponseDto: {
+      /** @description User ID */
+      id: string;
+      /**
+       * @description User role
+       * @enum {string}
+       */
+      role: "CUSTOMER" | "ADMIN";
+      /** @description User display name */
+      displayName?: Record<string, never>;
+      /** @description User avatar URL */
+      avatarUrl?: Record<string, never>;
+      /**
+       * Format: date-time
+       * @description Account creation time
+       */
+      createdAt: string;
+      /** @description Email address of the account */
+      email: Record<string, never> | null;
+      /** @description Whether the account can log in with a password */
+      hasPassword: boolean;
+      /** @description Whether a Google account is linked */
+      googleLinked: boolean;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    UpdateProfileDto: {
+      /**
+       * @description New display name: 1 to 100 visible characters (spaces are tidied)
+       * @example Nguyễn Văn A
+       */
+      displayName: string;
+    };
+    AddressResponseDto: {
+      id: string;
+      /** @example Nguyễn Văn A */
+      recipientName: string;
+      /** @example 0912345678 */
+      phone: string;
+      /** @example 01 */
+      provinceCode: string;
+      /** @example Thành phố Hà Nội */
+      provinceName: string;
+      /** @example 00004 */
+      wardCode: string;
+      /** @example Phường Ba Đình */
+      wardName: string;
+      /** @example 12 Bạch Đằng */
+      street: string;
+      /** @example Nhà */
+      label: Record<string, never> | null;
+      isDefault: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    CreateAddressDto: {
+      /**
+       * @description Who receives the parcel
+       * @example Nguyễn Văn A
+       */
+      recipientName: string;
+      /**
+       * @description 10 digits starting with 0; +84 and separators are accepted
+       * @example 0912345678
+       */
+      phone: string;
+      /**
+       * @description Code of the ward, commune or special zone (from GET /locations/provinces/:code/wards); the province follows from it
+       * @example 00004
+       */
+      wardCode: string;
+      /**
+       * @description House number and street
+       * @example 12 Bạch Đằng
+       */
+      street: string;
+      /**
+       * @description A name for the address, such as "Nhà" or "Công ty" (at most 50 characters)
+       * @example Nhà
+       */
+      label?: Record<string, never> | null;
+      /** @description Make this the default address (the first address is always the default) */
+      isDefault?: boolean;
+    };
+    UpdateAddressDto: {
+      /** @example Nguyễn Văn A */
+      recipientName?: string;
+      /** @example 0912345678 */
+      phone?: string;
+      /**
+       * @description Another ward; the province follows from it
+       * @example 00004
+       */
+      wardCode?: string;
+      /** @example 12 Bạch Đằng */
+      street?: string;
+      /**
+       * @description null removes the label
+       * @example Công ty
+       */
+      label?: Record<string, never> | null;
+    };
+    ProvinceDto: {
+      /**
+       * @description Code of the province: 2 digits
+       * @example 01
+       */
+      code: string;
+      /**
+       * @description Name without the kind
+       * @example Hà Nội
+       */
+      name: string;
+      /**
+       * @description Name with the kind
+       * @example Thành phố Hà Nội
+       */
+      fullName: string;
+      /** @enum {string} */
+      type: "CITY" | "PROVINCE";
+    };
+    WardDto: {
+      /**
+       * @description Code of the ward: 5 digits
+       * @example 00004
+       */
+      code: string;
+      /**
+       * @description Name without the kind
+       * @example Ba Đình
+       */
+      name: string;
+      /**
+       * @description Name with the kind
+       * @example Phường Ba Đình
+       */
+      fullName: string;
+      /** @enum {string} */
+      type: "WARD" | "COMMUNE" | "SPECIAL_ZONE";
+    };
+    RegisterDto: {
+      /** @example user@example.com */
+      email: string;
+      /** @example k9#Tq2$vLm8x */
+      password: string;
+      /** @example John Doe */
+      displayName?: string;
+    };
+    RegisterResponseDto: {
+      /**
+       * @description Always true: the account is created only after the emailed code is entered (POST /auth/verify-email)
+       * @example true
+       */
+      verificationRequired: boolean;
+      /**
+       * @description Seconds to wait before another code can be requested
+       * @example 300
+       */
+      resendAvailableInSeconds: number;
+      /**
+       * @description Seconds the registration is kept. After that the user must register again; asking for another code will not help
+       * @example 1800
+       */
+      verificationExpiresInSeconds: number;
+    };
+    VerifyEmailDto: {
+      /** @example user@example.com */
+      email: string;
+      /**
+       * @description The 6-digit code sent to the email address
+       * @example 482915
+       */
+      code: string;
+      /**
+       * @description The password given when registering
+       * @example k9#Tq2$vLm8x
+       */
+      password: string;
+    };
+    AuthResponseDto: {
+      /** @description JWT Access Token */
+      accessToken: string;
+      /** @description Opaque Refresh Token */
+      refreshToken: string;
+    };
+    ResendVerificationDto: {
+      /** @example user@example.com */
+      email: string;
+    };
+    ResendVerificationResponseDto: {
+      /**
+       * @description Seconds to wait before another code can be requested
+       * @example 300
+       */
+      resendAvailableInSeconds: number;
+    };
+    ForgotPasswordDto: {
+      /** @example user@example.com */
+      email: string;
+    };
+    ForgotPasswordResponseDto: {
+      /**
+       * @description Seconds to wait before another reset code can be requested. The same answer is given whether or not the address has an account
+       * @example 300
+       */
+      resendAvailableInSeconds: number;
+    };
+    ResetPasswordDto: {
+      /** @example user@example.com */
+      email: string;
+      /**
+       * @description The 6-digit code sent to the email address
+       * @example 482915
+       */
+      code: string;
+      /** @example k9#Tq2$vLm8x */
+      newPassword: string;
+    };
+    ChangePasswordDto: {
+      /** @example the-password-in-use-now */
+      currentPassword: string;
+      /** @example k9#Tq2$vLm8x */
+      newPassword: string;
+    };
+    LoginDto: {
+      /** @example user@example.com */
+      email: string;
+      /** @example k9#Tq2$vLm8x */
+      password: string;
+    };
+    RefreshTokenDto: {
+      /** @example some-random-hex-string */
+      refreshToken: string;
+    };
+    LogoutDto: {
+      /** @description Ignored. Kept so existing clients keep working. */
+      refreshToken?: string;
+    };
+    SessionResponseDto: {
+      /** @description Session ID */
+      id: string;
+      /**
+       * @description Device, as the User-Agent it logged in with
+       * @example Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0
+       */
+      deviceName: string;
+      /** @description IP of the most recent use */
+      ipAddress: string;
+      /**
+       * Format: date-time
+       * @description When this device logged in
+       */
+      createdAt: string;
+      /**
+       * Format: date-time
+       * @description Last time this device refreshed its token
+       */
+      lastUsedAt: string;
+      /** @description True for the session making this request */
+      current: boolean;
+    };
+    GoogleTokenDto: {
+      /** @description The `credential` Google Identity Services hands to the page (a JWT signed by Google) */
+      idToken: string;
+      /** @description The nonce given to Google when signing in, if any. Required to match when the token carries one */
+      nonce?: string;
+    };
+    GoogleLoginResponseDto: {
+      /** @description JWT Access Token */
+      accessToken: string;
+      /** @description Opaque Refresh Token */
+      refreshToken: string;
+      /** @description True when this sign-in created the account (a good moment to ask for a profile) */
+      isNewUser: boolean;
+    };
+    LinkGoogleDto: {
+      /** @description The `credential` Google Identity Services hands to the page (a JWT signed by Google) */
+      idToken: string;
+      /** @description The nonce given to Google when signing in, if any. Required to match when the token carries one */
+      nonce?: string;
+      /** @description The password of the account. Required when the account has one: it proves the owner is asking, which a stolen access token cannot */
+      currentPassword?: string;
+    };
+    PaginatedMetaDto: {
+      hasMore: boolean;
+      nextCursor: Record<string, never> | null;
+    };
+    PaginatedResponseDto: {
+      meta: components["schemas"]["PaginatedMetaDto"];
+    };
+    PageMetaResponseDto: {
+      page: number;
+      limit: number;
+      hasMore: boolean;
+      /** @description How many products match, counted only up to 1000 */
+      total: number;
+      /** @description More than total products match */
+      totalCapped: boolean;
+    };
+    SkuResponseDto: {
+      id: string;
+      skuCode: string;
+      /** @description The selling price: the price that is charged */
+      price: number;
+      /** @description The price before a discount, shown crossed out. Display only: money is always charged at price */
+      compareAtPrice: Record<string, never> | null;
+      /** @description How much cheaper than compareAtPrice, in whole percent; 0 when not discounted */
+      discountPercent: number;
+      /** @description In stock now (onHand above 0; units held for orders are not taken off). Only in the public endpoints. */
+      inStock?: boolean;
+      attributes: Record<string, never>;
+    };
+    ProductResponseDto: {
+      id: string;
+      categoryId: string;
+      name: string;
+      description?: Record<string, never> | null;
+      thumbnail?: Record<string, never> | null;
+      status: string;
+      skus: components["schemas"]["SkuResponseDto"][];
+      /** @description The lowest price among the SKUs ("from ... VND") */
+      minPrice: Record<string, never> | null;
+      /** @description Some SKU is sold below its original price */
+      onSale: boolean;
+      /** @description The biggest discount among the SKUs, in whole percent; 0 when none */
+      discountPercent: number;
+      /** @description Some SKU is in stock now. Only in the public endpoints; false means "out of stock". */
+      inStock?: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    CategoryProductCountResponseDto: {
+      categoryId: string;
+      name: string;
+      /** @description Published products in the category and every category below it, inside the filters */
+      count: number;
+    };
+    SkuDto: {
+      /**
+       * @description Giá của SKU (VND)
+       * @example 150000
+       */
+      price: number;
+      /**
+       * @description Giá trước khi giảm (hiển thị gạch ngang); phải lớn hơn price. Chỉ để hiển thị, tiền vẫn tính theo price
+       * @example 180000
+       */
+      compareAtPrice?: number;
+      /**
+       * @description Thuộc tính cấu hình của SKU
+       * @example {
+       *       "color": "Red",
+       *       "size": "XL"
+       *     }
+       */
+      attributes: Record<string, never>;
+      /**
+       * @description Mã SKU duy nhất
+       * @example SKU-RED-XL
+       */
+      skuCode: string;
+      /**
+       * @description Mã vạch (Barcode)
+       * @example 8931234567890
+       */
+      barcode?: string;
+    };
+    CreateProductDto: {
+      /**
+       * @description ID của danh mục
+       * @example cat_123
+       */
+      categoryId: string;
+      /**
+       * @description Tên sản phẩm
+       * @example Áo thun nam
+       */
+      name: string;
+      /**
+       * @description Mô tả chi tiết sản phẩm
+       * @example Áo thun cotton 100%...
+       */
+      description?: string;
+      /**
+       * @description URL ảnh đại diện
+       * @example https://example.com/image.png
+       */
+      thumbnail?: string;
+      /** @description Danh sách các phiên bản (SKU) của sản phẩm */
+      skus?: components["schemas"]["SkuDto"][];
+    };
+    UpdateProductDto: {
+      name?: string;
+      description?: string;
+      thumbnail?: string;
+    };
+    AddSkuDto: {
+      skuCode: string;
+      price: number;
+      /** @description The price before a discount (shown crossed out); must be greater than price. Display only: money is always charged at price */
+      compareAtPrice?: number;
+      attributes: Record<string, never>;
+      barcode?: string;
+    };
+    UpdateSkuPriceDto: {
+      /** @description New price for the SKU */
+      price: number;
+      /** @description The price before a discount (shown crossed out), greater than price. A number sets it, null removes the discount, leaving it out keeps what is there. Display only: money is always charged at price */
+      compareAtPrice?: Record<string, never> | null;
+    };
+    CreateCategoryDto: {
+      /**
+       * @description Tên danh mục
+       * @example Áo Nam
+       */
+      name: string;
+      /**
+       * @description ID của danh mục cha (nếu có)
+       * @example cat_12345
+       */
+      parentId?: string;
+    };
+    UpdateCategoryDto: {
+      name?: string;
+      isActive?: boolean;
+    };
+    MoveCategoryDto: {
+      /** @description ID of the new parent category. Send null or omit to move to root. */
+      newParentId?: Record<string, never>;
+    };
+    CartLineResponseDto: {
+      skuId: string;
+      productId: Record<string, never> | null;
+      productName: Record<string, never> | null;
+      thumbnail: Record<string, never> | null;
+      attributes: {
+        [key: string]: unknown;
+      } | null;
+      quantity: number;
+      /** @description The price now; null when the item is no longer on sale */
+      price: Record<string, never> | null;
+      /** @description The price when it was put in the cart */
+      addedPrice: number;
+      /** @description Units that can be sold now; null when the item is no longer on sale */
+      available: Record<string, never> | null;
+      flags: (
+        "priceChanged" | "unpublished" | "outOfStock" | "notEnoughStock"
+      )[];
+    };
+    CartResponseDto: {
+      items: components["schemas"]["CartLineResponseDto"][];
+      /** @description Total of the lines that can be ordered as they are */
+      subtotal: number;
+      lineCount: number;
+      quantityCount: number;
+    };
+    AddCartItemDto: {
+      /**
+       * @description The SKU to add
+       * @example seed_sku_flash
+       */
+      skuId: string;
+      /**
+       * @description Units to ADD to what the cart already holds for this SKU
+       * @example 1
+       */
+      quantity: number;
+    };
+    CartItemResponseDto: {
+      skuId: string;
+      /** @description Units in the cart for this SKU after the change */
+      quantity: number;
+      /** @description The price the cart recorded for this SKU */
+      addedPrice: number;
+    };
+    SetCartItemQuantityDto: {
+      /**
+       * @description The units the cart should hold for this SKU (it replaces the old number; sending it again changes nothing)
+       * @example 3
+       */
+      quantity: number;
+    };
+    PlaceOrderDto: {
+      /**
+       * @description One of the addresses in your address book
+       * @example 0b6f3d3a-2f6b-4a53-8f0e-1d6f2f6f0c11
+       */
+      addressId: string;
+      /**
+       * @description ONLINE: pay before delivery, 15 minutes from now. COD: pay in cash on delivery; the order is confirmed at once.
+       * @enum {string}
+       */
+      paymentMethod: "ONLINE" | "COD";
+    };
+    OrderItemResponseDto: {
+      skuId: string;
+      productName: string;
+      thumbnail: Record<string, never> | null;
+      attributes: {
+        [key: string]: string;
+      };
+      /** @description The price when the order was placed */
+      unitPrice: number;
+      quantity: number;
+      lineTotal: number;
+    };
+    ShippingAddressResponseDto: {
+      recipientName: string;
+      phone: string;
+      provinceCode: string;
+      provinceName: string;
+      wardCode: string;
+      wardName: string;
+      street: string;
+      label: Record<string, never> | null;
+    };
+    OrderTimelineResponseDto: {
+      /**
+       * Format: date-time
+       * @description When the order was placed
+       */
+      placedAt: string;
+      confirmedAt: Record<string, never> | null;
+      shippedAt: Record<string, never> | null;
+      deliveredAt: Record<string, never> | null;
+      cancelledAt: Record<string, never> | null;
+      expiredAt: Record<string, never> | null;
+    };
+    OrderResponseDto: {
+      id: string;
+      /** @enum {string} */
+      status:
+        | "PENDING"
+        | "PAYMENT_PROCESSING"
+        | "CONFIRMED"
+        | "SHIPPING"
+        | "DELIVERED"
+        | "CANCELLED"
+        | "EXPIRED";
+      /** @enum {string} */
+      paymentMethod: "ONLINE" | "COD";
+      total: number;
+      items: components["schemas"]["OrderItemResponseDto"][];
+      shippingAddress: components["schemas"]["ShippingAddressResponseDto"];
+      /**
+       * Format: date-time
+       * @description Online orders: when the time to pay runs out. Meaningless for cash on delivery.
+       */
+      expiresAt: string;
+      timeline: components["schemas"]["OrderTimelineResponseDto"];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    OrderSummaryItemResponseDto: {
+      productName: string;
+      thumbnail: Record<string, never> | null;
+      quantity: number;
+    };
+    OrderSummaryResponseDto: {
+      id: string;
+      /** @enum {string} */
+      status:
+        | "PENDING"
+        | "PAYMENT_PROCESSING"
+        | "CONFIRMED"
+        | "SHIPPING"
+        | "DELIVERED"
+        | "CANCELLED"
+        | "EXPIRED";
+      /** @enum {string} */
+      paymentMethod: "ONLINE" | "COD";
+      total: number;
+      /** @description How many lines the order has */
+      itemCount: number;
+      /** @description The first 3 items, enough to show what the order is about */
+      items: components["schemas"]["OrderSummaryItemResponseDto"][];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      expiresAt: string;
+    };
+    OrderCountsResponseDto: {
+      PENDING: number;
+      PAYMENT_PROCESSING: number;
+      CONFIRMED: number;
+      SHIPPING: number;
+      DELIVERED: number;
+      CANCELLED: number;
+      EXPIRED: number;
+    };
+    PaymentResponseDto: {
+      id: string;
+      orderId: string;
+      /** @enum {string} */
+      status:
+        | "INITIATED"
+        | "SUCCEEDED"
+        | "FAILED"
+        | "EXPIRED"
+        | "REFUND_PENDING"
+        | "REFUNDED";
+      /** @description What the customer has to pay (VND) */
+      amount: number;
+      /** @description Where to pay. Only while the payment is INITIATED; null in every other state. */
+      payUrl: Record<string, never> | null;
+      /**
+       * Format: date-time
+       * @description The customer has until this moment to pay
+       */
+      expiresAt: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    FakePayDto: {
+      /** @description What the fake gateway says it collected. Leave it out to pay the right amount; send another number to try a wrong amount. */
+      amount?: number;
+    };
+    FakeGatewayResultDto: {
+      /** @description The HTTP status our own webhook endpoint answered */
+      webhookStatus: number;
+      /** @description The id of the webhook message that was sent */
+      eventId: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    AppController_testHealth: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description API is healthy */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    UserController_getMe: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Return the profile of the current user */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
-                };
-            };
-        };
-    };
-    UserController_updateProfile: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProfileDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
-                };
-            };
-            /** @description The name is not valid (USR-006) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    UserController_uploadAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file: string;
-                };
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserResponseDto"];
-                };
-            };
-            /** @description Not a valid picture (USR-003) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The file is over 2 MB */
-            413: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Image storage unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    UserController_removeAvatar: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Removed (or there was none) */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AddressController_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddressResponseDto"][];
-                };
-            };
-        };
-    };
-    AddressController_add: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateAddressDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddressResponseDto"];
-                };
-            };
-            /** @description Not valid (ADDR-003) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Already 10 addresses (ADDR-002) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AddressController_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Address id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No such address of mine (ADDR-001) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AddressController_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Address id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateAddressDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddressResponseDto"];
-                };
-            };
-            /** @description Not valid (ADDR-003) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No such address of mine (ADDR-001) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AddressController_setDefault: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Address id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AddressResponseDto"];
-                };
-            };
-            /** @description No such address of mine (ADDR-001) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    LocationsController_listProvinces: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ProvinceDto"][];
-                };
-            };
-        };
-    };
-    LocationsController_listWards: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Province code */
-                code: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WardDto"][];
-                };
-            };
-            /** @description No such province (LOC-001) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_register: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RegisterDto"];
-            };
-        };
-        responses: {
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RegisterResponseDto"];
-                };
-            };
-            /** @description Email already has an account */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_verifyEmail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyEmailDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponseDto"];
-                };
-            };
-            /** @description Wrong, expired or already used code, or a password that differs from the one used to register (AUTH-011) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_resendVerification: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResendVerificationDto"];
-            };
-        };
-        responses: {
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResendVerificationResponseDto"];
-                };
-            };
-            /** @description No registration is waiting for this email; register again */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Asked again too soon, or too many codes this hour. `errors.retryAfterSeconds` (and the Retry-After header) say how long to wait */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_forgotPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ForgotPasswordDto"];
-            };
-        };
-        responses: {
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ForgotPasswordResponseDto"];
-                };
-            };
-            /** @description Asked again too soon, or too many codes this hour; the same for every address. `errors.retryAfterSeconds` says how long to wait */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_resetPassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetPasswordDto"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Wrong, expired or used code (AUTH-008), or a new password that is too easy to guess (AUTH-010, with the reason) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_changePassword: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChangePasswordDto"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Wrong current password (AUTH-012), or a new password that is the same as the current one or too easy to guess (AUTH-010, with the reason) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The password was changed by another request while this one was being processed (AUTH-013) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponseDto"];
-                };
-            };
-        };
-    };
-    AuthController_refresh: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RefreshTokenDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AuthResponseDto"];
-                };
-            };
-        };
-    };
-    AuthController_logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LogoutDto"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AuthController_logoutAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    SessionController_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionResponseDto"][];
-                };
-            };
-        };
-    };
-    SessionController_revokeOthers: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    SessionController_revoke: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Session ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Session not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GoogleAuthController_login: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["GoogleTokenDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GoogleLoginResponseDto"];
-                };
-            };
-            /** @description The token is not acceptable (AUTH-014) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Google says the email is not verified (AUTH-015) */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The account is linked to a different Google account (AUTH-016) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sign in with Google is not enabled (AUTH-018), or Google could not be reached */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GoogleAuthController_unlink: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Google is the only way to log in (AUTH-017) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No Google account is linked (AUTH-019) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    GoogleAuthController_link: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LinkGoogleDto"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Wrong or missing current password (AUTH-012) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description That Google account belongs to someone else, or this account has a different one (AUTH-016) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminUserController_suspend: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description User id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Suspended (or already was) */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not an admin, or the target is an admin */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminUserController_reinstate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description User id */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Reinstated (or was active) */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not logged in */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description User not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_getProducts: {
-        parameters: {
-            query?: {
-                /** @description Search products by name or description */
-                search?: string;
-                /** @description Minimum price filter */
-                minPrice?: number;
-                /** @description Maximum price filter */
-                maxPrice?: number;
-                /** @description Only products with at least one SKU in stock (units held for orders are not taken off) */
-                inStock?: "true";
-                /** @description Only products with at least one SKU sold below its original price */
-                onSale?: "true";
-                /** @description Number of items per page */
-                limit?: number;
-                /** @description The `meta.nextCursor` of the previous page */
-                cursor?: string;
-                /** @description Page number, starting at 1 (instead of `cursor`) */
-                page?: number;
-                /** @description Filter products by category ID. Includes the products of every sub-category. */
-                categoryId?: string;
-                /** @description newest (the default), price_asc, price_desc, or relevance (needs `search`). `cursor` only works with newest. */
-                sort?: "newest" | "price_asc" | "price_desc" | "relevance";
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Products retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        data?: components["schemas"]["ProductResponseDto"][];
-                        meta?: components["schemas"]["PageMetaResponseDto"];
-                    };
-                };
-            };
-            /** @description A bad parameter (VAL-001), or options that cannot go together (CAT-017): page with cursor, cursor with another sort, relevance without search, a page past the first 1000 results, a cursor that is not a product */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    ProductController_getFacets: {
-        parameters: {
-            query?: {
-                /** @description Search products by name or description */
-                search?: string;
-                /** @description Minimum price filter */
-                minPrice?: number;
-                /** @description Maximum price filter */
-                maxPrice?: number;
-                /** @description Only products with at least one SKU in stock (units held for orders are not taken off) */
-                inStock?: "true";
-                /** @description Only products with at least one SKU sold below its original price */
-                onSale?: "true";
-                /** @description Count the categories directly under this one. Leave out for the root categories. */
-                parentId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CategoryProductCountResponseDto"][];
-                };
-            };
-        };
-    };
-    ProductController_getProductById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Product retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found, or not published */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_getCategories: {
-        parameters: {
-            query?: {
-                /** @description ID of parent category to fetch children. Leave empty to fetch root categories. */
-                parentId?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Categories retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CategoryController_getCategoryById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Category ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Category retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Category not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_getProducts: {
-        parameters: {
-            query?: {
-                /** @description Search products by name or description */
-                search?: string;
-                /** @description Minimum price filter */
-                minPrice?: number;
-                /** @description Maximum price filter */
-                maxPrice?: number;
-                /** @description Number of items per page */
-                limit?: number;
-                /** @description The `meta.nextCursor` of the previous page */
-                cursor?: string;
-                /** @description Filter products by category ID. Includes the products of every sub-category. */
-                categoryId?: string;
-                /** @description Filter by product status. Leave empty for every status. */
-                status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Products retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
-                        data?: components["schemas"]["ProductResponseDto"][];
-                    };
-                };
-            };
-        };
-    };
-    AdminProductController_createProduct: {
-        parameters: {
-            query?: never;
-            header: {
-                "idempotency-key": string;
-                /** @description Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate product. */
-                "Idempotency-Key"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateProductDto"];
-            };
-        };
-        responses: {
-            /** @description Product created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request / Validation Error */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description A request with this Idempotency-Key is already in progress */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_getProductById: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Product retrieved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_updateProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateProductDto"];
-            };
-        };
-        responses: {
-            /** @description Product updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_publishProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Product published successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Cannot publish product without SKUs or Price */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_unpublishProduct: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Product unpublished successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_addSku: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddSkuDto"];
-            };
-        };
-        responses: {
-            /** @description SKU added successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_removeSku: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-                /** @description SKU ID */
-                skuId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description SKU removed successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product or SKU not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminProductController_updateSkuPrice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Product ID */
-                id: string;
-                /** @description SKU ID */
-                skuId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateSkuPriceDto"];
-            };
-        };
-        responses: {
-            /** @description SKU price updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Product or SKU not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminCategoryController_createCategory: {
-        parameters: {
-            query?: never;
-            header: {
-                "idempotency-key": string;
-                /** @description Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate category. */
-                "Idempotency-Key"?: string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Category created successfully */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description A request with this Idempotency-Key is already in progress */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminCategoryController_deleteCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Category ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Category deleted successfully */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Category not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Cannot delete category containing products or child categories */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminCategoryController_updateCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Category ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Category updated successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Category not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminCategoryController_moveCategory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Category ID */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["MoveCategoryDto"];
-            };
-        };
-        responses: {
-            /** @description Category moved successfully */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Category or New Parent not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CartController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CartResponseDto"];
-                };
-            };
-        };
-    };
-    CartController_clear: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CartController_add: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddCartItemDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CartItemResponseDto"];
-                };
-            };
-            /** @description Not available (CART-003) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Cart full (CART-001) or too many of one item (CART-002) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CartController_setQuantity: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                skuId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SetCartItemQuantityDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CartItemResponseDto"];
-                };
-            };
-            /** @description Not in the cart (CART-004) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Too many of one item (CART-002) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    CartController_removeItem: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                skuId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_list: {
-        parameters: {
-            query?: {
-                /** @description Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00) */
-                createdFrom?: string;
-                /** @description Only orders placed at or before this moment (ISO 8601 with a time zone) */
-                createdTo?: string;
-                /** @description The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -) */
-                q?: string;
-                /** @description Number of items per page */
-                limit?: number;
-                /** @description The `meta.nextCursor` of the previous page */
-                cursor?: string;
-                /** @description One or more statuses, separated by commas */
-                status?: string[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderSummaryResponseDto"][];
-                };
-            };
-            /** @description A bad filter, limit or cursor (VAL-001, ORD-000) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_place: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 8 to 100 characters from A-Z a-z 0-9 _ - */
-                "Idempotency-Key": string;
-            };
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlaceOrderDto"];
-            };
-        };
-        responses: {
-            /** @description The order of an earlier request with the same key */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            /** @description Missing or bad Idempotency-Key (ORD-005) or body */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Address not found (ADDR-001) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not enough stock (ORD-001), empty cart (ORD-003), items no longer on sale (ORD-004) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_counts: {
-        parameters: {
-            query?: {
-                /** @description Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00) */
-                createdFrom?: string;
-                /** @description Only orders placed at or before this moment (ISO 8601 with a time zone) */
-                createdTo?: string;
-                /** @description The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -) */
-                q?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderCountsResponseDto"];
-                };
-            };
-            /** @description A bad filter (VAL-001, ORD-000) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            /** @description Not found, or not yours (ORD-002): the same answer */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    OrderController_cancel: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            /** @description Not found, or not yours (ORD-002) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The order cannot be cancelled from where it is (ORD-006) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminOrderController_ship: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            /** @description No such order (ORD-002) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not CONFIRMED (ORD-006) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    AdminOrderController_deliver: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
-                };
-            };
-            /** @description No such order (ORD-002) */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not SHIPPING (ORD-006) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentController_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                orderId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaymentResponseDto"][];
-                };
-            };
-            /** @description Not found, or not yours (ORD-002): the same answer */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentController_start: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description 8 to 100 characters from A-Z a-z 0-9 _ - */
-                "Idempotency-Key": string;
-            };
-            path: {
-                orderId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description The payment of an earlier request with the same key */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaymentResponseDto"];
-                };
-            };
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaymentResponseDto"];
-                };
-            };
-            /** @description Missing or bad Idempotency-Key (PAY-001) */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not found, or not yours (ORD-002): the same answer */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not an online order (PAY-002), not payable now (PAY-003), too many attempts (PAY-004), time to pay is over or the held stock is gone (PAY-005) */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description The payment gateway cannot be reached (PAY-006) */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    PaymentWebhookController_receive: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                provider: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Received (also for a message already handled) */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Signed, but not a message we understand */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Missing or wrong signature, changed content, or too old */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Not the gateway this server uses */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    DevFakeGatewayController_pay: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                providerRef: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FakePayDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FakeGatewayResultDto"];
-                };
-            };
-            /** @description Not the fake gateway, production, or no such charge */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    DevFakeGatewayController_fail: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                providerRef: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FakeGatewayResultDto"];
-                };
-            };
-            /** @description Not the fake gateway, production, or no such charge */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
+  AppController_testHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description API is healthy */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  UserController_getMe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Return the profile of the current user */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserResponseDto"];
+        };
+      };
+    };
+  };
+  UserController_updateProfile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateProfileDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserResponseDto"];
+        };
+      };
+      /** @description The name is not valid (USR-006) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  UserController_uploadAvatar: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          /** Format: binary */
+          file: string;
+        };
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserResponseDto"];
+        };
+      };
+      /** @description Not a valid picture (USR-003) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The file is over 2 MB */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Image storage unavailable */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  UserController_removeAvatar: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Removed (or there was none) */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AddressController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AddressResponseDto"][];
+        };
+      };
+    };
+  };
+  AddressController_add: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateAddressDto"];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AddressResponseDto"];
+        };
+      };
+      /** @description Not valid (ADDR-003) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Already 10 addresses (ADDR-002) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AddressController_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Address id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description No such address of mine (ADDR-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AddressController_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Address id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateAddressDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AddressResponseDto"];
+        };
+      };
+      /** @description Not valid (ADDR-003) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description No such address of mine (ADDR-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AddressController_setDefault: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Address id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AddressResponseDto"];
+        };
+      };
+      /** @description No such address of mine (ADDR-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  LocationsController_listProvinces: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ProvinceDto"][];
+        };
+      };
+    };
+  };
+  LocationsController_listWards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Province code */
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["WardDto"][];
+        };
+      };
+      /** @description No such province (LOC-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_register: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RegisterDto"];
+      };
+    };
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RegisterResponseDto"];
+        };
+      };
+      /** @description Email already has an account */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_verifyEmail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VerifyEmailDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthResponseDto"];
+        };
+      };
+      /** @description Wrong, expired or already used code, or a password that differs from the one used to register (AUTH-011) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_resendVerification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResendVerificationDto"];
+      };
+    };
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ResendVerificationResponseDto"];
+        };
+      };
+      /** @description No registration is waiting for this email; register again */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Asked again too soon, or too many codes this hour. `errors.retryAfterSeconds` (and the Retry-After header) say how long to wait */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_forgotPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ForgotPasswordDto"];
+      };
+    };
+    responses: {
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ForgotPasswordResponseDto"];
+        };
+      };
+      /** @description Asked again too soon, or too many codes this hour; the same for every address. `errors.retryAfterSeconds` says how long to wait */
+      429: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_resetPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ResetPasswordDto"];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Wrong, expired or used code (AUTH-008), or a new password that is too easy to guess (AUTH-010, with the reason) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_changePassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ChangePasswordDto"];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Wrong current password (AUTH-012), or a new password that is the same as the current one or too easy to guess (AUTH-010, with the reason) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The password was changed by another request while this one was being processed (AUTH-013) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthResponseDto"];
+        };
+      };
+    };
+  };
+  AuthController_refresh: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RefreshTokenDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthResponseDto"];
+        };
+      };
+    };
+  };
+  AuthController_logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LogoutDto"];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AuthController_logoutAll: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  SessionController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SessionResponseDto"][];
+        };
+      };
+    };
+  };
+  SessionController_revokeOthers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  SessionController_revoke: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Session ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Session not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  GoogleAuthController_login: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GoogleTokenDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["GoogleLoginResponseDto"];
+        };
+      };
+      /** @description The token is not acceptable (AUTH-014) */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Google says the email is not verified (AUTH-015) */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The account is linked to a different Google account (AUTH-016) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sign in with Google is not enabled (AUTH-018), or Google could not be reached */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  GoogleAuthController_unlink: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Google is the only way to log in (AUTH-017) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description No Google account is linked (AUTH-019) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  GoogleAuthController_link: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LinkGoogleDto"];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Wrong or missing current password (AUTH-012) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description That Google account belongs to someone else, or this account has a different one (AUTH-016) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminUserController_suspend: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description User id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Suspended (or already was) */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not logged in */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not an admin, or the target is an admin */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description User not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminUserController_reinstate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description User id */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Reinstated (or was active) */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not logged in */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description User not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ProductController_getProducts: {
+    parameters: {
+      query?: {
+        /** @description Search products by name or description */
+        search?: string;
+        /** @description Minimum price filter */
+        minPrice?: number;
+        /** @description Maximum price filter */
+        maxPrice?: number;
+        /** @description Only products with at least one SKU in stock (units held for orders are not taken off) */
+        inStock?: "true";
+        /** @description Only products with at least one SKU sold below its original price */
+        onSale?: "true";
+        /** @description Number of items per page */
+        limit?: number;
+        /** @description The `meta.nextCursor` of the previous page */
+        cursor?: string;
+        /** @description Page number, starting at 1 (instead of `cursor`) */
+        page?: number;
+        /** @description Filter products by category ID. Includes the products of every sub-category. */
+        categoryId?: string;
+        /** @description newest (the default), price_asc, price_desc, or relevance (needs `search`). `cursor` only works with newest. */
+        sort?: "newest" | "price_asc" | "price_desc" | "relevance";
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Products retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedResponseDto"] & {
+            data?: components["schemas"]["ProductResponseDto"][];
+            meta?: components["schemas"]["PageMetaResponseDto"];
+          };
+        };
+      };
+      /** @description A bad parameter (VAL-001), or options that cannot go together (CAT-017): page with cursor, cursor with another sort, relevance without search, a page past the first 1000 results, a cursor that is not a product */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  ProductController_getFacets: {
+    parameters: {
+      query?: {
+        /** @description Search products by name or description */
+        search?: string;
+        /** @description Minimum price filter */
+        minPrice?: number;
+        /** @description Maximum price filter */
+        maxPrice?: number;
+        /** @description Only products with at least one SKU in stock (units held for orders are not taken off) */
+        inStock?: "true";
+        /** @description Only products with at least one SKU sold below its original price */
+        onSale?: "true";
+        /** @description Count the categories directly under this one. Leave out for the root categories. */
+        parentId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CategoryProductCountResponseDto"][];
+        };
+      };
+    };
+  };
+  ProductController_getProductById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Product retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found, or not published */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CategoryController_getCategories: {
+    parameters: {
+      query?: {
+        /** @description ID of parent category to fetch children. Leave empty to fetch root categories. */
+        parentId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Categories retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CategoryController_getCategoryById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Category ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Category retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Category not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_getProducts: {
+    parameters: {
+      query?: {
+        /** @description Search products by name or description */
+        search?: string;
+        /** @description Minimum price filter */
+        minPrice?: number;
+        /** @description Maximum price filter */
+        maxPrice?: number;
+        /** @description Number of items per page */
+        limit?: number;
+        /** @description The `meta.nextCursor` of the previous page */
+        cursor?: string;
+        /** @description Filter products by category ID. Includes the products of every sub-category. */
+        categoryId?: string;
+        /** @description Filter by product status. Leave empty for every status. */
+        status?: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Products retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedResponseDto"] & {
+            data?: components["schemas"]["ProductResponseDto"][];
+          };
+        };
+      };
+    };
+  };
+  AdminProductController_createProduct: {
+    parameters: {
+      query?: never;
+      header: {
+        "idempotency-key": string;
+        /** @description Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate product. */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateProductDto"];
+      };
+    };
+    responses: {
+      /** @description Product created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request / Validation Error */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description A request with this Idempotency-Key is already in progress */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_getProductById: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Product retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_updateProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateProductDto"];
+      };
+    };
+    responses: {
+      /** @description Product updated successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_publishProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Product published successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Cannot publish product without SKUs or Price */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_unpublishProduct: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Product unpublished successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_addSku: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AddSkuDto"];
+      };
+    };
+    responses: {
+      /** @description SKU added successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_removeSku: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+        /** @description SKU ID */
+        skuId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description SKU removed successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product or SKU not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminProductController_updateSkuPrice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Product ID */
+        id: string;
+        /** @description SKU ID */
+        skuId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateSkuPriceDto"];
+      };
+    };
+    responses: {
+      /** @description SKU price updated successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Product or SKU not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCategoryController_createCategory: {
+    parameters: {
+      query?: never;
+      header: {
+        "idempotency-key": string;
+        /** @description Optional client-generated key. Retrying the same key within 24h replays the original response instead of creating a duplicate category. */
+        "Idempotency-Key"?: string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CreateCategoryDto"];
+      };
+    };
+    responses: {
+      /** @description Category created successfully */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description A request with this Idempotency-Key is already in progress */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCategoryController_deleteCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Category ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Category deleted successfully */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Category not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Cannot delete category containing products or child categories */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCategoryController_updateCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Category ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateCategoryDto"];
+      };
+    };
+    responses: {
+      /** @description Category updated successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Category not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminCategoryController_moveCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        /** @description Category ID */
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["MoveCategoryDto"];
+      };
+    };
+    responses: {
+      /** @description Category moved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Category or New Parent not found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CartController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CartResponseDto"];
+        };
+      };
+    };
+  };
+  CartController_clear: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CartController_add: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AddCartItemDto"];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CartItemResponseDto"];
+        };
+      };
+      /** @description Not available (CART-003) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Cart full (CART-001) or too many of one item (CART-002) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CartController_setQuantity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        skuId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SetCartItemQuantityDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CartItemResponseDto"];
+        };
+      };
+      /** @description Not in the cart (CART-004) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Too many of one item (CART-002) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  CartController_removeItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        skuId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_list: {
+    parameters: {
+      query?: {
+        /** @description Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00) */
+        createdFrom?: string;
+        /** @description Only orders placed at or before this moment (ISO 8601 with a time zone) */
+        createdTo?: string;
+        /** @description The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -) */
+        q?: string;
+        /** @description Number of items per page */
+        limit?: number;
+        /** @description The `meta.nextCursor` of the previous page */
+        cursor?: string;
+        /** @description One or more statuses, separated by commas */
+        status?: string[];
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderSummaryResponseDto"][];
+        };
+      };
+      /** @description A bad filter, limit or cursor (VAL-001, ORD-000) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_place: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 8 to 100 characters from A-Z a-z 0-9 _ - */
+        "Idempotency-Key": string;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PlaceOrderDto"];
+      };
+    };
+    responses: {
+      /** @description The order of an earlier request with the same key */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      /** @description Missing or bad Idempotency-Key (ORD-005) or body */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Address not found (ADDR-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not enough stock (ORD-001), empty cart (ORD-003), items no longer on sale (ORD-004) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_counts: {
+    parameters: {
+      query?: {
+        /** @description Only orders placed at or after this moment (ISO 8601 with a time zone, for example 2026-10-01T00:00:00+07:00) */
+        createdFrom?: string;
+        /** @description Only orders placed at or before this moment (ISO 8601 with a time zone) */
+        createdTo?: string;
+        /** @description The start of the order id: the 8 characters shown as the order code work (6 to 36 characters from 0-9, a-f and -) */
+        q?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderCountsResponseDto"];
+        };
+      };
+      /** @description A bad filter (VAL-001, ORD-000) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      /** @description Not found, or not yours (ORD-002): the same answer */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_cancel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      /** @description Not found, or not yours (ORD-002) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The order cannot be cancelled from where it is (ORD-006) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminOrderController_ship: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      /** @description No such order (ORD-002) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not CONFIRMED (ORD-006) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  AdminOrderController_deliver: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OrderResponseDto"];
+        };
+      };
+      /** @description No such order (ORD-002) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not SHIPPING (ORD-006) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  PaymentController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        orderId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaymentResponseDto"][];
+        };
+      };
+      /** @description Not found, or not yours (ORD-002): the same answer */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  PaymentController_start: {
+    parameters: {
+      query?: never;
+      header: {
+        /** @description 8 to 100 characters from A-Z a-z 0-9 _ - */
+        "Idempotency-Key": string;
+      };
+      path: {
+        orderId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description The payment of an earlier request with the same key */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaymentResponseDto"];
+        };
+      };
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaymentResponseDto"];
+        };
+      };
+      /** @description Missing or bad Idempotency-Key (PAY-001) */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not found, or not yours (ORD-002): the same answer */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not an online order (PAY-002), not payable now (PAY-003), too many attempts (PAY-004), time to pay is over or the held stock is gone (PAY-005) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description The payment gateway cannot be reached (PAY-006) */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  PaymentWebhookController_receive: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        provider: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Received (also for a message already handled) */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Signed, but not a message we understand */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing or wrong signature, changed content, or too old */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not the gateway this server uses */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  DevFakeGatewayController_pay: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        providerRef: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["FakePayDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FakeGatewayResultDto"];
+        };
+      };
+      /** @description Not the fake gateway, production, or no such charge */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  DevFakeGatewayController_fail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        providerRef: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["FakeGatewayResultDto"];
+        };
+      };
+      /** @description Not the fake gateway, production, or no such charge */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
 }

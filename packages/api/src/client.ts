@@ -1,4 +1,5 @@
 import { ApiError, CLIENT_ERROR_CODES } from "./errors";
+import { readEventStream } from "./event-stream";
 import {
   session as sharedSession,
   type Session,
@@ -29,6 +30,17 @@ interface UntypedOptions {
   signal?: AbortSignal;
   /** The page handles the failure itself: do not report it to the error listeners. */
   silent?: boolean;
+  /** What to ask for in the `Accept` header; JSON when absent. */
+  accept?: string;
+}
+
+export interface StreamOptions {
+  params?: Record<string, string | number>;
+  query?: Record<string, unknown>;
+  /** Stops the stream. Cancelling is not a failure: `stream` just returns. */
+  signal?: AbortSignal;
+  /** Called for every message of the stream with its name (`status`, `ping`...) and its data read as JSON. */
+  onMessage: (event: string, data: unknown) => void;
 }
 
 /** The same sentence is reported once in this many milliseconds (five calls failing together show one message). */
@@ -116,7 +128,9 @@ export function createApiClient(config: ApiClientConfig = {}) {
     options: UntypedOptions,
     accessToken: string | null,
   ): Promise<Response> {
-    const headers: Record<string, string> = { Accept: "application/json" };
+    const headers: Record<string, string> = {
+      Accept: options.accept ?? "application/json",
+    };
     if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
     if (options.idempotencyKey)
       headers["Idempotency-Key"] = options.idempotencyKey;
@@ -297,6 +311,69 @@ export function createApiClient(config: ApiClientConfig = {}) {
     }
   }
 
+  async function errorOf(response: Response): Promise<ApiError> {
+    return toApiError(response, await readJson(response).catch(() => null));
+  }
+
+  /**
+   * Keeps a server-sent-events stream open and gives each message to `onMessage`. Resolves when the
+   * server closes the stream or `signal` is aborted; throws an `ApiError` when it cannot open (the
+   * server refuses, or the network is down) or breaks.
+   *
+   * It signs in like the other calls (an expired token is renewed once), but it never reports to
+   * `api.onError`: a stream is an extra on top of normal calls, and the caller decides what a failure
+   * means (try again, or ask now and then instead). A message whose data is not JSON is skipped.
+   */
+  async function stream(path: string, options: StreamOptions): Promise<void> {
+    const url = buildUrl(path, options);
+    const asked = { signal: options.signal, accept: "text/event-stream" };
+
+    try {
+      let response = await send("get", url, asked, session.getAccessToken());
+      let failure = response.ok ? null : await errorOf(response);
+      if (
+        failure &&
+        response.status === 401 &&
+        isTokenExpired(failure.code, failure.message)
+      ) {
+        if (!(await renewOnce())) throw failure;
+        response = await send("get", url, asked, session.getAccessToken());
+        failure = response.ok ? null : await errorOf(response);
+      }
+      if (failure) throw failure;
+      if (!response.body) {
+        throw new ApiError({
+          status: response.status,
+          code: CLIENT_ERROR_CODES.BAD_RESPONSE,
+          message: "The server answered a stream with no body",
+        });
+      }
+
+      for await (const message of readEventStream(response.body)) {
+        let data: unknown;
+        try {
+          data = JSON.parse(message.data);
+        } catch {
+          continue;
+        }
+        try {
+          options.onMessage(message.event, data);
+        } catch {
+          // The listener's own failure must not end the stream (as with the error listeners)
+        }
+      }
+    } catch (error) {
+      if (options.signal?.aborted) return; // cancelled on purpose
+      if (error instanceof ApiError) throw error;
+      // The connection broke in the middle of the stream
+      throw new ApiError({
+        status: 0,
+        code: CLIENT_ERROR_CODES.NETWORK,
+        message: "The connection to the server was lost",
+      });
+    }
+  }
+
   function call<M extends HttpMethod>(method: M) {
     return <P extends ApiPath<M>>(
       path: P,
@@ -311,6 +388,8 @@ export function createApiClient(config: ApiClientConfig = {}) {
     put: call("put"),
     patch: call("patch"),
     delete: call("delete"),
+    /** Opens a server-sent-events stream (see `stream` above). Not in the typed schema: the path is a plain string. */
+    stream,
     /** Every failed call of every app comes here (one listener, usually the shell's toast). Returns a function that stops listening. */
     onError,
   };

@@ -7,6 +7,7 @@ export {
   createApiClient,
   type ApiClient,
   type ApiClientConfig,
+  type StreamOptions,
 } from "./client";
 export {
   session,
@@ -26,3 +27,4 @@ export type {
   ResponseData,
 } from "./types";
 export type { paths, components } from "./generated/schema";
+export { readEventStream, type ServerSentEvent } from "./event-stream";

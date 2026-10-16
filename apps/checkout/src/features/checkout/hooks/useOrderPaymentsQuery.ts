@@ -9,14 +9,7 @@ export function useOrderPaymentsQuery(orderId: string | undefined) {
     queryKey: queryKeys.checkout.payments(orderId ?? ""),
     queryFn: () => checkoutService.getOrderPayments(orderId!),
     enabled: Boolean(orderId),
-    refetchInterval: (query) => {
-      const payments = query.state.data;
-      const latest = payments?.[0];
-      if (latest && latest.status === "INITIATED") {
-        return 3000;
-      }
-      return false;
-    },
+    // No polling here: every outcome of a payment changes the order, and that makes the page read this again
   });
 }
 

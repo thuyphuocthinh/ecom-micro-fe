@@ -11,6 +11,7 @@ import {
   useOrderPaymentsQuery,
   useStartPaymentMutation,
   useDevGatewayMutation,
+  useOrderStatusStream,
 } from "@/features/checkout/hooks";
 import {
   CheckoutStepper,
@@ -41,6 +42,13 @@ export function PaymentPage() {
     useDevGatewayMutation(orderId);
 
   const latestPayment = payments[0];
+
+  // Told when the order changes, instead of asking again and again. It is only needed while the order
+  // waits for the payment (PENDING also covers the moment after a failed payment, before a retry).
+  useOrderStatusStream(
+    orderId,
+    order?.status === "PENDING" || order?.status === "PAYMENT_PROCESSING",
+  );
 
   // If the order is pending and has no payment yet, start the first one. Wait until the list of payments
   // has arrived: while it is loading `payments` is empty even when a payment exists. The key of the request

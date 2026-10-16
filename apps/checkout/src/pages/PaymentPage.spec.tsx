@@ -1,9 +1,10 @@
 import { StrictMode } from "react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router";
+import { api, type StreamOptions } from "@ecom/api";
 import { createQueryClient } from "@/libs/queryClient.ts";
 import { PaymentPage } from "./PaymentPage.tsx";
 import { checkoutService } from "@/services/checkout.service.ts";
@@ -95,6 +96,25 @@ const mockPayments: PaymentResponse[] = [
     updatedAt: new Date().toISOString(),
   },
 ];
+
+// The stream of the order status is replaced by one the tests drive: `streams[0].onMessage(...)` plays a
+// message of the server. Nothing here touches the network.
+let streams: StreamOptions[] = [];
+
+beforeEach(() => {
+  streams = [];
+  vi.spyOn(api, "stream").mockImplementation(
+    (_path, options) =>
+      new Promise<void>((resolve) => {
+        streams.push(options);
+        options.signal?.addEventListener("abort", () => resolve());
+      }),
+  );
+});
+
+afterEach(() => {
+  vi.mocked(api.stream).mockRestore();
+});
 
 function renderWithProviders(ui: React.ReactElement) {
   const queryClient = createQueryClient();
@@ -395,5 +415,118 @@ describe("PaymentPage starting the payment (AC-1, AC-2, AC-3)", () => {
       .mocked(checkoutService.startPayment)
       .mock.calls.map(([, key]) => key);
     expect(new Set(keys)).toEqual(new Set(["pay-ord-123-2"]));
+  });
+});
+
+describe("PaymentPage learns of changes from the stream (AC-9, AC-8)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearch = "?orderId=ord-123";
+  });
+
+  const confirmed = { ...mockOrder, status: "CONFIRMED" } as OrderResponse;
+
+  it("opens the stream of this order while it waits for the payment", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
+
+    renderWithProviders(<PaymentPage />);
+    await screen.findByText("Quét mã QR để thanh toán");
+
+    expect(api.stream).toHaveBeenCalledTimes(1);
+    expect(api.stream).toHaveBeenCalledWith(
+      "/orders/{id}/events",
+      expect.objectContaining({ params: { id: "ord-123" } }),
+    );
+  });
+
+  it("does not open a stream for an order that is already paid", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(confirmed);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([
+      { ...mockPayments[0], status: "SUCCEEDED" },
+    ]);
+
+    renderWithProviders(<PaymentPage />);
+    await screen.findByText("Thanh toán thành công");
+
+    expect(api.stream).not.toHaveBeenCalled();
+  });
+
+  it("shows the success state when a CONFIRMED message arrives", async () => {
+    vi.mocked(checkoutService.getOrder)
+      .mockResolvedValueOnce(mockOrder)
+      .mockResolvedValue(confirmed);
+    vi.mocked(checkoutService.getOrderPayments)
+      .mockResolvedValueOnce(mockPayments)
+      .mockResolvedValue([{ ...mockPayments[0], status: "SUCCEEDED" }]);
+
+    renderWithProviders(<PaymentPage />);
+    await screen.findByText("Quét mã QR để thanh toán");
+
+    act(() =>
+      streams[0].onMessage("status", {
+        orderId: "ord-123",
+        status: "CONFIRMED",
+      }),
+    );
+
+    expect(
+      await screen.findByText("Thanh toán thành công"),
+    ).toBeInTheDocument();
+  });
+
+  it("shows the failed state, with a retry, when a PENDING message follows a failed payment", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+    vi.mocked(checkoutService.getOrderPayments)
+      .mockResolvedValueOnce(mockPayments)
+      .mockResolvedValue([{ ...mockPayments[0], status: "FAILED" }]);
+
+    renderWithProviders(<PaymentPage />);
+    await screen.findByText("Quét mã QR để thanh toán");
+
+    act(() =>
+      streams[0].onMessage("status", { orderId: "ord-123", status: "PENDING" }),
+    );
+
+    expect(
+      await screen.findByText("Thanh toán chưa thành công"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Thử lại, còn 2 lần/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("asks for nothing during five minutes while the stream is open (AC-8)", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+      vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(
+        mockPayments,
+      );
+
+      renderWithProviders(<PaymentPage />);
+      await screen.findByText("Quét mã QR để thanh toán");
+      act(() =>
+        streams[0].onMessage("status", {
+          orderId: "ord-123",
+          status: "PAYMENT_PROCESSING",
+        }),
+      );
+      await act(() => vi.advanceTimersByTimeAsync(100));
+      const orderReads = vi.mocked(checkoutService.getOrder).mock.calls.length;
+      const paymentReads = vi.mocked(checkoutService.getOrderPayments).mock
+        .calls.length;
+
+      await act(() => vi.advanceTimersByTimeAsync(5 * 60_000));
+
+      expect(vi.mocked(checkoutService.getOrder)).toHaveBeenCalledTimes(
+        orderReads,
+      );
+      expect(vi.mocked(checkoutService.getOrderPayments)).toHaveBeenCalledTimes(
+        paymentReads,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

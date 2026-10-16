@@ -84,3 +84,21 @@ export function setup(
   });
   return { api, calls, session, fakeFetch };
 }
+
+const encoder = new TextEncoder();
+
+/** A body made of the given chunks, each one delivered as its own read. */
+export function bodyOf(
+  chunks: (string | Uint8Array)[],
+): ReadableStream<Uint8Array> {
+  return new ReadableStream({
+    start(controller) {
+      for (const chunk of chunks) {
+        controller.enqueue(
+          typeof chunk === "string" ? encoder.encode(chunk) : chunk,
+        );
+      }
+      controller.close();
+    },
+  });
+}

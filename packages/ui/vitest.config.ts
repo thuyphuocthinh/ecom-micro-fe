@@ -7,5 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
+    // The first test that opens the image popup loads the library: slow when many packages test at once
+    testTimeout: 15000,
   },
 });
