@@ -2,7 +2,10 @@ import { useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router";
 import { Spinner, Button, Icon } from "@ecom/ui";
 import { formatCurrency } from "@/utils/format.ts";
-import { getPaymentState } from "@/features/checkout/utils";
+import {
+  getPaymentState,
+  providerRefFromPayUrl,
+} from "@/features/checkout/utils";
 import {
   useOrderDetailQuery,
   useOrderPaymentsQuery,
@@ -39,18 +42,21 @@ export function PaymentPage() {
 
   const latestPayment = payments[0];
 
-  // If no payment exists yet and order is pending, auto-start first payment
+  // If the order is pending and has no payment yet, start the first one. Wait until the list of payments
+  // has arrived: while it is loading `payments` is empty even when a payment exists. The key of the request
+  // is fixed for the order and the attempt, so a second request (page drawn again) gets the same payment back.
   useEffect(() => {
     if (
       order &&
       order.status === "PENDING" &&
+      !isLoadingPayments &&
       payments.length === 0 &&
       !startPaymentMutation.isPending &&
       !startPaymentMutation.isSuccess
     ) {
-      startPaymentMutation.mutate({ orderId: order.id });
+      startPaymentMutation.mutate({ orderId: order.id, attempt: 1 });
     }
-  }, [order, payments.length, startPaymentMutation]);
+  }, [order, isLoadingPayments, payments.length, startPaymentMutation]);
 
   if (!orderId) {
     return (
@@ -113,11 +119,12 @@ export function PaymentPage() {
 
   const handleRetryPayment = () => {
     if (orderId && canRetry) {
-      startPaymentMutation.mutate({ orderId });
+      startPaymentMutation.mutate({ orderId, attempt: payments.length + 1 });
     }
   };
 
-  const providerRef = latestPayment?.id || order.id;
+  // What the dev simulator needs is the reference of the charge at the gateway, not the id of the payment.
+  const providerRef = providerRefFromPayUrl(latestPayment?.payUrl);
 
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
@@ -256,7 +263,7 @@ export function PaymentPage() {
             )}
 
             {/* 5. Dev Gateway Simulator (shown in dev mode or waiting) */}
-            {isWaiting && (
+            {isWaiting && providerRef && (
               <PaymentDevSimulator
                 onSimulatePaid={() =>
                   simulatePay({ providerRef, amount: order.total })

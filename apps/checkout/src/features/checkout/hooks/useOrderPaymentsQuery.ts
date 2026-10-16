@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createIdempotencyKey } from "@ecom/api";
 import { queryKeys } from "@/constants/queryKeys.ts";
 import { checkoutService } from "@/services";
 import type { PaymentResponse } from "@/types";
+import { paymentIdempotencyKey } from "../utils/payment.ts";
 
 export function useOrderPaymentsQuery(orderId: string | undefined) {
   return useQuery({
@@ -23,11 +23,17 @@ export function useOrderPaymentsQuery(orderId: string | undefined) {
 export function useStartPaymentMutation() {
   const queryClient = useQueryClient();
 
-  return useMutation<PaymentResponse, Error, { orderId: string }>({
-    mutationFn: ({ orderId }: { orderId: string }) => {
-      const idempotencyKey = createIdempotencyKey();
-      return checkoutService.startPayment(orderId, idempotencyKey);
-    },
+  return useMutation<
+    PaymentResponse,
+    Error,
+    { orderId: string; attempt: number }
+  >({
+    // The key is fixed for an order and an attempt: asked twice, the backend gives the same payment back.
+    mutationFn: ({ orderId, attempt }) =>
+      checkoutService.startPayment(
+        orderId,
+        paymentIdempotencyKey(orderId, attempt),
+      ),
     onSuccess: (_payment, { orderId }) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.checkout.payments(orderId),

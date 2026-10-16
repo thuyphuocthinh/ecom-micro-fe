@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -87,7 +88,8 @@ const mockPayments: PaymentResponse[] = [
     orderId: "ord-123",
     status: "INITIATED",
     amount: 4929000,
-    payUrl: "https://gateway.example.com/pay/pay-1",
+    // The reference of the charge at the gateway is in the address, and is not the id of the payment.
+    payUrl: "/dev/fake-gateway/charges/fake_abc",
     expiresAt: new Date(Date.now() + 14 * 60 * 1000).toISOString(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -192,7 +194,7 @@ describe("PaymentPage Integration", () => {
     await waitFor(() => {
       expect(checkoutService.startPayment).toHaveBeenCalledWith(
         "ord-123",
-        expect.any(String),
+        "pay-ord-123-2",
       );
     });
   });
@@ -241,9 +243,157 @@ describe("PaymentPage Integration", () => {
 
     await waitFor(() => {
       expect(checkoutService.simulateGatewayPay).toHaveBeenCalledWith(
-        "pay-1",
+        "fake_abc",
         4929000,
       );
     });
+  });
+
+  it("calls simulateGatewayFail with the reference of the charge, not the id of the payment (AC-4)", async () => {
+    const user = userEvent.setup();
+
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
+    vi.mocked(checkoutService.simulateGatewayFail).mockResolvedValueOnce({
+      webhookStatus: 200,
+      eventId: "evt-sim-2",
+    });
+
+    renderWithProviders(<PaymentPage />);
+    await user.click(
+      await screen.findByRole("button", { name: /Giao dịch thất bại/i }),
+    );
+
+    await waitFor(() => {
+      expect(checkoutService.simulateGatewayFail).toHaveBeenCalledWith(
+        "fake_abc",
+      );
+    });
+    expect(checkoutService.simulateGatewayFail).not.toHaveBeenCalledWith(
+      "pay-1",
+    );
+  });
+
+  it.each([
+    ["no address", null],
+    ["an address without a path", "https://gateway.example.com"],
+  ])(
+    "does not show the simulator when the payment has %s (AC-5)",
+    async (_name, payUrl) => {
+      vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+      vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([
+        { ...mockPayments[0], payUrl },
+      ]);
+
+      renderWithProviders(<PaymentPage />);
+
+      expect(
+        await screen.findByText("Hoàn tất thanh toán"),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/Dev Simulator/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /Khách đã trả/i }),
+      ).not.toBeInTheDocument();
+      expect(checkoutService.simulateGatewayPay).not.toHaveBeenCalled();
+    },
+  );
+});
+
+describe("PaymentPage starting the payment (AC-1, AC-2, AC-3)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearch = "?orderId=ord-123";
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+  });
+
+  it("starts the first payment with the key of order and attempt 1 (AC-1)", async () => {
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([]);
+    vi.mocked(checkoutService.startPayment).mockResolvedValue(mockPayments[0]);
+
+    renderWithProviders(<PaymentPage />);
+
+    await waitFor(() => {
+      expect(checkoutService.startPayment).toHaveBeenCalledWith(
+        "ord-123",
+        "pay-ord-123-1",
+      );
+    });
+  });
+
+  it("sends the same key whenever the page asks again: drawn twice, or opened again (AC-1)", async () => {
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([]);
+    vi.mocked(checkoutService.startPayment).mockResolvedValue(mockPayments[0]);
+
+    const first = render(
+      <StrictMode>
+        <QueryClientProvider client={createQueryClient()}>
+          <MemoryRouter>
+            <PaymentPage />
+          </MemoryRouter>
+        </QueryClientProvider>
+      </StrictMode>,
+    );
+    await waitFor(() =>
+      expect(checkoutService.startPayment).toHaveBeenCalled(),
+    );
+    first.unmount();
+
+    // Opened again before the first payment shows in the list: a new page, a new query cache.
+    renderWithProviders(<PaymentPage />);
+    await waitFor(() =>
+      expect(
+        vi.mocked(checkoutService.startPayment).mock.calls.length,
+      ).toBeGreaterThan(1),
+    );
+
+    const keys = vi
+      .mocked(checkoutService.startPayment)
+      .mock.calls.map(([, key]) => key);
+    expect(new Set(keys)).toEqual(new Set(["pay-ord-123-1"]));
+  });
+
+  it("does not start a payment while the list of payments is still loading (AC-2)", async () => {
+    let answer: (payments: PaymentResponse[]) => void = () => {};
+    vi.mocked(checkoutService.getOrderPayments).mockReturnValue(
+      new Promise((resolve) => {
+        answer = resolve;
+      }),
+    );
+
+    renderWithProviders(<PaymentPage />);
+    await waitFor(() => expect(checkoutService.getOrder).toHaveBeenCalled());
+    // Let the order arrive and the page act on it before the list does.
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(checkoutService.startPayment).not.toHaveBeenCalled();
+
+    // The list arrives with a payment that is already waiting: still nothing to start.
+    answer(mockPayments);
+    expect(await screen.findByText("Hoàn tất thanh toán")).toBeInTheDocument();
+    expect(checkoutService.startPayment).not.toHaveBeenCalled();
+  });
+
+  it("retries with the key of the next attempt, and a double click sends the same key (AC-3)", async () => {
+    const user = userEvent.setup();
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([
+      { ...mockPayments[0], status: "FAILED" },
+    ]);
+    vi.mocked(checkoutService.startPayment).mockResolvedValue({
+      ...mockPayments[0],
+      id: "pay-2",
+    });
+
+    renderWithProviders(<PaymentPage />);
+    const retry = await screen.findByRole("button", {
+      name: /Thử lại, còn 2 lần/i,
+    });
+    await user.dblClick(retry);
+
+    await waitFor(() =>
+      expect(checkoutService.startPayment).toHaveBeenCalled(),
+    );
+    const keys = vi
+      .mocked(checkoutService.startPayment)
+      .mock.calls.map(([, key]) => key);
+    expect(new Set(keys)).toEqual(new Set(["pay-ord-123-2"]));
   });
 });
