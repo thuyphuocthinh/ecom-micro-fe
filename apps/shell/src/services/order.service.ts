@@ -1,4 +1,4 @@
-import { api } from "@ecom/api";
+import { api, type ApiResult } from "@ecom/api";
 import type {
   OrderCounts,
   OrderDetail,
@@ -16,7 +16,10 @@ export interface GetOrdersOptions extends OrderFilterParams {
 }
 
 export const orderService = {
-  getOrders(options: GetOrdersOptions = {}) {
+  getOrders(options: GetOrdersOptions = {}): Promise<{
+    data: OrderSummary[];
+    meta?: { nextCursor?: string; hasMore?: boolean };
+  }> {
     const query: Record<string, string | number> = {};
     if (options.status) query.status = options.status;
     if (options.createdFrom) query.createdFrom = options.createdFrom;
@@ -33,7 +36,9 @@ export const orderService = {
 
   getOrderCounts(
     options: { createdFrom?: string; createdTo?: string; q?: string } = {},
-  ) {
+  ): Promise<{
+    data: OrderCounts;
+  }> {
     const query: Record<string, string> = {};
     if (options.createdFrom) query.createdFrom = options.createdFrom;
     if (options.createdTo) query.createdTo = options.createdTo;
@@ -44,13 +49,13 @@ export const orderService = {
     }>;
   },
 
-  getOrder(id: string) {
+  getOrder(id: string): Promise<ApiResult<OrderDetail>> {
     return api.get("/orders/{id}", {
       params: { id },
-    }) as unknown as Promise<{ data: OrderDetail }>;
+    }) as Promise<ApiResult<OrderDetail>>;
   },
 
-  cancelOrder(id: string) {
+  cancelOrder(id: string): Promise<ApiResult<unknown>> {
     return api.post("/orders/{id}/cancel", {
       params: { id },
     });

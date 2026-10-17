@@ -4,11 +4,11 @@ import { queryKeys } from "@/constants/queryKeys.ts";
 import type { Address } from "@/types";
 
 export function useAddressesQuery(options?: { enabled?: boolean }) {
-  return useQuery({
+  return useQuery<Address[]>({
     queryKey: queryKeys.user.addresses(),
     queryFn: async () => {
       const result = await addressService.getAddresses();
-      return (result.data ?? []) as unknown as Address[];
+      return result.data ?? [];
     },
     enabled: options?.enabled,
   });

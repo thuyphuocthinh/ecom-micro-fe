@@ -12,7 +12,9 @@ export interface GetProductsResponse {
 }
 
 export const productService = {
-  getProducts(params: ProductFilterParams = {}) {
+  async getProducts(
+    params: ProductFilterParams = {},
+  ): Promise<GetProductsResponse> {
     const query: Record<string, string | number> = {};
     if (params.search?.trim()) query.search = params.search.trim();
     if (params.categoryId) query.categoryId = params.categoryId;
@@ -37,9 +39,13 @@ export const productService = {
       query.limit = params.limit;
     }
 
-    return api.get("/catalog/products", {
+    const res = await api.get("/catalog/products", {
       query,
-    }) as unknown as Promise<GetProductsResponse>;
+    });
+    return {
+      data: (res.data.data ?? []) as Product[],
+      meta: (res.data.meta ?? {}) as ProductsPageMeta,
+    };
   },
 
   async getProductFacets(
@@ -62,30 +68,16 @@ export const productService = {
       query.onSale = "true";
     }
 
-    const res = (await api.get("/catalog/products/facets", {
+    const res = await api.get("/catalog/products/facets", {
       query,
-    })) as unknown as CategoryFacet[] | { data: CategoryFacet[] };
-
-    if (Array.isArray(res)) return res;
-    if (
-      res &&
-      typeof res === "object" &&
-      "data" in res &&
-      Array.isArray(res.data)
-    ) {
-      return res.data;
-    }
-    return [];
+    });
+    return (res.data ?? []) as CategoryFacet[];
   },
 
   async getProductById(id: string): Promise<Product> {
-    const res = (await api.get("/catalog/products/{identifier}", {
+    const res = await api.get("/catalog/products/{identifier}", {
       params: { identifier: id },
-    })) as unknown as Product | { data: Product };
-
-    if (res && typeof res === "object" && "data" in res && res.data) {
-      return res.data;
-    }
-    return res as unknown as Product;
+    });
+    return res.data as Product;
   },
 };

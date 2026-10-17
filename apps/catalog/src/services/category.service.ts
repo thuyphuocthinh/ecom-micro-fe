@@ -2,18 +2,18 @@ import { api } from "@ecom/api";
 import type { Category } from "@/types";
 
 export const categoryService = {
-  getCategories(parentId?: string) {
+  async getCategories(parentId?: string): Promise<{ data: Category[] }> {
     const query: Record<string, string> = {};
     if (parentId) query.parentId = parentId;
 
-    return api.get("/catalog/categories", { query }) as unknown as Promise<{
-      data: Category[];
-    }>;
+    const res = await api.get("/catalog/categories", { query });
+    return { data: (res.data ?? []) as Category[] };
   },
 
-  getCategoryById(id: string) {
-    return api.get("/catalog/categories/{identifier}", {
+  async getCategoryById(id: string): Promise<{ data: Category }> {
+    const res = await api.get("/catalog/categories/{identifier}", {
       params: { identifier: id },
-    }) as unknown as Promise<{ data: Category }>;
+    });
+    return { data: res.data as Category };
   },
 };

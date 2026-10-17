@@ -18,7 +18,7 @@ export const checkoutService = {
 
   async createAddress(payload: CreateAddressPayload): Promise<Address> {
     const res = await api.post("/users/me/addresses", {
-      body: payload as unknown as never,
+      body: payload,
     });
     return res.data as Address;
   },
@@ -42,7 +42,7 @@ export const checkoutService = {
     const res = await api.post("/orders", {
       body: payload,
       idempotencyKey,
-    } as unknown as never);
+    });
     return res.data as OrderResponse;
   },
 
@@ -67,7 +67,7 @@ export const checkoutService = {
     const res = await api.post("/orders/{orderId}/payments", {
       params: { orderId },
       idempotencyKey,
-    } as unknown as never);
+    });
     return res.data as PaymentResponse;
   },
 
@@ -78,14 +78,14 @@ export const checkoutService = {
     const res = await api.post("/dev/fake-gateway/charges/{providerRef}/pay", {
       params: { providerRef },
       body: amount !== undefined ? { amount } : {},
-    } as unknown as never);
+    });
     return res.data as FakeGatewayResult;
   },
 
   async simulateGatewayFail(providerRef: string): Promise<FakeGatewayResult> {
     const res = await api.post("/dev/fake-gateway/charges/{providerRef}/fail", {
       params: { providerRef },
-    } as unknown as never);
+    });
     return res.data as FakeGatewayResult;
   },
 };

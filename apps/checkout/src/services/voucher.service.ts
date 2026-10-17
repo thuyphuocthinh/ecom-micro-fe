@@ -7,7 +7,7 @@ export const voucherService = {
   /** The vouchers that are running, each marked usable or not for the cart as it is now. */
   async getVouchers(): Promise<VoucherListItem[]> {
     const res = await api.get("/vouchers", { silent: true });
-    return (res.data ?? []) as unknown as VoucherListItem[];
+    return (res.data ?? []) as VoucherListItem[];
   },
 
   /** What a voucher would take off the cart right now. Takes no use of the voucher. */
@@ -15,7 +15,7 @@ export const voucherService = {
     const res = await api.post("/vouchers/preview", {
       body: { code },
       silent: true,
-    } as unknown as never);
+    });
     return res.data as VoucherPreview;
   },
 };

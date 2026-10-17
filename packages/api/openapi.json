@@ -1301,7 +1301,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Categories retrieved successfully"
+            "description": "Categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryResponseDto"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get list of categories",
@@ -1326,7 +1336,14 @@
         ],
         "responses": {
           "200": {
-            "description": "Category retrieved successfully"
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponseDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Category not found"
@@ -2903,12 +2920,14 @@
             ]
           },
           "displayName": {
-            "type": "object",
-            "description": "User display name"
+            "type": "string",
+            "description": "User display name",
+            "nullable": true
           },
           "avatarUrl": {
-            "type": "object",
-            "description": "User avatar URL"
+            "type": "string",
+            "description": "User avatar URL",
+            "nullable": true
           },
           "createdAt": {
             "format": "date-time",
@@ -2916,7 +2935,7 @@
             "description": "Account creation time"
           },
           "email": {
-            "type": "object",
+            "type": "string",
             "description": "Email address of the account",
             "nullable": true
           },
@@ -2986,7 +3005,7 @@
             "example": "12 Bạch Đằng"
           },
           "label": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "example": "Nhà"
           },
@@ -3041,7 +3060,7 @@
             "example": "12 Bạch Đằng"
           },
           "label": {
-            "type": "object",
+            "type": "string",
             "description": "A name for the address, such as \"Nhà\" or \"Công ty\" (at most 50 characters)",
             "example": "Nhà",
             "nullable": true
@@ -3079,7 +3098,7 @@
             "example": "12 Bạch Đằng"
           },
           "label": {
-            "type": "object",
+            "type": "string",
             "description": "null removes the label",
             "nullable": true,
             "example": "Công ty"
@@ -3491,7 +3510,7 @@
             "type": "boolean"
           },
           "nextCursor": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           }
         },
@@ -3554,7 +3573,7 @@
             "description": "The selling price: the price that is charged"
           },
           "compareAtPrice": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "The price before a discount, shown crossed out. Display only: money is always charged at price"
           },
@@ -3592,31 +3611,31 @@
             "type": "string"
           },
           "slug": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "metaTitle": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "metaDescription": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "ogImage": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "canonicalUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "thumbnail": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "status": {
@@ -3629,7 +3648,7 @@
             }
           },
           "minPrice": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "The lowest price among the SKUs (\"from ... VND\")"
           },
@@ -3821,7 +3840,7 @@
             "minimum": 0
           },
           "compareAtPrice": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "The price before a discount (shown crossed out), greater than price. A number sets it, null removes the discount, leaving it out keeps what is there. Display only: money is always charged at price"
           }
@@ -3865,8 +3884,9 @@
         "type": "object",
         "properties": {
           "newParentId": {
-            "type": "object",
-            "description": "ID of the new parent category. Send null or omit to move to root."
+            "type": "string",
+            "description": "ID of the new parent category. Send null or omit to move to root.",
+            "nullable": true
           }
         }
       },
@@ -3877,15 +3897,15 @@
             "type": "string"
           },
           "productId": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "productName": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "thumbnail": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "attributes": {
@@ -3897,7 +3917,7 @@
             "type": "number"
           },
           "price": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "The price now; null when the item is no longer on sale"
           },
@@ -3906,7 +3926,7 @@
             "description": "The price when it was put in the cart"
           },
           "available": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "Units that can be sold now; null when the item is no longer on sale"
           },
@@ -4053,7 +4073,7 @@
             "type": "string"
           },
           "thumbnail": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "attributes": {
@@ -4108,7 +4128,7 @@
             "type": "string"
           },
           "label": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           }
         },
@@ -4132,24 +4152,29 @@
             "description": "When the order was placed"
           },
           "confirmedAt": {
-            "type": "object",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
           },
           "shippedAt": {
-            "type": "object",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
           },
           "deliveredAt": {
-            "type": "object",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
           },
           "cancelledAt": {
-            "type": "object",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
           },
           "expiredAt": {
-            "type": "object",
-            "nullable": true
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
           }
         },
         "required": [
@@ -4195,7 +4220,7 @@
             "description": "What the voucher took off (0 without one)"
           },
           "voucherCode": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "The voucher used on this order, or null"
           },
@@ -4252,7 +4277,7 @@
             "type": "string"
           },
           "thumbnail": {
-            "type": "object",
+            "type": "string",
             "nullable": true
           },
           "quantity": {
@@ -4382,7 +4407,7 @@
             "description": "The amount (FIXED_AMOUNT) or the percent (PERCENTAGE)"
           },
           "maxDiscount": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "example": 100000
           },
@@ -4410,7 +4435,7 @@
             "description": "Why it cannot be used (null when it can)"
           },
           "discountAmount": {
-            "type": "object",
+            "type": "number",
             "nullable": true,
             "description": "What it would take off the cart (null when it cannot be used)"
           }
@@ -4509,7 +4534,7 @@
             "description": "What the customer has to pay (VND)"
           },
           "payUrl": {
-            "type": "object",
+            "type": "string",
             "nullable": true,
             "description": "Where to pay. Only while the payment is INITIATED; null in every other state."
           },
@@ -4562,6 +4587,43 @@
         "required": [
           "webhookStatus",
           "eventId"
+        ]
+      },
+      "CategoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "path",
+          "createdAt",
+          "updatedAt"
         ]
       }
     }

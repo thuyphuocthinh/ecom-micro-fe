@@ -91,10 +91,11 @@ export function OrderDetailPage() {
   // Subtotal and shipping fee calculation fallback
   const subtotal =
     order.subtotal ??
-    order.items.reduce(
+    order.items?.reduce(
       (acc, it) => acc + (it.unitPrice ?? it.price ?? 0) * it.quantity,
       0,
-    );
+    ) ??
+    0;
   const discountAmount = order.discountAmount ?? 0;
   const shippingFee =
     order.shippingFee ?? Math.max(0, order.total - (subtotal - discountAmount));
