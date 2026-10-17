@@ -36,6 +36,9 @@ const mockOnlineOrder: OrderResponse = {
   id: "ord-12345678",
   status: "CONFIRMED",
   paymentMethod: "ONLINE",
+  subtotal: 4929000,
+  discountAmount: 0,
+  voucherCode: null,
   total: 4929000,
   items: [
     {
@@ -148,6 +151,55 @@ describe("OrderSuccessPage Integration", () => {
       expect(
         screen.getByText("Chờ thanh toán khi nhận hàng"),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe("an order that used a voucher (AC-21)", () => {
+    const discounted: OrderResponse = {
+      ...mockOnlineOrder,
+      subtotal: 4929000,
+      discountAmount: 50000,
+      voucherCode: "GIAM50K",
+      total: 4879000,
+    };
+
+    it("shows the goods, what the voucher took off, and then what was paid", async () => {
+      vi.mocked(checkoutService.getOrder).mockResolvedValueOnce(discounted);
+
+      renderWithProviders(<OrderSuccessPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Mã giảm giá (GIAM50K)")).toBeInTheDocument();
+      });
+      expect(screen.getByText("Tạm tính")).toBeInTheDocument();
+      expect(screen.getByText("4.929.000 ₫")).toBeInTheDocument();
+      expect(screen.getByText("−50.000 ₫")).toBeInTheDocument();
+      const paid = screen.getByText("Đã thanh toán");
+      expect(paid.nextElementSibling).toHaveTextContent("4.879.000 ₫");
+    });
+
+    it("a cash-on-delivery order says what must be paid on delivery, after the discount", async () => {
+      vi.mocked(checkoutService.getOrder).mockResolvedValueOnce({
+        ...discounted,
+        paymentMethod: "COD",
+      });
+
+      renderWithProviders(<OrderSuccessPage />);
+
+      const due = await screen.findByText("Cần thanh toán khi nhận hàng");
+      expect(due.nextElementSibling).toHaveTextContent("4.879.000 ₫");
+    });
+
+    it("an order without a voucher has no discount line", async () => {
+      vi.mocked(checkoutService.getOrder).mockResolvedValueOnce(
+        mockOnlineOrder,
+      );
+
+      renderWithProviders(<OrderSuccessPage />);
+
+      await screen.findByText("Đã thanh toán");
+      expect(screen.queryByText(/Mã giảm giá/)).not.toBeInTheDocument();
+      expect(screen.queryByText("Tạm tính")).not.toBeInTheDocument();
     });
   });
 });

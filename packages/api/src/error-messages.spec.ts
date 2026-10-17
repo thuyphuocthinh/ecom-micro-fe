@@ -40,6 +40,9 @@ const CUSTOMER_CODES = [
   ...["001", "002", "003", "004", "005", "006", "007", "008", "009"].map(
     (n) => `INV-${n}`,
   ),
+  ...["000", "001", "002", "003", "004", "005", "006", "007"].map(
+    (n) => `VOU-${n}`,
+  ),
   "CAT-010",
   "CAT-017",
   "CAT-018",
@@ -110,6 +113,66 @@ describe("a sentence for a known code (AC-15)", () => {
     expect(say(400, "AUTH-010")).toBe(
       "Mật khẩu này quá dễ đoán, hãy chọn mật khẩu khác.",
     );
+  });
+});
+
+describe("the sentences of the vouchers", () => {
+  it.each([
+    ["VOU-001", 404, "Không tìm thấy mã giảm giá này. Hãy kiểm tra lại mã."],
+    ["VOU-004", 409, "Mã giảm giá này đã hết lượt dùng."],
+    ["VOU-005", 409, "Bạn đã dùng hết số lượt của mã giảm giá này."],
+    [
+      "VOU-007",
+      503,
+      "Mã giảm giá tạm thời chưa dùng được. Hãy thử lại sau ít giây.",
+    ],
+  ])("%s says its own sentence", (code, status, sentence) => {
+    expect(say(status, code)).toBe(sentence);
+  });
+
+  it.each([
+    ["DISABLED", "Mã giảm giá này không còn áp dụng."],
+    ["NOT_STARTED", "Mã giảm giá này chưa tới thời gian áp dụng."],
+    ["ENDED", "Mã giảm giá này đã hết hạn."],
+  ])("VOU-002 with reason %s", (reason, sentence) => {
+    expect(say(409, "VOU-002", { errors: { reason } })).toBe(sentence);
+  });
+
+  it("VOU-002 without a reason, or with one it does not know, still has a sentence", () => {
+    const general = "Mã giảm giá này chưa dùng được hoặc đã hết hạn.";
+    expect(say(409, "VOU-002")).toBe(general);
+    expect(say(409, "VOU-002", { errors: { reason: "NEW_ONE" } })).toBe(
+      general,
+    );
+  });
+
+  it("VOU-003 says how much the order needs when the backend tells", () => {
+    expect(
+      say(409, "VOU-003", {
+        errors: { reason: "BELOW_MINIMUM", minOrderValue: 200000 },
+      }),
+    ).toBe("Đơn hàng cần từ 200.000 ₫ để dùng mã này.");
+  });
+
+  it("VOU-003 without the minimum, with NO_DISCOUNT, or without a reason", () => {
+    expect(say(409, "VOU-003", { errors: { reason: "BELOW_MINIMUM" } })).toBe(
+      "Đơn hàng chưa đủ giá trị tối thiểu để dùng mã này.",
+    );
+    expect(say(409, "VOU-003", { errors: { reason: "NO_DISCOUNT" } })).toBe(
+      "Mã này chưa giảm được cho giỏ hàng của bạn.",
+    );
+    expect(say(409, "VOU-003")).toBe(
+      "Mã giảm giá này chưa áp dụng được cho giỏ hàng của bạn.",
+    );
+  });
+
+  it("never shows a code, a voucher id or a technical word", () => {
+    for (const code of CUSTOMER_CODES.filter((c) => c.startsWith("VOU-"))) {
+      const sentence = say(409, code, {
+        errors: { reason: "BELOW_MINIMUM", minOrderValue: 1000 },
+      });
+      expect(sentence).not.toMatch(/VOU|Redis|voucherId/i);
+    }
   });
 });
 

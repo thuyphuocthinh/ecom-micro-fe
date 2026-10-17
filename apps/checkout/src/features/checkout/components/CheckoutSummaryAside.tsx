@@ -10,6 +10,23 @@ export interface CheckoutSummaryAsideProps {
   isSubmitting?: boolean;
   isDisabled?: boolean;
   onPlaceOrder: () => void;
+  /** The voucher chosen in the cart, as the server worked it out (this component subtracts nothing). */
+  voucher?: CheckoutVoucherView;
+}
+
+export interface CheckoutVoucherView {
+  /** The code of the voucher in use, once the server has checked it. */
+  code: string | null;
+  /** What it takes off; 0 or absent when there is no voucher. */
+  discountAmount: number;
+  /** What the customer pays, from the server; absent means the subtotal. */
+  total?: number;
+  /** The server is being asked (again) about the code. */
+  isChecking?: boolean;
+  /** Why the code is no longer in use, or why it could not be checked. */
+  message?: string | null;
+  /** The code the server refused (then `message` is the reason). */
+  refusedCode?: string | null;
 }
 
 export function CheckoutSummaryAside({
@@ -19,8 +36,13 @@ export function CheckoutSummaryAside({
   isSubmitting = false,
   isDisabled = false,
   onPlaceOrder,
+  voucher,
 }: CheckoutSummaryAsideProps) {
   const isOnline = paymentMethod === "ONLINE";
+  const discountAmount = voucher?.discountAmount ?? 0;
+  const hasDiscount = Boolean(voucher?.code) && discountAmount > 0;
+  const total = hasDiscount ? (voucher?.total ?? subtotal) : subtotal;
+  const isRefreshing = Boolean(voucher?.isChecking) && hasDiscount;
   const actionText = isOnline ? "Đặt hàng và thanh toán" : "Đặt hàng";
 
   return (
@@ -75,24 +97,62 @@ export function CheckoutSummaryAside({
       </ul>
 
       {/* Price breakdown */}
-      <dl className="m-0 flex flex-col gap-3 border-t border-line pt-4 text-sm">
+      <dl
+        aria-busy={isRefreshing}
+        className={`m-0 flex flex-col gap-3 border-t border-line pt-4 text-sm transition-opacity ${
+          isRefreshing ? "opacity-60" : ""
+        }`}
+      >
         <div className="flex justify-between items-baseline">
           <dt className="text-muted">Tạm tính</dt>
           <dd className="m-0 font-mono font-semibold text-ink">
             {formatCurrency(subtotal)}
           </dd>
         </div>
+        {hasDiscount && (
+          <div className="flex justify-between items-baseline gap-3">
+            <dt className="text-muted">
+              Mã giảm giá ({voucher?.code}){" "}
+              <Link
+                to="/cart"
+                className="font-semibold text-brand hover:underline"
+              >
+                Đổi mã
+              </Link>
+            </dt>
+            <dd
+              aria-live="polite"
+              className="m-0 font-mono font-semibold text-ok"
+            >
+              −{formatCurrency(discountAmount)}
+            </dd>
+          </div>
+        )}
         <div className="flex justify-between items-baseline">
           <dt className="text-muted">Vận chuyển</dt>
           <dd className="m-0 font-mono font-semibold text-ok">Miễn phí</dd>
         </div>
         <div className="flex justify-between items-baseline border-t border-line pt-3.5">
           <dt className="font-bold text-base text-ink">Tổng cộng</dt>
-          <dd className="m-0 font-head font-bold text-2xl text-ink tracking-tight">
-            {formatCurrency(subtotal)}
+          <dd
+            aria-live="polite"
+            className="m-0 font-head font-bold text-2xl text-ink tracking-tight"
+          >
+            {formatCurrency(total)}
           </dd>
         </div>
       </dl>
+
+      {voucher?.message && (
+        <p
+          role="status"
+          className="text-xs font-medium text-err leading-relaxed"
+        >
+          {voucher.refusedCode
+            ? `Mã ${voucher.refusedCode} không dùng được nữa: ${voucher.message}`
+            : voucher.message}
+        </p>
+      )}
 
       {/* Action button */}
       <Button

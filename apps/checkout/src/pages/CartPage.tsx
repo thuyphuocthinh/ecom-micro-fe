@@ -1,16 +1,22 @@
 import { useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { queryKeys } from "@/constants/queryKeys.ts";
 import {
   useCartQuery,
   useUpdateCartItemMutation,
   useRemoveCartItemMutation,
   useAddToCartMutation,
+  useVouchersQuery,
+  useVoucherPreviewQuery,
+  useSelectedVoucher,
 } from "@/features/cart/hooks";
 import {
   CartSkeleton,
   CartEmptyState,
   CartItemList,
   CartOrderSummary,
+  type CartVoucherView,
 } from "@/features/cart/components";
 import { formatCartHeaderCount } from "@/features/cart/utils/cart-format.ts";
 
@@ -20,27 +26,47 @@ export function CartPage() {
   const removeMutation = useRemoveCartItemMutation();
   const addMutation = useAddToCartMutation();
 
-  const [couponCode, setCouponCode] = useState<string>("");
+  const queryClient = useQueryClient();
+  const { select, clear } = useSelectedVoucher();
 
   const lineCount = cart?.lineCount ?? 0;
   const quantityCount = cart?.quantityCount ?? 0;
   const subtotal = cart?.subtotal ?? 0;
 
-  // Coupon discount computation
-  const isCouponValid = couponCode === "ECOM50K" && subtotal > 0;
-  const discountAmount = isCouponValid ? 50000 : 0;
+  // Vouchers are for a signed-in customer with something in the cart. The list is only asked for
+  // when the box is first opened; the chosen code is checked by the server (the page works out
+  // nothing itself).
+  const canUseVouchers = !isGuest && !isLoading && lineCount > 0;
+  const [listWanted, setListWanted] = useState(false);
+  const vouchersQuery = useVouchersQuery(canUseVouchers && listWanted);
+  const voucherPreview = useVoucherPreviewQuery(canUseVouchers);
 
-  const handleApplyCoupon = useCallback(
-    (code: string): boolean => {
-      if (code === "ECOM50K" && subtotal > 0) {
-        setCouponCode("ECOM50K");
-        return true;
-      }
-      setCouponCode("");
-      return false;
+  const handleSelectVoucher = useCallback(
+    (code: string) => {
+      select(code);
+      // Typing the same code again asks again (it is how a customer retries after a temporary failure)
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.cart.voucherPreview(code.trim()),
+      });
     },
-    [subtotal],
+    [select, queryClient],
   );
+
+  const voucher: CartVoucherView = {
+    appliedCode: voucherPreview.code,
+    preview: voucherPreview.preview,
+    isChecking: voucherPreview.isFetching,
+    errorMessage: voucherPreview.errorMessage,
+    vouchers: vouchersQuery.data ?? [],
+    listState: vouchersQuery.isError
+      ? "error"
+      : vouchersQuery.isPending
+        ? "loading"
+        : "ready",
+    onOpenList: () => setListWanted(true),
+    onSelect: handleSelectVoucher,
+    onRemove: clear,
+  };
 
   const handleUpdateQuantity = useCallback(
     (skuId: string, quantity: number) => {
@@ -118,9 +144,7 @@ export function CartPage() {
           />
           <CartOrderSummary
             subtotal={subtotal}
-            couponCode={couponCode}
-            discountAmount={discountAmount}
-            onApplyCoupon={handleApplyCoupon}
+            voucher={voucher}
             isGuest={isGuest}
           />
         </div>

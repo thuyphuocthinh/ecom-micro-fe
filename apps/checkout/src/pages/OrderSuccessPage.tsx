@@ -139,6 +139,26 @@ export function OrderSuccessPage() {
               ))}
             </ul>
 
+            {order.discountAmount > 0 && (
+              <dl className="m-0 flex flex-col gap-2 border-t border-line pt-3.5 text-sm">
+                <div className="flex justify-between items-baseline">
+                  <dt className="text-muted">Tạm tính</dt>
+                  <dd className="m-0 font-mono font-semibold text-ink">
+                    {formatCurrency(order.subtotal)}
+                  </dd>
+                </div>
+                <div className="flex justify-between items-baseline">
+                  <dt className="text-muted">
+                    Mã giảm giá
+                    {order.voucherCode ? ` (${order.voucherCode})` : ""}
+                  </dt>
+                  <dd className="m-0 font-mono font-semibold text-ok">
+                    −{formatCurrency(order.discountAmount)}
+                  </dd>
+                </div>
+              </dl>
+            )}
+
             <div className="flex justify-between items-baseline border-t border-line pt-3.5">
               <span className="font-bold text-sm text-ink">
                 {isOnline ? "Đã thanh toán" : "Cần thanh toán khi nhận hàng"}

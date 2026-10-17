@@ -1,48 +1,58 @@
-import { useState, type KeyboardEvent } from "react";
 import { Link } from "react-router";
-import { Button, buttonClasses } from "@ecom/ui";
+import { buttonClasses } from "@ecom/ui";
 import { formatCurrency } from "@/features/cart/utils/cart-format.ts";
+import type { VoucherListItem, VoucherPreview } from "@/types";
+import {
+  VoucherPicker,
+  type VoucherListState,
+  type VoucherStatus,
+} from "./VoucherPicker.tsx";
+
+/** Everything the voucher box needs, worked out by the page from the server's answers. */
+export interface CartVoucherView {
+  /** The code that is chosen now (null for none). */
+  appliedCode: string | null;
+  /** What the server says the code takes off; absent until it has answered. */
+  preview?: VoucherPreview;
+  /** The server is being asked about the code (or about it again after the cart changed). */
+  isChecking: boolean;
+  /** Why the code was dropped, or why it could not be checked. */
+  errorMessage: string | null;
+  vouchers: VoucherListItem[];
+  listState: VoucherListState;
+  onOpenList: () => void;
+  onSelect: (code: string) => void;
+  onRemove: () => void;
+}
 
 export interface CartOrderSummaryProps {
   subtotal: number;
-  couponCode: string;
-  discountAmount: number;
-  onApplyCoupon: (code: string) => boolean;
+  voucher: CartVoucherView;
   isGuest?: boolean;
 }
 
 export function CartOrderSummary({
   subtotal,
-  couponCode,
-  discountAmount,
-  onApplyCoupon,
+  voucher,
+  isGuest = false,
 }: CartOrderSummaryProps) {
-  const [couponInput, setCouponInput] = useState(couponCode);
-  const [couponError, setCouponError] = useState(false);
+  const { preview } = voucher;
+  const status: VoucherStatus = isGuest
+    ? { kind: "none" }
+    : voucher.errorMessage
+      ? { kind: "error", message: voucher.errorMessage }
+      : preview
+        ? { kind: "applied", code: preview.code }
+        : voucher.appliedCode
+          ? { kind: "applying" }
+          : { kind: "none" };
 
-  const total = Math.max(0, subtotal - discountAmount);
-  const hasDiscount = discountAmount > 0 && couponCode.length > 0;
-
-  const handleApply = () => {
-    const trimmed = couponInput.trim().toUpperCase();
-    if (!trimmed) {
-      setCouponError(false);
-      return;
-    }
-    const success = onApplyCoupon(trimmed);
-    if (!success) {
-      setCouponError(true);
-    } else {
-      setCouponError(false);
-    }
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleApply();
-    }
-  };
+  // What to pay comes from the server; this page never subtracts anything itself
+  const discountAmount = !isGuest && preview ? preview.discountAmount : 0;
+  const hasDiscount = discountAmount > 0;
+  const total = !isGuest && preview ? preview.total : subtotal;
+  // The numbers of the last answer stay on screen, dimmed, while the server is asked again
+  const isRefreshing = voucher.isChecking && preview !== undefined;
 
   return (
     <aside
@@ -54,61 +64,25 @@ export function CartOrderSummary({
         Tóm tắt đơn hàng
       </h2>
 
-      {/* Coupon Field */}
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="coupon" className="font-semibold text-[14px] text-ink">
-          Mã giảm giá
-        </label>
-        <div className="flex gap-2">
-          <input
-            id="coupon"
-            type="text"
-            name="coupon"
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="Ví dụ: ECOM50K…"
-            value={couponInput}
-            onChange={(e) => {
-              setCouponInput(e.target.value);
-              if (couponError) setCouponError(false);
-            }}
-            onKeyDown={handleKeyDown}
-            aria-invalid={couponError}
-            aria-describedby="coupon-msg"
-            className="w-full min-h-[44px] px-3.5 border border-field-border rounded-[10px] bg-white text-ink text-[15px] focus:outline-none focus:border-brand focus:ring-3 focus:ring-brand/25 transition-colors aria-invalid:border-err"
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleApply}
-            className="flex-shrink-0"
-          >
-            Áp dụng
-          </Button>
-        </div>
-
-        {/* Coupon Message */}
-        <p
-          id="coupon-msg"
-          aria-live="polite"
-          className={
-            couponError
-              ? "text-[13px] text-err font-medium mt-0.5"
-              : hasDiscount
-                ? "text-[13px] text-ok font-medium mt-0.5"
-                : "text-[13px] text-muted mt-0.5"
-          }
-        >
-          {couponError
-            ? "Mã không đúng hoặc đã hết hạn. Kiểm tra lại mã rồi thử lần nữa."
-            : hasDiscount
-              ? `Đã áp dụng mã ${couponCode}.`
-              : "Mã mẫu để thử: ECOM50K"}
-        </p>
-      </div>
+      <VoucherPicker
+        isGuest={isGuest}
+        subtotal={subtotal}
+        appliedCode={isGuest ? null : voucher.appliedCode}
+        status={status}
+        vouchers={voucher.vouchers}
+        listState={voucher.listState}
+        onOpen={voucher.onOpenList}
+        onSelect={voucher.onSelect}
+        onRemove={voucher.onRemove}
+      />
 
       {/* Cost Breakdown */}
-      <dl className="m-0 flex flex-col gap-3 py-1">
+      <dl
+        aria-busy={isRefreshing}
+        className={`m-0 flex flex-col gap-3 py-1 transition-opacity ${
+          isRefreshing ? "opacity-60" : ""
+        }`}
+      >
         <div className="flex justify-between items-baseline gap-4">
           <dt className="text-ink-2 text-[15px]">Tạm tính</dt>
           <dd className="tnum m-0 font-semibold text-ink text-[15px]">
@@ -116,10 +90,15 @@ export function CartOrderSummary({
           </dd>
         </div>
 
-        {hasDiscount && (
+        {hasDiscount && preview && (
           <div className="flex justify-between items-baseline gap-4">
-            <dt className="text-ink-2 text-[15px]">Mã giảm giá</dt>
-            <dd className="tnum m-0 font-semibold text-ok text-[15px]">
+            <dt className="text-ink-2 text-[15px]">
+              Mã giảm giá ({preview.code})
+            </dt>
+            <dd
+              aria-live="polite"
+              className="tnum m-0 font-semibold text-ok text-[15px]"
+            >
               −{formatCurrency(discountAmount)}
             </dd>
           </div>
@@ -134,7 +113,10 @@ export function CartOrderSummary({
 
         <div className="flex justify-between items-baseline gap-4 border-t border-line pt-3.5 mt-1">
           <dt className="font-bold text-[17px] text-ink">Tổng cộng</dt>
-          <dd className="tnum m-0 font-bold text-[24px] font-head tracking-tight text-ink">
+          <dd
+            aria-live="polite"
+            className="tnum m-0 font-bold text-[24px] font-head tracking-tight text-ink"
+          >
             {formatCurrency(total)}
           </dd>
         </div>

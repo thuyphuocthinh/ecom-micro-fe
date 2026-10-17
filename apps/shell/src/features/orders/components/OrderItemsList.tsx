@@ -8,6 +8,8 @@ export interface OrderItemsListProps {
   subtotal: number;
   shippingFee: number;
   total: number;
+  discountAmount?: number;
+  voucherCode?: string | null;
 }
 
 export function OrderItemsList({
@@ -15,11 +17,14 @@ export function OrderItemsList({
   subtotal,
   shippingFee,
   total,
+  discountAmount = 0,
+  voucherCode = null,
 }: OrderItemsListProps) {
   const formattedSubtotal = formatVnd(subtotal);
   const formattedShipping =
     shippingFee === 0 ? "Miễn phí" : formatVnd(shippingFee);
   const formattedTotal = formatVnd(total);
+  const hasDiscount = discountAmount > 0;
 
   return (
     <Card
@@ -97,6 +102,16 @@ export function OrderItemsList({
             {formattedSubtotal}
           </dd>
         </div>
+        {hasDiscount && (
+          <div className="flex justify-between gap-4 items-baseline">
+            <dt className="text-ink-2 text-[14.5px]">
+              Mã giảm giá{voucherCode ? ` (${voucherCode})` : ""}
+            </dt>
+            <dd className="m-0 font-semibold text-ok tnum text-[14.5px]">
+              −{formatVnd(discountAmount)}
+            </dd>
+          </div>
+        )}
         <div className="flex justify-between gap-4 items-baseline">
           <dt className="text-ink-2 text-[14.5px]">Vận chuyển</dt>
           <dd className="m-0 font-semibold text-ink tnum text-[14.5px]">

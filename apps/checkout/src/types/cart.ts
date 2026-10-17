@@ -33,8 +33,3 @@ export interface GuestCartItem {
   quantity: number;
   flags?: CartLineFlag[];
 }
-
-export interface CouponDiscount {
-  code: string;
-  discountAmount: number;
-}

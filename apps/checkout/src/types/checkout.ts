@@ -41,6 +41,8 @@ export interface Ward {
 export interface PlaceOrderPayload {
   addressId: string;
   paymentMethod: PaymentMethod;
+  /** The voucher to use on this order (one at most); left out when there is none. */
+  voucherCode?: string;
 }
 
 export interface OrderItem {
@@ -84,6 +86,12 @@ export interface OrderResponse {
   id: string;
   status: OrderStatus;
   paymentMethod: PaymentMethod;
+  /** The goods before any voucher. */
+  subtotal: number;
+  /** What the voucher took off (0 without one). */
+  discountAmount: number;
+  voucherCode: string | null;
+  /** What the customer pays: the subtotal minus the discount. */
   total: number;
   items: OrderItem[];
   shippingAddress: ShippingAddressInfo;

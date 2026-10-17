@@ -95,7 +95,9 @@ export function OrderDetailPage() {
       (acc, it) => acc + (it.unitPrice ?? it.price ?? 0) * it.quantity,
       0,
     );
-  const shippingFee = order.shippingFee ?? Math.max(0, order.total - subtotal);
+  const discountAmount = order.discountAmount ?? 0;
+  const shippingFee =
+    order.shippingFee ?? Math.max(0, order.total - (subtotal - discountAmount));
 
   return (
     <div className="max-w-[1040px] mx-auto px-4 sm:px-10 py-8 pb-18 flex flex-col gap-6">
@@ -187,6 +189,8 @@ export function OrderDetailPage() {
           subtotal={subtotal}
           shippingFee={shippingFee}
           total={order.total}
+          discountAmount={discountAmount}
+          voucherCode={order.voucherCode}
         />
 
         {/* Right Column: Shipping & Payment */}

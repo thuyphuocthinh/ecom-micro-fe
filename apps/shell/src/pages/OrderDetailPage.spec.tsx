@@ -190,4 +190,48 @@ describe("OrderDetailPage", () => {
       });
     });
   });
+
+  it("renders order detail with voucher discount row and derived free shipping (AC-11)", async () => {
+    const voucherOrder: OrderDetail = {
+      ...mockOrderDetail,
+      shippingFee: undefined,
+      subtotal: 5000000,
+      discountAmount: 100000,
+      voucherCode: "VIP100K",
+      total: 4900000,
+    };
+    vi.spyOn(api, "get").mockResolvedValue(voucherOrder as never);
+
+    renderOrderDetailPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("Tạm tính")).toBeInTheDocument();
+      expect(screen.getByText("5.000.000 ₫")).toBeInTheDocument();
+      expect(screen.getByText("Mã giảm giá (VIP100K)")).toBeInTheDocument();
+      const discountValue = screen.getByText("−100.000 ₫");
+      expect(discountValue).toBeInTheDocument();
+      expect(discountValue).toHaveClass("text-ok");
+      expect(screen.getByText("Miễn phí")).toBeInTheDocument();
+      expect(screen.getByText("4.900.000 ₫")).toBeInTheDocument();
+    });
+  });
+
+  it("derives non-zero shipping fee correctly when voucher is applied (AC-11)", async () => {
+    const voucherOrder: OrderDetail = {
+      ...mockOrderDetail,
+      shippingFee: undefined,
+      subtotal: 5000000,
+      discountAmount: 100000,
+      voucherCode: "VIP100K",
+      total: 4930000,
+    };
+    vi.spyOn(api, "get").mockResolvedValue(voucherOrder as never);
+
+    renderOrderDetailPage();
+
+    await waitFor(() => {
+      expect(screen.getByText("30.000 ₫")).toBeInTheDocument();
+      expect(screen.queryByText("Miễn phí")).not.toBeInTheDocument();
+    });
+  });
 });

@@ -7,6 +7,10 @@ export const queryKeys = {
   cart: {
     all: ["cart"] as const,
     summary: () => [...queryKeys.cart.all, "summary"] as const,
+    // Under the cart root on purpose: a change of the cart refreshes them, and leaving clears them
+    vouchers: () => [...queryKeys.cart.all, "vouchers"] as const,
+    voucherPreview: (code: string) =>
+      [...queryKeys.cart.all, "voucher-preview", code] as const,
   },
   checkout: {
     all: ["checkout"] as const,

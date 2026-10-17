@@ -1,8 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router";
 import { toast } from "sonner";
+import { ApiError, createIdempotencyKey } from "@ecom/api";
 import { Spinner, Button, Icon } from "@ecom/ui";
 import { useCartQuery } from "@/features/cart/hooks/useCartQuery.ts";
+import {
+  isVoucherRefusal,
+  useSelectedVoucher,
+  useVoucherPreviewQuery,
+} from "@/features/cart/hooks";
 import {
   useUserAddressesQuery,
   useCreateAddressMutation,
@@ -23,7 +29,7 @@ export function CheckoutPage() {
   const navigate = useNavigate();
 
   // Queries
-  const { data: cart, isLoading: isLoadingCart } = useCartQuery();
+  const { data: cart, isLoading: isLoadingCart, isGuest } = useCartQuery();
   const { data: addresses = [], isLoading: isLoadingAddresses } =
     useUserAddressesQuery();
   const { data: provinces = [] } = useProvincesQuery();
@@ -50,6 +56,26 @@ export function CheckoutPage() {
   const createAddressMutation = useCreateAddressMutation();
   const placeOrderMutation = usePlaceOrderMutation();
 
+  // The voucher chosen in the cart: the server says what it takes off; this page only shows it and
+  // sends the code when the order is placed
+  const isCartEmpty = !cart || cart.items.length === 0;
+  const {
+    code: chosenVoucher,
+    clear: clearVoucher,
+    reject: rejectVoucher,
+  } = useSelectedVoucher();
+  const voucher = useVoucherPreviewQuery(!isGuest && !isCartEmpty);
+
+  // One attempt, one Idempotency-Key: pressing the button again after a temporary failure sends the
+  // same key, so the order is made once. Anything the order depends on changing makes a new key.
+  const attemptRef = useRef<{ signature: string; key: string } | null>(null);
+  const keyForAttempt = (signature: string): string => {
+    if (attemptRef.current?.signature !== signature) {
+      attemptRef.current = { signature, key: createIdempotencyKey() };
+    }
+    return attemptRef.current.key;
+  };
+
   // Initialize selected address once addresses load
   const hasInitializedRef = useRef(false);
   useEffect(() => {
@@ -73,8 +99,6 @@ export function CheckoutPage() {
       newAddressData.wardCode &&
       newAddressData.street.trim()
     );
-
-  const isCartEmpty = !cart || cart.items.length === 0;
 
   const handlePlaceOrder = async () => {
     if (isCartEmpty) {
@@ -102,12 +126,27 @@ export function CheckoutPage() {
         finalAddressId = created.id;
       }
 
-      // Submit order
-      const order = await placeOrderMutation.mutateAsync({
-        addressId: finalAddressId,
+      // Submit order, with the voucher of the cart when there is one
+      const voucherCode = !isGuest && chosenVoucher ? chosenVoucher : undefined;
+      const signature = JSON.stringify({
+        address: selectedAddressId,
+        newAddress: selectedAddressId === "new" ? newAddressData : null,
         paymentMethod,
+        voucherCode: voucherCode ?? null,
+        cart: cart.items.map((item) => `${item.skuId}:${item.quantity}`),
+      });
+      const order = await placeOrderMutation.mutateAsync({
+        payload: {
+          addressId: finalAddressId,
+          paymentMethod,
+          ...(voucherCode ? { voucherCode } : {}),
+        },
+        idempotencyKey: keyForAttempt(signature),
       });
 
+      // Placed: the next order is a new attempt, and its voucher is chosen again
+      attemptRef.current = null;
+      clearVoucher();
       toast.success("Đặt hàng thành công!");
 
       if (paymentMethod === "ONLINE") {
@@ -116,9 +155,18 @@ export function CheckoutPage() {
         navigate(`/checkout/success?orderId=${order.id}`);
       }
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Đặt hàng không thành công.";
-      toast.error(message);
+      if (error instanceof ApiError) {
+        // The client has already told the customer (one toast for every failed call). A voucher the
+        // server refused is dropped, so the next press does not send it again; a temporary failure
+        // keeps it, and the key, so the next press is a retry of the same order.
+        if (isVoucherRefusal(error) && chosenVoucher) {
+          rejectVoucher({ code: chosenVoucher, message: error.userMessage });
+        }
+        return;
+      }
+      toast.error(
+        error instanceof Error ? error.message : "Đặt hàng không thành công.",
+      );
     }
   };
 
@@ -198,6 +246,14 @@ export function CheckoutPage() {
               isSubmitting={isSubmitting}
               isDisabled={isNewAddressIncomplete}
               onPlaceOrder={handlePlaceOrder}
+              voucher={{
+                code: voucher.preview?.code ?? null,
+                discountAmount: voucher.preview?.discountAmount ?? 0,
+                total: voucher.preview?.total,
+                isChecking: voucher.isFetching,
+                message: voucher.errorMessage,
+                refusedCode: voucher.refusedCode,
+              }}
             />
           </div>
         </div>

@@ -12,8 +12,8 @@ export const categoryService = {
   },
 
   getCategoryById(id: string) {
-    return api.get("/catalog/categories/{id}", {
-      params: { id },
+    return api.get("/catalog/categories/{identifier}", {
+      params: { identifier: id },
     }) as unknown as Promise<{ data: Category }>;
   },
 };

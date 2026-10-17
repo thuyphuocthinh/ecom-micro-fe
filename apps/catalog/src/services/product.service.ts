@@ -79,8 +79,8 @@ export const productService = {
   },
 
   async getProductById(id: string): Promise<Product> {
-    const res = (await api.get("/catalog/products/{id}", {
-      params: { id },
+    const res = (await api.get("/catalog/products/{identifier}", {
+      params: { identifier: id },
     })) as unknown as Product | { data: Product };
 
     if (res && typeof res === "object" && "data" in res && res.data) {

@@ -498,14 +498,31 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/catalog/products/{id}": {
+  "/api/v1/catalog/products/sitemap-data": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get a published product by ID */
+    /** Get product sitemap data for SSR & search engine indexing */
+    get: operations["ProductController_getSitemapData"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/catalog/products/{identifier}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get a published product by ID or slug */
     get: operations["ProductController_getProductById"];
     put?: never;
     post?: never;
@@ -532,14 +549,14 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/api/v1/catalog/categories/{id}": {
+  "/api/v1/catalog/categories/{identifier}": {
     parameters: {
       query?: never;
       header?: never;
       path?: never;
       cookie?: never;
     };
-    /** Get category by ID */
+    /** Get category by ID or slug */
     get: operations["CategoryController_getCategoryById"];
     put?: never;
     post?: never;
@@ -722,6 +739,26 @@ export interface paths {
     patch: operations["AdminCategoryController_moveCategory"];
     trace?: never;
   };
+  "/api/v1/catalog/sitemap-data": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get catalog sitemap data for SSR & search engine indexing
+     * @description Returns all active categories and published products with their slug, lastmod, changefreq, and priority for Next.js sitemap.xml generation.
+     */
+    get: operations["CatalogSitemapController_getSitemapData"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/cart": {
     parameters: {
       query?: never;
@@ -819,6 +856,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orders/{id}/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * The status of one of my orders, pushed as it changes (server-sent events)
+     * @description Sends `event: status` with `{ orderId, status }` first with the current status, then at every change; `event: ping` every 20 seconds keeps the connection alive. The stream ends by itself at a final status (DELIVERED, CANCELLED, EXPIRED) and after 30 minutes. Treat a message as "reload the order", not as the data. Send the access token in the `Authorization` header (use `fetch`: `EventSource` cannot).
+     */
+    get: operations["OrderController_events"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orders/{id}": {
     parameters: {
       query?: never;
@@ -881,6 +938,40 @@ export interface paths {
     put?: never;
     /** SHIPPING to DELIVERED */
     post: operations["AdminOrderController_deliver"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/vouchers": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** The vouchers running now, each marked usable or not for my cart (and why not) */
+    get: operations["VoucherController_list"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/vouchers/preview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** How much a voucher would take off my cart right now (takes no use of the voucher) */
+    post: operations["VoucherController_preview"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1282,6 +1373,11 @@ export interface components {
       id: string;
       categoryId: string;
       name: string;
+      slug?: Record<string, never> | null;
+      metaTitle?: Record<string, never> | null;
+      metaDescription?: Record<string, never> | null;
+      ogImage?: Record<string, never> | null;
+      canonicalUrl?: Record<string, never> | null;
       description?: Record<string, never> | null;
       thumbnail?: Record<string, never> | null;
       status: string;
@@ -1461,6 +1557,11 @@ export interface components {
        * @enum {string}
        */
       paymentMethod: "ONLINE" | "COD";
+      /**
+       * @description A discount code to use on this order (one at most; upper or lower case). Pick it from GET /vouchers. Leave it out to use none.
+       * @example GIAM50K
+       */
+      voucherCode?: string;
     };
     OrderItemResponseDto: {
       skuId: string;
@@ -1509,6 +1610,13 @@ export interface components {
         | "EXPIRED";
       /** @enum {string} */
       paymentMethod: "ONLINE" | "COD";
+      /** @description The goods before any voucher */
+      subtotal: number;
+      /** @description What the voucher took off (0 without one) */
+      discountAmount: number;
+      /** @description The voucher used on this order, or null */
+      voucherCode: Record<string, never> | null;
+      /** @description What the customer pays: the subtotal minus the discount */
       total: number;
       items: components["schemas"]["OrderItemResponseDto"][];
       shippingAddress: components["schemas"]["ShippingAddressResponseDto"];
@@ -1559,6 +1667,68 @@ export interface components {
       DELIVERED: number;
       CANCELLED: number;
       EXPIRED: number;
+    };
+    VoucherListItemResponseDto: {
+      /** @example GIAM50K */
+      code: string;
+      name: string;
+      /** @enum {string} */
+      discountType: "FIXED_AMOUNT" | "PERCENTAGE";
+      /**
+       * @description The amount (FIXED_AMOUNT) or the percent (PERCENTAGE)
+       * @example 50000
+       */
+      value: number;
+      /** @example 100000 */
+      maxDiscount: Record<string, never> | null;
+      /** @example 200000 */
+      minOrderValue: number;
+      /** Format: date-time */
+      endsAt: string;
+      /** @description Whether it can be used on the cart as it is now */
+      usable: boolean;
+      /**
+       * @description Why it cannot be used (null when it can)
+       * @enum {string|null}
+       */
+      reason:
+        | "BELOW_MINIMUM"
+        | "NO_DISCOUNT"
+        | "USED_UP"
+        | "USER_LIMIT_REACHED"
+        | null;
+      /** @description What it would take off the cart (null when it cannot be used) */
+      discountAmount: Record<string, never> | null;
+    };
+    PreviewVoucherDto: {
+      /**
+       * @description The voucher code (upper or lower case, spaces at the ends are ignored)
+       * @example GIAM50K
+       */
+      code: string;
+    };
+    VoucherPreviewResponseDto: {
+      /** @example GIAM50K */
+      code: string;
+      /** @example Giảm 50 nghìn cho 100 người đầu tiên */
+      name: string;
+      /** @enum {string} */
+      discountType: "FIXED_AMOUNT" | "PERCENTAGE";
+      /**
+       * @description What the voucher takes off
+       * @example 50000
+       */
+      discountAmount: number;
+      /**
+       * @description The goods in the cart that can be ordered now, before the discount
+       * @example 320000
+       */
+      subtotal: number;
+      /**
+       * @description What the customer would pay
+       * @example 270000
+       */
+      total: number;
     };
     PaymentResponseDto: {
       id: string;
@@ -2551,13 +2721,31 @@ export interface operations {
       };
     };
   };
+  ProductController_getSitemapData: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Sitemap data retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   ProductController_getProductById: {
     parameters: {
       query?: never;
       header?: never;
       path: {
-        /** @description Product ID */
-        id: string;
+        /** @description Product ID or slug */
+        identifier: string;
       };
       cookie?: never;
     };
@@ -2605,8 +2793,8 @@ export interface operations {
       query?: never;
       header?: never;
       path: {
-        /** @description Category ID */
-        id: string;
+        /** @description Category ID or slug */
+        identifier: string;
       };
       cookie?: never;
     };
@@ -3063,6 +3251,24 @@ export interface operations {
       };
     };
   };
+  CatalogSitemapController_getSitemapData: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Sitemap data retrieved successfully */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   CartController_get: {
     parameters: {
       query?: never;
@@ -3273,15 +3479,22 @@ export interface operations {
         };
         content?: never;
       };
-      /** @description Address not found (ADDR-001) */
+      /** @description Address not found (ADDR-001) or no such voucher (VOU-001) */
       404: {
         headers: {
           [name: string]: unknown;
         };
         content?: never;
       };
-      /** @description Not enough stock (ORD-001), empty cart (ORD-003), items no longer on sale (ORD-004) */
+      /** @description Not enough stock (ORD-001), empty cart (ORD-003), items no longer on sale (ORD-004), or the voucher cannot be used (VOU-002 to VOU-006) */
       409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Vouchers unavailable (VOU-007) */
+      503: {
         headers: {
           [name: string]: unknown;
         };
@@ -3315,6 +3528,33 @@ export interface operations {
       };
       /** @description A bad filter (VAL-001, ORD-000) */
       400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  OrderController_events: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description text/event-stream */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not found, or not yours (ORD-002): the same answer */
+      404: {
         headers: {
           [name: string]: unknown;
         };
@@ -3447,6 +3687,69 @@ export interface operations {
         content?: never;
       };
       /** @description Not SHIPPING (ORD-006) */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  VoucherController_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["VoucherListItemResponseDto"][];
+        };
+      };
+      /** @description Vouchers unavailable (VOU-007) */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  VoucherController_preview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PreviewVoucherDto"];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["VoucherPreviewResponseDto"];
+        };
+      };
+      /** @description No such voucher (VOU-001) */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Cannot be used now (VOU-002), does not fit the cart (VOU-003), used up (VOU-004), used up by me (VOU-005), or the cart is empty (ORD-003) */
       409: {
         headers: {
           [name: string]: unknown;

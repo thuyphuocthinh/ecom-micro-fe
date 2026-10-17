@@ -71,6 +71,8 @@ export interface OrderDetail {
   status: OrderStatus;
   paymentMethod: PaymentMethod;
   subtotal?: number;
+  discountAmount?: number;
+  voucherCode?: string | null;
   shippingFee?: number;
   total: number;
   items: OrderItem[];

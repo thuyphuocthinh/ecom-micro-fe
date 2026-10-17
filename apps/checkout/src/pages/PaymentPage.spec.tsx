@@ -41,6 +41,9 @@ const mockOrder: OrderResponse = {
   id: "ord-123",
   status: "PENDING",
   paymentMethod: "ONLINE",
+  subtotal: 4929000,
+  discountAmount: 0,
+  voucherCode: null,
   total: 4929000,
   items: [
     {
@@ -317,6 +320,74 @@ describe("PaymentPage Integration", () => {
       expect(checkoutService.simulateGatewayPay).not.toHaveBeenCalled();
     },
   );
+});
+
+describe("PaymentPage with an order that used a voucher (AC-21)", () => {
+  const discounted: OrderResponse = {
+    ...mockOrder,
+    subtotal: 4929000,
+    discountAmount: 50000,
+    voucherCode: "GIAM50K",
+    total: 4879000,
+  };
+  const discountedPayments: PaymentResponse[] = [
+    { ...mockPayments[0], amount: 4879000 },
+  ];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearch = "?orderId=ord-123";
+  });
+
+  it("shows the goods, the voucher and what must be paid, which is the discounted total", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(discounted);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(
+      discountedPayments,
+    );
+
+    renderWithProviders(<PaymentPage />);
+
+    await screen.findByText("Mã giảm giá (GIAM50K)");
+    expect(screen.getByText("Tạm tính")).toBeInTheDocument();
+    expect(screen.getByText("−50.000 ₫")).toBeInTheDocument();
+    const due = screen.getByText("Cần thanh toán");
+    expect(due.nextElementSibling).toHaveTextContent("4.879.000 ₫");
+  });
+
+  it("the gateway simulator is asked to charge the discounted total, not the goods", async () => {
+    const user = userEvent.setup();
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(discounted);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(
+      discountedPayments,
+    );
+    vi.mocked(checkoutService.simulateGatewayPay).mockResolvedValueOnce({
+      webhookStatus: 200,
+      eventId: "evt-sim-2",
+    });
+
+    renderWithProviders(<PaymentPage />);
+    await user.click(
+      await screen.findByRole("button", { name: /Khách đã trả/i }),
+    );
+
+    await waitFor(() => {
+      expect(checkoutService.simulateGatewayPay).toHaveBeenCalledWith(
+        "fake_abc",
+        4879000,
+      );
+    });
+  });
+
+  it("an order without a voucher has no discount line", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
+
+    renderWithProviders(<PaymentPage />);
+
+    await screen.findByText("Cần thanh toán");
+    expect(screen.queryByText(/Mã giảm giá/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Tạm tính")).not.toBeInTheDocument();
+  });
 });
 
 describe("PaymentPage starting the payment (AC-1, AC-2, AC-3)", () => {

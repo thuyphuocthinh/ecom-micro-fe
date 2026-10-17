@@ -105,7 +105,40 @@ export const MESSAGES: Record<string, string> = {
   "INV-007": "Kho hàng tạm thời chưa dùng được. Hãy thử lại sau.",
   "INV-008": "Không thực hiện được việc này với đơn hàng hiện tại.",
   "INV-009": "Không thể gia hạn thời gian giữ hàng cho đơn này.",
+
+  // Vouchers (the sentences of VOU-002 and VOU-003 are made sharper by `errors.reason`, below)
+  "VOU-000": "Mã giảm giá chưa xử lý được yêu cầu này.",
+  "VOU-001": "Không tìm thấy mã giảm giá này. Hãy kiểm tra lại mã.",
+  "VOU-002": "Mã giảm giá này chưa dùng được hoặc đã hết hạn.",
+  "VOU-003": "Mã giảm giá này chưa áp dụng được cho giỏ hàng của bạn.",
+  "VOU-004": "Mã giảm giá này đã hết lượt dùng.",
+  "VOU-005": "Bạn đã dùng hết số lượt của mã giảm giá này.",
+  "VOU-006":
+    "Đơn này đã dùng một mã giảm giá khác. Hãy tải lại trang rồi thử lại.",
+  "VOU-007": `Mã giảm giá tạm thời chưa dùng được. ${SOON}`,
 };
+
+/** Why a voucher cannot be used now (VOU-002), as `errors.reason` says. */
+const VOUCHER_NOT_ACTIVE_REASONS: Record<string, string> = {
+  DISABLED: "Mã giảm giá này không còn áp dụng.",
+  NOT_STARTED: "Mã giảm giá này chưa tới thời gian áp dụng.",
+  ENDED: "Mã giảm giá này đã hết hạn.",
+};
+
+/** Why a voucher does not fit the cart (VOU-003), as `errors.reason` says. */
+function voucherNotApplicableReason(errors: unknown): string | undefined {
+  const { reason, minOrderValue } = (errors ?? {}) as {
+    reason?: unknown;
+    minOrderValue?: unknown;
+  };
+  if (reason === "NO_DISCOUNT") {
+    return "Mã này chưa giảm được cho giỏ hàng của bạn.";
+  }
+  if (reason !== "BELOW_MINIMUM") return undefined;
+  return typeof minOrderValue === "number" && minOrderValue > 0
+    ? `Đơn hàng cần từ ${new Intl.NumberFormat("vi-VN").format(minOrderValue)} ₫ để dùng mã này.`
+    : "Đơn hàng chưa đủ giá trị tối thiểu để dùng mã này.";
+}
 
 /** Why the backend refused a password (AUTH-010), as `errors.reason` says. */
 const WEAK_PASSWORD_REASONS: Record<string, string> = {
@@ -151,16 +184,32 @@ function weakPasswordReason(errors: unknown): string | undefined {
   return typeof reason === "string" ? WEAK_PASSWORD_REASONS[reason] : undefined;
 }
 
+/** A sentence that says more than the code's own one, when `errors.reason` allows it. */
+function sharperSentence(error: ErrorInfo): string | undefined {
+  switch (error.code) {
+    case "AUTH-010":
+      return weakPasswordReason(error.errors);
+    case "VOU-002": {
+      const reason = (error.errors as { reason?: unknown } | null | undefined)
+        ?.reason;
+      return typeof reason === "string"
+        ? VOUCHER_NOT_ACTIVE_REASONS[reason]
+        : undefined;
+    }
+    case "VOU-003":
+      return voucherNotApplicableReason(error.errors);
+    default:
+      return undefined;
+  }
+}
+
 /** The sentence a customer reads for a failed call. Pure: the same error always gives the same words. */
 export function userMessageFor(error: ErrorInfo): string {
   if (error.code === "NETWORK") return NETWORK;
   if (error.code === "BAD_RESPONSE") return BAD_RESPONSE;
   if (error.status === 429) return tooFast(error.retryAfterSeconds);
 
-  const known =
-    error.code === "AUTH-010"
-      ? (weakPasswordReason(error.errors) ?? MESSAGES[error.code])
-      : MESSAGES[error.code];
+  const known = sharperSentence(error) ?? MESSAGES[error.code];
   const message = known ?? byStatus(error.status);
 
   // A reference the customer can read out to support, only when the fault is ours or unknown

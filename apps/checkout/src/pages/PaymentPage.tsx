@@ -311,6 +311,25 @@ export function PaymentPage() {
             </ul>
 
             <dl className="m-0 flex flex-col gap-3 border-t border-line pt-4 text-sm">
+              {order.discountAmount > 0 && (
+                <>
+                  <div className="flex justify-between items-baseline">
+                    <dt className="text-muted">Tạm tính</dt>
+                    <dd className="m-0 font-mono font-semibold text-ink">
+                      {formatCurrency(order.subtotal)}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between items-baseline">
+                    <dt className="text-muted">
+                      Mã giảm giá
+                      {order.voucherCode ? ` (${order.voucherCode})` : ""}
+                    </dt>
+                    <dd className="m-0 font-mono font-semibold text-ok">
+                      −{formatCurrency(order.discountAmount)}
+                    </dd>
+                  </div>
+                </>
+              )}
               <div className="flex justify-between items-baseline">
                 <dt className="text-muted">Vận chuyển</dt>
                 <dd className="m-0 font-mono font-semibold text-ok">
