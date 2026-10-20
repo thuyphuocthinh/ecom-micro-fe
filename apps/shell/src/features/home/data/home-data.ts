@@ -1,24 +1,8 @@
 import type {
   HomeCategoryDecoration,
-  HomeProduct,
   HomeProductDecoration,
   ValueProp,
 } from "@/features/home/types/home.ts";
-
-/**
- * The featured card of the hero. It is a showcase of the design, not a product of the catalog (the
- * catalog has no such product), so it is not shown by the API-driven sections below.
- */
-export const HERO_PRODUCT: HomeProduct = {
-  id: "prod-aero-2",
-  skuId: "sku-aero-2-navy",
-  name: "Tai nghe không dây Aero 2",
-  price: 3990000,
-  oldPrice: 4590000,
-  kind: "audio",
-  tint: "#dce6ff",
-  tone: "#101828",
-};
 
 /**
  * Only the look of a product card (the colour and the drawing that stands for the picture), taken in turn

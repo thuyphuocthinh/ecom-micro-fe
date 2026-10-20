@@ -31,6 +31,7 @@ export function mapApiProductToHomeProduct(
     id: product.id,
     skuId: primarySku?.id ?? `sku-${product.id}`,
     name: product.name,
+    thumbnail: product.thumbnail ?? null,
     price,
     oldPrice,
     ...decoration,

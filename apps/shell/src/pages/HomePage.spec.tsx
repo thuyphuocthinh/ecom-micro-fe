@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ApiError, session } from "@ecom/api";
 import { HomePage } from "@/pages/HomePage.tsx";
 import { GUEST_CART_STORAGE_KEY } from "@/utils/cart.ts";
 import {
@@ -11,6 +12,7 @@ import {
   type ApiCategory,
   type ApiProduct,
 } from "@/services/catalog.service.ts";
+import { cartService } from "@/services/cart.service.ts";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -77,10 +79,20 @@ describe("HomePage Integration (shell-home)", () => {
     vi.restoreAllMocks();
     vi.clearAllMocks();
     localStorage.clear();
+    session.clear();
     mockHomeApi();
   });
 
-  it("renders Hero Section with title, description, CTAs and featured card (AC-1)", () => {
+  it("renders Hero Section with title, description, CTAs and a featured card of a real product (AC-1)", async () => {
+    // Product 2 is on sale: the card of the hero shows it, with the discount worked out from the API's prices
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValue([
+      apiProduct(1),
+      apiProduct(2, {
+        onSale: true,
+        minPrice: 80000,
+        skus: [{ id: "sku-2", price: 80000, compareAtPrice: 100000 }],
+      }),
+    ]);
     renderHomePage();
 
     expect(
@@ -97,7 +109,8 @@ describe("HomePage Integration (shell-home)", () => {
 
     const newLink = screen.getByRole("link", { name: "Xem sản phẩm mới" });
     expect(newLink).toBeInTheDocument();
-    expect(newLink).toHaveAttribute("href", "/search?sort=createdAt_desc");
+    // `newest` is a sort the backend knows; the old `createdAt_desc` was refused (400) and the page came up empty
+    expect(newLink).toHaveAttribute("href", "/search?sort=newest");
 
     const saleLink = screen.getByRole("link", { name: "Xem hàng giảm giá" });
     expect(saleLink).toBeInTheDocument();
@@ -108,10 +121,39 @@ describe("HomePage Integration (shell-home)", () => {
     });
     expect(
       within(heroSection).getByRole("img", {
-        name: "Tai nghe không dây Aero 2 trên nền xanh nhạt (ảnh minh hoạ)",
+        name: "Hình minh hoạ các sản phẩm trên nền xanh nhạt",
       }),
     ).toBeInTheDocument();
-    expect(within(heroSection).getByText("Giảm 13%")).toBeInTheDocument();
+    expect(
+      await within(heroSection).findByText("Sản phẩm số 2"),
+    ).toBeInTheDocument();
+    expect(within(heroSection).getByText("Giảm 20%")).toBeInTheDocument();
+    // The made-up product the hero used to show is gone
+    expect(screen.queryByText(/Aero 2/)).not.toBeInTheDocument();
+  });
+
+  it("the card of the hero shows the first product when none is on sale", async () => {
+    renderHomePage();
+    const heroSection = screen.getByRole("region", {
+      name: "Những món dùng mỗi ngày, giá rõ ràng ngay từ đầu.",
+    });
+    expect(
+      await within(heroSection).findByRole("button", {
+        name: "Thêm vào giỏ: Sản phẩm số 1",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("the hero has no card at all when the API has no products", async () => {
+    vi.spyOn(catalogService, "getBestsellers").mockResolvedValue([]);
+    renderHomePage();
+    const heroSection = screen.getByRole("region", {
+      name: "Những món dùng mỗi ngày, giá rõ ràng ngay từ đầu.",
+    });
+    await screen.findByText(/chưa có sản phẩm/i);
+    expect(
+      within(heroSection).queryByRole("button", { name: /Thêm vào giỏ/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders Category Section with the categories of the API (AC-2, AC-17)", async () => {
@@ -346,8 +388,9 @@ describe("HomePage Integration (shell-home)", () => {
     ).toBeInTheDocument();
   });
 
-  it("adds Hero product to cart, dispatches cart:changed event and shows toast (AC-4, AC-5)", async () => {
+  it("a visitor who is not signed in adds the hero product to the cart of this browser (AC-4, AC-5)", async () => {
     const user = userEvent.setup();
+    const addItem = vi.spyOn(cartService, "addItem");
     const cartChangedHandler = vi.fn();
     window.addEventListener("cart:changed", cartChangedHandler);
 
@@ -356,25 +399,25 @@ describe("HomePage Integration (shell-home)", () => {
     const heroSection = screen.getByRole("region", {
       name: "Những món dùng mỗi ngày, giá rõ ràng ngay từ đầu.",
     });
-    const heroAddBtn = within(heroSection).getByRole("button", {
-      name: "Thêm vào giỏ: Tai nghe không dây Aero 2",
-    });
-    await user.click(heroAddBtn);
+    await user.click(
+      await within(heroSection).findByRole("button", {
+        name: "Thêm vào giỏ: Sản phẩm số 1",
+      }),
+    );
 
-    const raw = localStorage.getItem(GUEST_CART_STORAGE_KEY);
-    expect(raw).toBeTruthy();
-    const cart = JSON.parse(raw!);
+    const cart = JSON.parse(localStorage.getItem(GUEST_CART_STORAGE_KEY)!);
     expect(cart).toHaveLength(1);
-    expect(cart[0].productName).toBe("Tai nghe không dây Aero 2");
-    expect(cart[0].quantity).toBe(1);
-
+    expect(cart[0]).toMatchObject({
+      skuId: "sku-1",
+      productName: "Sản phẩm số 1",
+      quantity: 1,
+    });
+    expect(addItem).not.toHaveBeenCalled();
     expect(cartChangedHandler).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalledWith(
-      "Đã thêm Tai nghe không dây Aero 2 vào giỏ hàng",
+      "Đã thêm Sản phẩm số 1 vào giỏ hàng",
       expect.objectContaining({
-        action: expect.objectContaining({
-          label: "Xem giỏ hàng",
-        }),
+        action: expect.objectContaining({ label: "Xem giỏ hàng" }),
       }),
     );
 
@@ -398,5 +441,81 @@ describe("HomePage Integration (shell-home)", () => {
     const item = cart.find((i: { skuId: string }) => i.skuId === "sku-2");
     expect(item).toBeDefined();
     expect(item.quantity).toBe(2);
+  });
+});
+
+describe("HomePage add to cart when signed in", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+    localStorage.clear();
+    mockHomeApi();
+    session.set({ accessToken: "access-123", refreshToken: "refresh-123" });
+  });
+
+  afterEach(() => session.clear());
+
+  const clickAdd = async (productName: string) => {
+    const user = userEvent.setup();
+    renderHomePage();
+    const buttons = await screen.findAllByRole("button", {
+      name: `Thêm vào giỏ: ${productName}`,
+    });
+    await user.click(buttons[0]);
+  };
+
+  it("sends the SKU to the server cart (POST) and not to this browser, then tells the header", async () => {
+    const addItem = vi
+      .spyOn(cartService, "addItem")
+      .mockResolvedValue({ data: {}, replayed: false });
+    const cartChangedHandler = vi.fn();
+    window.addEventListener("cart:changed", cartChangedHandler);
+
+    await clickAdd("Sản phẩm số 2");
+
+    expect(addItem).toHaveBeenCalledTimes(1);
+    expect(addItem).toHaveBeenCalledWith("sku-2", 1);
+    expect(localStorage.getItem(GUEST_CART_STORAGE_KEY)).toBeNull();
+    expect(cartChangedHandler).toHaveBeenCalledTimes(1);
+    expect(toast.success).toHaveBeenCalledWith(
+      "Đã thêm Sản phẩm số 2 vào giỏ hàng",
+      expect.anything(),
+    );
+
+    window.removeEventListener("cart:changed", cartChangedHandler);
+  });
+
+  it("does not claim success, nor tell the header, when the server refuses (its own message was already shown)", async () => {
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      Object.assign(Object.create(ApiError.prototype), {
+        status: 409,
+        code: "INV-001",
+        message: "Hết hàng",
+      }),
+    );
+    const cartChangedHandler = vi.fn();
+    window.addEventListener("cart:changed", cartChangedHandler);
+
+    await clickAdd("Sản phẩm số 3");
+
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(toast.error).not.toHaveBeenCalled();
+    expect(cartChangedHandler).not.toHaveBeenCalled();
+    expect(localStorage.getItem(GUEST_CART_STORAGE_KEY)).toBeNull();
+
+    window.removeEventListener("cart:changed", cartChangedHandler);
+  });
+
+  it("says it could not add when something other than the server fails (the network)", async () => {
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      new TypeError("offline"),
+    );
+
+    await clickAdd("Sản phẩm số 4");
+
+    expect(toast.error).toHaveBeenCalledWith(
+      "Không thể thêm vào giỏ hàng lúc này. Vui lòng thử lại!",
+    );
+    expect(toast.success).not.toHaveBeenCalled();
   });
 });

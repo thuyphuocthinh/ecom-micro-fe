@@ -6,6 +6,8 @@ export interface HomeProduct {
   id: string;
   skuId: string;
   name: string;
+  /** Kept for the guest cart, whose lines show the picture. The card itself draws a shape. */
+  thumbnail?: string | null;
   price: number;
   oldPrice?: number | null;
   kind: HomeCategoryKind;

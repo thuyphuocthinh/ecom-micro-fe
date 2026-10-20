@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { Button, Card, Tag } from "@ecom/ui";
-import { HERO_PRODUCT } from "@/features/home/data/home-data.ts";
 import {
   formatVND,
   calculateDiscountPercent,
@@ -8,14 +7,15 @@ import {
 import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface HeroSectionProps {
+  /** A real product of the catalog to show on the card. Without one (still loading, or none) there is no card. */
+  featured?: HomeProduct | null;
   onAddToCart: (product: HomeProduct) => void;
 }
 
-export function HeroSection({ onAddToCart }: HeroSectionProps) {
-  const discountLabel = calculateDiscountPercent(
-    HERO_PRODUCT.price,
-    HERO_PRODUCT.oldPrice,
-  );
+export function HeroSection({ featured, onAddToCart }: HeroSectionProps) {
+  const discountLabel = featured
+    ? calculateDiscountPercent(featured.price, featured.oldPrice)
+    : null;
 
   return (
     <section
@@ -37,7 +37,7 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
 
         <div className="flex gap-3 flex-wrap">
           <Link
-            to="/search?sort=createdAt_desc"
+            to="/search?sort=newest"
             className="inline-flex items-center justify-center min-h-[52px] px-7 rounded-xl font-semibold text-base bg-brand text-white hover:bg-brand-dark transition-colors"
           >
             Xem sản phẩm mới
@@ -54,7 +54,7 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
       <div
         className="lg:col-span-6 relative h-[380px] sm:h-[470px] rounded-[28px] overflow-hidden bg-[#dce6ff]"
         role="img"
-        aria-label="Tai nghe không dây Aero 2 trên nền xanh nhạt (ảnh minh hoạ)"
+        aria-label="Hình minh hoạ các sản phẩm trên nền xanh nhạt"
       >
         <div
           aria-hidden="true"
@@ -69,35 +69,37 @@ export function HeroSection({ onAddToCart }: HeroSectionProps) {
           className="absolute left-[36%] top-[44%] w-[9%] aspect-square rounded-full bg-[#dce6ff]"
         />
 
-        <Card className="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 p-4 sm:p-5 flex flex-col gap-2.5 w-[280px] sm:w-[310px] shadow-lg border-white/60 bg-white/95 backdrop-blur-sm">
-          <div className="flex justify-between items-center gap-2">
-            <span className="font-semibold text-sm sm:text-base text-ink line-clamp-1">
-              {HERO_PRODUCT.name}
-            </span>
-            {discountLabel && <Tag tone="sale">{discountLabel}</Tag>}
-          </div>
+        {featured && (
+          <Card className="absolute left-4 sm:left-6 bottom-4 sm:bottom-6 p-4 sm:p-5 flex flex-col gap-2.5 w-[280px] sm:w-[310px] shadow-lg border-white/60 bg-white/95 backdrop-blur-sm">
+            <div className="flex justify-between items-center gap-2">
+              <span className="font-semibold text-sm sm:text-base text-ink line-clamp-1">
+                {featured.name}
+              </span>
+              {discountLabel && <Tag tone="sale">{discountLabel}</Tag>}
+            </div>
 
-          <div className="flex items-baseline gap-2.5">
-            <span className="font-head text-2xl sm:text-3xl font-bold text-ink tabular-nums tracking-tight">
-              {formatVND(HERO_PRODUCT.price)}
-            </span>
-            {Boolean(HERO_PRODUCT.oldPrice) && (
-              <s className="text-sm text-muted tabular-nums">
-                {formatVND(HERO_PRODUCT.oldPrice!)}
-              </s>
-            )}
-          </div>
+            <div className="flex items-baseline gap-2.5">
+              <span className="font-head text-2xl sm:text-3xl font-bold text-ink tabular-nums tracking-tight">
+                {formatVND(featured.price)}
+              </span>
+              {Boolean(featured.oldPrice) && (
+                <s className="text-sm text-muted tabular-nums">
+                  {formatVND(featured.oldPrice!)}
+                </s>
+              )}
+            </div>
 
-          <Button
-            variant="primary"
-            size="md"
-            className="w-full mt-1"
-            onClick={() => onAddToCart(HERO_PRODUCT)}
-            aria-label={`Thêm vào giỏ: ${HERO_PRODUCT.name}`}
-          >
-            Thêm vào giỏ
-          </Button>
-        </Card>
+            <Button
+              variant="primary"
+              size="md"
+              className="w-full mt-1"
+              onClick={() => onAddToCart(featured)}
+              aria-label={`Thêm vào giỏ: ${featured.name}`}
+            >
+              Thêm vào giỏ
+            </Button>
+          </Card>
+        )}
       </div>
     </section>
   );
