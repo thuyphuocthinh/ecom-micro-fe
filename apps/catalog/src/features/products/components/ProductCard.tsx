@@ -12,12 +12,15 @@ export interface ProductCardProps {
   product: Product;
   categoryName?: string;
   onAddToCart?: (product: Product) => void;
+  /** The product is on its way to the cart: the button shows a spinner and cannot be pressed again. */
+  isAdding?: boolean;
 }
 
 export function ProductCard({
   product,
   categoryName,
   onAddToCart,
+  isAdding = false,
 }: ProductCardProps) {
   const isOutOfStock = product.inStock === false;
   const priceLabel = formatProductPriceLabel(
@@ -136,6 +139,7 @@ export function ProductCard({
               type="button"
               variant="secondary"
               size="md"
+              loading={isAdding}
               onClick={() => onAddToCart(product)}
               className="w-full justify-center group-hover:border-ink-2 transition-colors"
             >

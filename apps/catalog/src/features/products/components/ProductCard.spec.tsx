@@ -89,4 +89,25 @@ describe("ProductCard (AC-2)", () => {
     expect(handleAddToCart).toHaveBeenCalledTimes(1);
     expect(handleAddToCart).toHaveBeenCalledWith(mockProduct);
   });
+
+  it("shows a spinner and cannot be pressed again while the product is being added", async () => {
+    const user = userEvent.setup();
+    const handleAddToCart = vi.fn();
+
+    renderCard({ onAddToCart: handleAddToCart, isAdding: true });
+
+    const btn = screen.getByRole("button", { name: /thêm vào giỏ/i });
+    expect(btn).toBeDisabled();
+    expect(btn).toHaveAttribute("aria-busy", "true");
+    await user.click(btn);
+    expect(handleAddToCart).not.toHaveBeenCalled();
+  });
+
+  it("is a normal button when nothing is being added", () => {
+    renderCard({ onAddToCart: vi.fn() });
+
+    const btn = screen.getByRole("button", { name: /thêm vào giỏ/i });
+    expect(btn).toBeEnabled();
+    expect(btn).not.toHaveAttribute("aria-busy");
+  });
 });

@@ -10,6 +10,8 @@ export interface ProductGridProps {
   isStale?: boolean;
   skeletonCount?: number;
   onAddToCart?: (product: Product) => void;
+  /** Whether a product is on its way to the cart (its card shows a spinner). */
+  isAdding?: (productId: string) => boolean;
   onClearFilters?: () => void;
 }
 
@@ -20,6 +22,7 @@ export function ProductGrid({
   isStale = false,
   skeletonCount = 6,
   onAddToCart,
+  isAdding,
   onClearFilters,
 }: ProductGridProps) {
   if (isLoading) {
@@ -61,6 +64,7 @@ export function ProductGrid({
               product={product}
               categoryName={categoryNames[product.categoryId]}
               onAddToCart={onAddToCart}
+              isAdding={isAdding?.(product.id)}
             />
           </li>
         ))}

@@ -1,7 +1,9 @@
 import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router";
 import { Button } from "@ecom/ui";
+import { ApiError } from "@ecom/api";
 import { useAddToCart } from "@/features/cart/useAddToCart.ts";
+import { useBusyKeys } from "@/features/cart/useBusyKeys.ts";
 import { toast } from "sonner";
 import { Icon } from "@/components/common/Icon.tsx";
 import {
@@ -22,6 +24,7 @@ export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const addToCartMutation = useAddToCart();
+  const addingProducts = useBusyKeys();
 
   // Read search params
   const currentQ = searchParams.get("q") || "";
@@ -223,7 +226,10 @@ export function SearchPage() {
   };
 
   // Cross-app Add to cart event
-  const handleAddToCart = async (product: Product) => {
+  const handleAddToCart = (product: Product) =>
+    addingProducts.run(product.id, () => addProductToCart(product));
+
+  const addProductToCart = async (product: Product) => {
     const firstSku = product.skus?.[0];
     const skuId = firstSku?.id || `sku_${product.id}`;
     const price = firstSku?.price ?? product.minPrice ?? 0;
@@ -242,7 +248,9 @@ export function SearchPage() {
         quantity: 1,
       });
       toast.success(`Đã thêm "${product.name}" vào giỏ hàng`);
-    } catch {
+    } catch (error) {
+      // A refusal of the server was already shown, in its own words, by the API client
+      if (error instanceof ApiError) return;
       toast.error("Không thể thêm vào giỏ hàng, vui lòng thử lại");
     }
   };
@@ -445,6 +453,7 @@ export function SearchPage() {
             isLoading={isProductsLoading}
             isStale={isProductsStale}
             onAddToCart={handleAddToCart}
+            isAdding={addingProducts.isBusy}
             onClearFilters={handleClearAllFilters}
           />
 

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route } from "react-router";
@@ -7,6 +7,8 @@ import { ProductDetailPage } from "./ProductDetailPage.tsx";
 import { productService } from "@/services/product.service.ts";
 import { categoryService } from "@/services/category.service.ts";
 import { toast } from "sonner";
+import { ApiError, session } from "@ecom/api";
+import { cartService } from "@/services/cart.service.ts";
 import type { Product, Category } from "@/types";
 
 vi.mock("sonner", () => ({
@@ -200,5 +202,108 @@ describe("ProductDetailPage (AC-1, AC-3, AC-6, AC-11)", () => {
     expect(
       screen.getByRole("link", { name: "Quay lại danh mục sản phẩm" }),
     ).toBeInTheDocument();
+  });
+});
+
+describe("ProductDetailPage buying while signed in", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    window.scrollTo = vi.fn();
+    vi.mocked(categoryService.getCategories).mockResolvedValue({
+      data: mockCategories,
+    } as any);
+    vi.mocked(productService.getProducts).mockResolvedValue({
+      data: [],
+      meta: {},
+    });
+    vi.mocked(productService.getProductById).mockResolvedValue(mockProduct);
+    session.set({ accessToken: "access-123", refreshToken: "refresh-123" });
+  });
+
+  afterEach(() => {
+    session.clear();
+    vi.restoreAllMocks();
+  });
+
+  const waitForPage = () =>
+    screen.findByRole("heading", { name: "Tai nghe không dây Aero 2" });
+
+  it("while the product is being added both buttons are busy, and pressing again sends no second request", async () => {
+    const user = userEvent.setup();
+    let finish!: () => void;
+    const addItem = vi.spyOn(cartService, "addItem").mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = () => resolve({ data: {}, replayed: false } as never);
+        }),
+    );
+
+    renderPDP();
+    await waitForPage();
+    const add = screen.getByRole("button", { name: /Thêm vào giỏ|Đang thêm/ });
+
+    await user.click(add);
+    await waitFor(() => expect(add).toBeDisabled());
+    expect(add).toHaveAttribute("aria-busy", "true");
+    expect(screen.getByRole("button", { name: "Mua ngay" })).toBeDisabled();
+
+    await user.click(add);
+    expect(addItem).toHaveBeenCalledTimes(1);
+
+    finish();
+    await waitFor(() => expect(add).toBeEnabled());
+  });
+
+  it("Mua ngay adds the product and then goes to the cart", async () => {
+    const user = userEvent.setup();
+    const addItem = vi
+      .spyOn(cartService, "addItem")
+      .mockResolvedValue({ data: {}, replayed: false } as never);
+
+    renderPDP();
+    await waitForPage();
+    await user.click(screen.getByRole("button", { name: "Mua ngay" }));
+
+    expect(await screen.findByText("Trang giỏ hàng")).toBeInTheDocument();
+    expect(addItem).toHaveBeenCalledTimes(1);
+  });
+
+  it("Mua ngay stays on the page when the server refuses, and adds no second message of its own", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      Object.assign(Object.create(ApiError.prototype), {
+        status: 409,
+        code: "INV-001",
+        message: "Hết hàng",
+      }),
+    );
+
+    renderPDP();
+    await waitForPage();
+    await user.click(screen.getByRole("button", { name: "Mua ngay" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Mua ngay" })).toBeEnabled(),
+    );
+    expect(screen.queryByText("Trang giỏ hàng")).not.toBeInTheDocument();
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it("Mua ngay stays on the page and says so when the network fails", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      new TypeError("offline"),
+    );
+
+    renderPDP();
+    await waitForPage();
+    await user.click(screen.getByRole("button", { name: "Mua ngay" }));
+
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith(
+        "Không thể thêm vào giỏ hàng, vui lòng thử lại",
+      ),
+    );
+    expect(screen.queryByText("Trang giỏ hàng")).not.toBeInTheDocument();
   });
 });

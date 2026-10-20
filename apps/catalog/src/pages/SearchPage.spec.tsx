@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Routes, Route, useLocation } from "react-router";
@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SearchPage } from "./SearchPage.tsx";
 import { productService } from "@/services/product.service.ts";
 import { categoryService } from "@/services/category.service.ts";
+import { cartService } from "@/services/cart.service.ts";
+import { session } from "@ecom/api";
 import type { Product, Category, CategoryFacet } from "@/types";
 
 vi.mock("@/services/product.service.ts", () => ({
@@ -386,5 +388,70 @@ describe("SearchPage Integration (AC-1 to AC-9)", () => {
 
     window.removeEventListener("cart:add", cartAddSpy);
     window.removeEventListener("cart:changed", cartChangedSpy);
+  });
+});
+
+describe("SearchPage add to cart is busy while it runs", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(categoryService.getCategories).mockResolvedValue({
+      data: mockCategories,
+    });
+    vi.mocked(productService.getProductFacets).mockResolvedValue(mockFacets);
+    vi.mocked(productService.getProducts).mockResolvedValue({
+      data: mockProducts,
+      meta: { page: 1, limit: 12, hasMore: false, total: 2 },
+    });
+    session.set({ accessToken: "access-123", refreshToken: "refresh-123" });
+  });
+
+  afterEach(() => {
+    session.clear();
+    vi.restoreAllMocks();
+  });
+
+  it("the button of that product shows a spinner and cannot be pressed again; the other product is free; one request is sent", async () => {
+    const user = userEvent.setup();
+    let finish!: () => void;
+    const addItem = vi.spyOn(cartService, "addItem").mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = () => resolve({ data: {}, replayed: false } as never);
+        }),
+    );
+
+    renderSearchPage();
+    await screen.findByText("iPhone 15 Pro Max");
+    const [first, second] = screen.getAllByRole("button", {
+      name: /Thêm vào giỏ/i,
+    });
+
+    await user.click(first);
+    await waitFor(() => expect(first).toBeDisabled());
+    expect(first).toHaveAttribute("aria-busy", "true");
+    expect(second).toBeEnabled();
+
+    // Pressing it again (or twice at once) does not send a second request
+    await user.click(first);
+    expect(addItem).toHaveBeenCalledTimes(1);
+
+    finish();
+    await waitFor(() => expect(first).toBeEnabled());
+    expect(first).not.toHaveAttribute("aria-busy");
+  });
+
+  it("the button is free again when the add fails", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      new TypeError("offline"),
+    );
+
+    renderSearchPage();
+    await screen.findByText("iPhone 15 Pro Max");
+    const [first] = screen.getAllByRole("button", { name: /Thêm vào giỏ/i });
+
+    await user.click(first);
+
+    await waitFor(() => expect(first).toBeEnabled());
   });
 });

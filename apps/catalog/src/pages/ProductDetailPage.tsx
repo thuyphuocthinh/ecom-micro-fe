@@ -18,6 +18,7 @@ import { ProductSpecs } from "@/features/products/components/ProductSpecs.tsx";
 import { ProductRelatedSection } from "@/features/products/components/ProductRelatedSection.tsx";
 import { ProductDetailSkeleton } from "@/features/products/components/ProductDetailSkeleton.tsx";
 import { ProductNotFound } from "@/features/products/components/ProductNotFound.tsx";
+import { ApiError } from "@ecom/api";
 import { useAddToCart } from "@/features/cart/useAddToCart.ts";
 
 export function ProductDetailPage() {
@@ -140,7 +141,9 @@ export function ProductDetailPage() {
           },
         },
       );
-    } catch {
+    } catch (error) {
+      // A refusal of the server was already shown, in its own words, by the API client
+      if (error instanceof ApiError) return;
       toast.error("Không thể thêm vào giỏ hàng, vui lòng thử lại");
     }
   };
@@ -161,8 +164,12 @@ export function ProductDetailPage() {
         price: selectedSku.price ?? product.minPrice ?? 0,
         available: selectedSku.stock ?? 99,
       });
-    } finally {
       navigate("/cart");
+    } catch (error) {
+      // Not added: stay here, so the customer sees why instead of an empty or unchanged cart.
+      // A refusal of the server was already shown, in its own words, by the API client
+      if (error instanceof ApiError) return;
+      toast.error("Không thể thêm vào giỏ hàng, vui lòng thử lại");
     }
   };
 

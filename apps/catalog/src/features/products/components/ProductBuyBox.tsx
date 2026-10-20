@@ -180,7 +180,7 @@ export function ProductBuyBox({
               variant="primary"
               size="lg"
               onClick={onAddToCart}
-              disabled={isAddingToCart}
+              loading={isAddingToCart}
               className="flex-1 min-w-[180px] shadow-xs cursor-pointer font-semibold gap-2"
             >
               <svg
@@ -199,6 +199,7 @@ export function ProductBuyBox({
               variant="secondary"
               size="lg"
               onClick={onBuyNow}
+              disabled={isAddingToCart}
               className="flex-1 min-w-[140px] font-semibold cursor-pointer"
             >
               Mua ngay
