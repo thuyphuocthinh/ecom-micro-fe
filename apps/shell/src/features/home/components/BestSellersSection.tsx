@@ -6,6 +6,8 @@ import type { HomeProduct } from "@/features/home/types/home.ts";
 
 export interface BestSellersSectionProps {
   onAddToCart: (product: HomeProduct) => void;
+  /** Whether the SKU is on its way to the cart (its card shows a spinner). */
+  isAdding?: (skuId: string) => boolean;
   products?: HomeProduct[];
 }
 
@@ -23,6 +25,7 @@ function ProductCardSkeleton() {
 
 export function BestSellersSection({
   onAddToCart,
+  isAdding,
   products: propProducts,
 }: BestSellersSectionProps) {
   const {
@@ -76,6 +79,7 @@ export function BestSellersSection({
                   key={product.id}
                   product={product}
                   onAddToCart={onAddToCart}
+                  isAdding={isAdding?.(product.skuId)}
                 />
               ))}
         </ul>

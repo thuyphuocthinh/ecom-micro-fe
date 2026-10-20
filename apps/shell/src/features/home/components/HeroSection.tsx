@@ -10,9 +10,15 @@ export interface HeroSectionProps {
   /** A real product of the catalog to show on the card. Without one (still loading, or none) there is no card. */
   featured?: HomeProduct | null;
   onAddToCart: (product: HomeProduct) => void;
+  /** The featured product is on its way to the cart. */
+  isAdding?: boolean;
 }
 
-export function HeroSection({ featured, onAddToCart }: HeroSectionProps) {
+export function HeroSection({
+  featured,
+  onAddToCart,
+  isAdding = false,
+}: HeroSectionProps) {
   const discountLabel = featured
     ? calculateDiscountPercent(featured.price, featured.oldPrice)
     : null;
@@ -93,6 +99,7 @@ export function HeroSection({ featured, onAddToCart }: HeroSectionProps) {
               variant="primary"
               size="md"
               className="w-full mt-1"
+              loading={isAdding}
               onClick={() => onAddToCart(featured)}
               aria-label={`Thêm vào giỏ: ${featured.name}`}
             >

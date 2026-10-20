@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { ApiError, session } from "@ecom/api";
@@ -57,9 +57,16 @@ function addToGuestCart(product: HomeProduct): void {
 
 export function useHomeAddToCart() {
   const navigate = useNavigate();
+  // The SKUs on their way to the cart. The ref answers at once (two presses in the same moment must not
+  // both get through); the state is what the buttons show (a spinner, and they cannot be pressed).
+  const inFlight = useRef(new Set<string>());
+  const [adding, setAdding] = useState<ReadonlySet<string>>(new Set());
 
   const addToCart = useCallback(
     async (product: HomeProduct) => {
+      if (inFlight.current.has(product.skuId)) return;
+      inFlight.current.add(product.skuId);
+      setAdding(new Set(inFlight.current));
       try {
         if (isSignedIn()) {
           // The cart of a signed-in customer is on the server: writing only to this browser would
@@ -80,10 +87,15 @@ export function useHomeAddToCart() {
         // A refusal of the server was already shown, in its own words, by the API client
         if (error instanceof ApiError) return;
         toast.error("Không thể thêm vào giỏ hàng lúc này. Vui lòng thử lại!");
+      } finally {
+        inFlight.current.delete(product.skuId);
+        setAdding(new Set(inFlight.current));
       }
     },
     [navigate],
   );
 
-  return { addToCart };
+  const isAdding = useCallback((skuId: string) => adding.has(skuId), [adding]);
+
+  return { addToCart, isAdding };
 }

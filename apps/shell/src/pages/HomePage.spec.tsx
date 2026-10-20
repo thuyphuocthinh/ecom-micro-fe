@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -517,5 +517,83 @@ describe("HomePage add to cart when signed in", () => {
       "Không thể thêm vào giỏ hàng lúc này. Vui lòng thử lại!",
     );
     expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it("the card shows a spinner and cannot be pressed again while it is being added, and only one request is sent", async () => {
+    const user = userEvent.setup();
+    let finish!: () => void;
+    const addItem = vi.spyOn(cartService, "addItem").mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = () => resolve({ data: {}, replayed: false });
+        }),
+    );
+
+    renderHomePage();
+    const buttons = await screen.findAllByRole("button", {
+      name: "Thêm vào giỏ: Sản phẩm số 2",
+    });
+    // The card of the grid (the hero shows product 1)
+    const button = buttons[0];
+    const other = (
+      await screen.findAllByRole("button", {
+        name: "Thêm vào giỏ: Sản phẩm số 3",
+      })
+    )[0];
+
+    await user.click(button);
+    await waitFor(() => expect(button).toBeDisabled());
+    expect(button).toHaveAttribute("aria-busy", "true");
+    expect(other).toBeEnabled();
+
+    await user.click(button);
+    expect(addItem).toHaveBeenCalledTimes(1);
+
+    finish();
+    await waitFor(() => expect(button).toBeEnabled());
+    expect(button).not.toHaveAttribute("aria-busy");
+    expect(toast.success).toHaveBeenCalledTimes(1);
+  });
+
+  it("the hero button is busy together with the card of the same product", async () => {
+    const user = userEvent.setup();
+    let finish!: () => void;
+    vi.spyOn(cartService, "addItem").mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = () => resolve({ data: {}, replayed: false });
+        }),
+    );
+
+    renderHomePage();
+    // Product 1 is featured in the hero and is also the first card of the grid
+    const both = await screen.findAllByRole("button", {
+      name: "Thêm vào giỏ: Sản phẩm số 1",
+    });
+    expect(both).toHaveLength(2);
+
+    await user.click(both[0]);
+
+    await waitFor(() => {
+      for (const b of both) expect(b).toBeDisabled();
+    });
+
+    finish();
+    await waitFor(() => {
+      for (const b of both) expect(b).toBeEnabled();
+    });
+  });
+
+  it("the button is free again when the add fails", async () => {
+    vi.spyOn(cartService, "addItem").mockRejectedValue(
+      new TypeError("offline"),
+    );
+
+    await clickAdd("Sản phẩm số 5");
+
+    const [button] = await screen.findAllByRole("button", {
+      name: "Thêm vào giỏ: Sản phẩm số 5",
+    });
+    await waitFor(() => expect(button).toBeEnabled());
   });
 });

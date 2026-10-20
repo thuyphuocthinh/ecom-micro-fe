@@ -14,6 +14,8 @@ import { prefetchOnIntent } from "@/libs/remote-loaders.ts";
 export interface HomeProductCardProps {
   product: HomeProduct;
   onAddToCart: (product: HomeProduct) => void;
+  /** The product is on its way to the cart: the button shows a spinner and cannot be pressed again. */
+  isAdding?: boolean;
 }
 
 function renderProductShape(kind: HomeCategoryKind, tone: string) {
@@ -58,6 +60,7 @@ function renderProductShape(kind: HomeCategoryKind, tone: string) {
 export function HomeProductCard({
   product,
   onAddToCart,
+  isAdding = false,
 }: HomeProductCardProps) {
   const discountLabel = calculateDiscountPercent(
     product.price,
@@ -107,6 +110,7 @@ export function HomeProductCard({
         variant="secondary"
         size="md"
         className="w-full mt-auto"
+        loading={isAdding}
         onClick={() => onAddToCart(product)}
         aria-label={`Thêm vào giỏ: ${product.name}`}
       >
