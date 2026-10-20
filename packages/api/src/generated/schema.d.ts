@@ -424,6 +424,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all users across the platform with numbered pagination */
+        get: operations["AdminUserController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get full detail of a user */
+        get: operations["AdminUserController_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{id}/role": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Make a customer an administrator
+         * @description Only promotes: `role: ADMIN` makes the user an administrator, and it takes effect at once (the access tokens the user already holds stop working with 401, and the next refresh brings a token with the new role; the user is not logged out). An administrator's role cannot be lowered through the API, so `role: CUSTOMER` is refused for an administrator and does nothing for a customer.
+         */
+        patch: operations["AdminUserController_updateRole"];
+        trace?: never;
+    };
     "/api/v1/admin/users/{id}/suspend": {
         parameters: {
             query?: never;
@@ -578,6 +632,23 @@ export interface paths {
         put?: never;
         /** Create a new product */
         post: operations["AdminProductController_createProduct"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/products/counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Count products by status for tab navigation */
+        get: operations["AdminProductController_counts"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -759,6 +830,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/inventory": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List inventory status for all SKUs with numbered pagination */
+        get: operations["AdminInventoryController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/inventory/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get overall inventory statistics and counts */
+        get: operations["AdminInventoryController_stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/inventory/export-csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export inventory as CSV (UTF-8 BOM) */
+        get: operations["AdminInventoryController_exportCsv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/inventory/{skuId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Adjust total physical stock on hand for a SKU
+         * @description Total stock cannot be less than the quantity held for orders, including orders being placed right now. Safe while customers are buying: the stock row is locked and the Redis availability number moves by the same difference, so units held by pending orders are kept.
+         */
+        patch: operations["AdminInventoryController_adjust"];
+        trace?: never;
+    };
     "/api/v1/cart": {
         parameters: {
             query?: never;
@@ -910,6 +1052,97 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List all orders across all users (numbered pagination)
+         * @description Filter with `status`, `paymentMethod`, `createdFrom`, `createdTo`, and search with `q` (order id, or the account name, email, phone of the customer).
+         */
+        get: operations["AdminOrderController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/counts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Count orders by status across all users */
+        get: operations["AdminOrderController_counts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/export-csv": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Export orders matching filters as CSV (UTF-8 BOM) */
+        get: operations["AdminOrderController_exportCsv"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get full details of any order */
+        get: operations["AdminOrderController_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Admin cancels an order before it ships (PENDING or CONFIRMED)
+         * @description Releases held inventory, returns confirmed stock, refunds vouchers, and emits Outbox events.
+         */
+        post: operations["AdminOrderController_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/orders/{id}/ship": {
         parameters: {
             query?: never;
@@ -978,6 +1211,77 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/vouchers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List all vouchers across platform with numbered pagination */
+        get: operations["AdminVoucherController_list"];
+        put?: never;
+        /** Create a new voucher */
+        post: operations["AdminVoucherController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vouchers/kpis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get overall voucher KPIs and discount statistics */
+        get: operations["AdminVoucherController_kpis"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/vouchers/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get full voucher detail by ID */
+        get: operations["AdminVoucherController_get"];
+        put?: never;
+        post?: never;
+        /** Delete a voucher if it has never been used in orders */
+        delete: operations["AdminVoucherController_delete"];
+        options?: never;
+        head?: never;
+        /** Update voucher details */
+        patch: operations["AdminVoucherController_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/vouchers/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Toggle voucher active status */
+        patch: operations["AdminVoucherController_updateStatus"];
+        trace?: never;
+    };
     "/api/v1/orders/{orderId}/payments": {
         parameters: {
             query?: never;
@@ -990,7 +1294,7 @@ export interface paths {
         put?: never;
         /**
          * Start paying one of my online orders
-         * @description The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Send the customer to `payUrl`.
+         * @description The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Draw `qrCode` as a QR code for the customer to scan; `payUrl`, when there is one, is a page to pay on instead.
          */
         post: operations["PaymentController_start"];
         delete?: never;
@@ -1047,6 +1351,57 @@ export interface paths {
         put?: never;
         /** Dev only: this charge failed at the fake gateway */
         post: operations["DevFakeGatewayController_fail"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/dashboard/kpis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get overview KPIs for the admin dashboard */
+        get: operations["AdminDashboardController_getKpis"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/dashboard/revenue-chart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get revenue chart data points comparing current vs previous period */
+        get: operations["AdminDashboardController_getRevenueChart"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/dashboard/top-products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get top performing products by revenue and units sold */
+        get: operations["AdminDashboardController_getTopProducts"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1340,12 +1695,91 @@ export interface components {
             /** @description The password of the account. Required when the account has one: it proves the owner is asking, which a stolen access token cannot */
             currentPassword?: string;
         };
-        PaginatedMetaDto: {
+        NumberedPageMetaDto: {
+            page: number;
+            limit: number;
+            hasMore: boolean;
+            /** @description How many rows match, counted up to a ceiling */
+            total: number;
+            /** @description True when more rows than `total` match */
+            totalCapped: boolean;
+            totalPages?: number;
+        };
+        AdminUserSummaryDto: {
+            id: string;
+            name: string;
+            displayName?: string | null;
+            email: string;
+            phone: string;
+            /** @enum {string} */
+            role: "CUSTOMER" | "ADMIN";
+            /** @enum {string} */
+            status: "ACTIVE" | "SUSPENDED";
+            /** @description Total number of orders placed by this user */
+            orderCount: number;
+            /** @description ISO 8601 string */
+            createdAt: string;
+            /** @description ISO 8601 string */
+            updatedAt: string;
+        };
+        AdminUserAddressDto: {
+            id: string;
+            recipientName: string;
+            phone: string;
+            street: string;
+            wardName: string;
+            provinceName: string;
+            isDefault: boolean;
+        };
+        AdminUserRecentOrderDto: {
+            id: string;
+            shortCode: string;
+            /** @description Total amount as number */
+            total: number;
+            status: string;
+            createdAt: string;
+        };
+        AdminUserSessionDto: {
+            id: string;
+            userAgent?: string | null;
+            ipAddress?: string | null;
+            createdAt: string;
+            expiresAt: string;
+        };
+        AdminUserDetailDto: {
+            id: string;
+            name: string;
+            displayName?: string | null;
+            avatarUrl?: string | null;
+            email: string;
+            phone: string;
+            /** @enum {string} */
+            role: "CUSTOMER" | "ADMIN";
+            /** @enum {string} */
+            status: "ACTIVE" | "SUSPENDED";
+            orderCount: number;
+            /** @description Total amount spent across all completed orders */
+            totalSpent: number;
+            addresses: components["schemas"]["AdminUserAddressDto"][];
+            recentOrders: components["schemas"]["AdminUserRecentOrderDto"][];
+            sessions: components["schemas"]["AdminUserSessionDto"][];
+            createdAt: string;
+            updatedAt: string;
+        };
+        AdminUpdateUserRoleDto: {
+            /**
+             * @description New role for the user (ADMIN, CUSTOMER)
+             * @example ADMIN
+             * @enum {string}
+             */
+            role: "CUSTOMER" | "ADMIN";
+        };
+        CursorPageMetaDto: {
             hasMore: boolean;
             nextCursor: string | null;
         };
-        PaginatedResponseDto: {
-            meta: components["schemas"]["PaginatedMetaDto"];
+        CursorPageResponseDto: {
+            meta: components["schemas"]["CursorPageMetaDto"];
         };
         PageMetaResponseDto: {
             page: number;
@@ -1400,6 +1834,23 @@ export interface components {
             name: string;
             /** @description Published products in the category and every category below it, inside the filters */
             count: number;
+        };
+        CategoryResponseDto: {
+            id: string;
+            name: string;
+            slug?: string | null;
+            parentId: string | null;
+            path: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        AdminProductCountsResponseDto: {
+            ALL: number;
+            PUBLISHED: number;
+            DRAFT: number;
+            ARCHIVED: number;
         };
         SkuDto: {
             /**
@@ -1493,6 +1944,41 @@ export interface components {
         MoveCategoryDto: {
             /** @description ID of the new parent category. Send null or omit to move to root. */
             newParentId?: string | null;
+        };
+        AdminInventoryItemDto: {
+            /** @description SKU ID */
+            id: string;
+            /** @description SKU Code */
+            skuCode: string;
+            /** @description Parent product ID */
+            productId: string;
+            /** @description Parent product name */
+            productName: string;
+            /** @description Total stock on hand */
+            totalStock: number;
+            /** @description Stock reserved for pending orders */
+            reserved: number;
+            /** @description Available stock to sell (totalStock - reserved) */
+            available: number;
+            /** @description SKU price as a number */
+            price: number;
+        };
+        AdminInventoryStatsDto: {
+            /** @description Total number of SKUs */
+            totalSkus: number;
+            /** @description Total physical items on hand across all SKUs */
+            totalStock: number;
+            /** @description Number of SKUs with stock > 0 and <= 10 */
+            lowStockCount: number;
+            /** @description Number of SKUs with available stock = 0 */
+            outOfStockCount: number;
+        };
+        AdminAdjustStockDto: {
+            /**
+             * @description New total physical stock on hand (must be >= currently reserved)
+             * @example 50
+             */
+            totalStock: number;
         };
         CartLineResponseDto: {
             skuId: string;
@@ -1657,6 +2143,73 @@ export interface components {
             CANCELLED: number;
             EXPIRED: number;
         };
+        AdminOrderItemSummaryDto: {
+            /** @description ID of the SKU */
+            sku: string;
+            /** @description Product name */
+            name: string;
+            /** @description Unit price as a number */
+            price: number;
+            /** @description Quantity ordered */
+            quantity: number;
+        };
+        AdminOrderSummaryDto: {
+            id: string;
+            /** @description First 8 characters of order ID */
+            shortCode: string;
+            userId?: string;
+            customerName: string;
+            customerPhone: string;
+            shippingAddress: string;
+            items: components["schemas"]["AdminOrderItemSummaryDto"][];
+            /** @description Total order amount as a number */
+            totalAmount: number;
+            /** @enum {string} */
+            paymentMethod: "ONLINE" | "COD";
+            /** @enum {string} */
+            status: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
+            /** @description ISO 8601 timestamp */
+            createdAt: string;
+        };
+        AdminCustomerInfoDto: {
+            id: string;
+            fullName: string;
+            email: string;
+            phone?: string;
+        };
+        AdminOrderDetailDto: {
+            id: string;
+            shortCode: string;
+            userId: string;
+            customer: components["schemas"]["AdminCustomerInfoDto"];
+            /** @enum {string} */
+            status: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
+            /** @enum {string} */
+            paymentMethod: "ONLINE" | "COD";
+            /** @description Subtotal before discount as number */
+            subtotal: number;
+            /** @description Discount amount as number */
+            discountAmount: number;
+            voucherCode?: string | null;
+            /** @description Final total as number */
+            total: number;
+            items: components["schemas"]["OrderItemResponseDto"][];
+            shippingAddress: components["schemas"]["ShippingAddressResponseDto"];
+            /** Format: date-time */
+            expiresAt?: string | null;
+            timeline: components["schemas"]["OrderTimelineResponseDto"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        AdminCancelOrderDto: {
+            /**
+             * @description Reason for cancelling the order
+             * @example Khách hàng yêu cầu hủy qua điện thoại
+             */
+            reason?: string;
+        };
         VoucherListItemResponseDto: {
             /** @example GIAM50K */
             code: string;
@@ -1714,6 +2267,116 @@ export interface components {
              */
             total: number;
         };
+        AdminVoucherResponseDto: {
+            id: string;
+            code: string;
+            name: string;
+            /** @enum {string} */
+            discountType: "FIXED_AMOUNT" | "PERCENTAGE";
+            discountValue: number;
+            maxDiscountAmount?: number | null;
+            minOrderValue: number;
+            usageLimit: number;
+            usagePerUser: number;
+            usedCount: number;
+            startDate: string;
+            endDate: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "UPCOMING" | "EXPIRED" | "DISABLED";
+            /** @default ALL */
+            scope: string;
+            createdAt: string;
+        };
+        AdminVoucherKpisDto: {
+            /** @description Number of currently active vouchers */
+            activeCount: number;
+            /** @description Total number of times vouchers have been used */
+            totalUsedCount: number;
+            /** @description Total order revenue associated with vouchers */
+            totalRevenueDriven: number;
+            /** @description Total discount amount granted across all orders */
+            totalDiscountAmount: number;
+        };
+        AdminCreateVoucherDto: {
+            /**
+             * @description Voucher uppercase code (3-20 uppercase alphanumeric)
+             * @example SUMMER2026
+             */
+            code: string;
+            /**
+             * @description Display name for the voucher
+             * @example Khuyến mãi mùa hè 2026
+             */
+            name: string;
+            /**
+             * @description Type of discount: FIXED_AMOUNT (money) or PERCENTAGE (%)
+             * @example PERCENTAGE
+             * @enum {string}
+             */
+            type: "FIXED_AMOUNT" | "PERCENTAGE";
+            /**
+             * @description Discount value: percentage amount (1-100) or fixed amount in VND (> 0)
+             * @example 15
+             */
+            value: number;
+            /**
+             * @description Max discount amount in VND for PERCENTAGE vouchers
+             * @example 100000
+             */
+            maxDiscount?: number;
+            /**
+             * @description Minimum order value required to apply voucher
+             * @default 0
+             * @example 200000
+             */
+            minOrderValue: number;
+            /**
+             * @description Total number of uses across all customers
+             * @example 500
+             */
+            totalLimit: number;
+            /**
+             * @description Number of uses permitted per individual customer
+             * @default 1
+             * @example 1
+             */
+            perUserLimit: number;
+            /**
+             * @description Start date time (ISO 8601 string)
+             * @example 2026-10-01T00:00:00Z
+             */
+            startsAt: string;
+            /**
+             * @description End date time (ISO 8601 string)
+             * @example 2026-10-31T23:59:59Z
+             */
+            endsAt: string;
+            /**
+             * @description Whether voucher is active
+             * @default true
+             */
+            active: boolean;
+        };
+        AdminUpdateVoucherDto: {
+            name?: string;
+            /** @enum {string} */
+            type?: "FIXED_AMOUNT" | "PERCENTAGE";
+            value?: number;
+            /** @description Send null to remove the cap */
+            maxDiscount?: number | null;
+            minOrderValue?: number;
+            totalLimit?: number;
+            perUserLimit?: number;
+            /** @description Start date time (ISO 8601 string) */
+            startsAt?: string;
+            /** @description End date time (ISO 8601 string) */
+            endsAt?: string;
+            active?: boolean;
+        };
+        AdminUpdateVoucherStatusDto: {
+            /** @description Active status for voucher */
+            active: boolean;
+        };
         PaymentResponseDto: {
             id: string;
             orderId: string;
@@ -1721,7 +2384,9 @@ export interface components {
             status: "INITIATED" | "SUCCEEDED" | "FAILED" | "EXPIRED" | "REFUND_PENDING" | "REFUNDED";
             /** @description What the customer has to pay (VND) */
             amount: number;
-            /** @description Where to pay. Only while the payment is INITIATED; null in every other state. */
+            /** @description The VietQR text to draw as a QR code, which the customer scans with a banking app. Only while the payment is INITIATED; null in every other state. */
+            qrCode: string | null;
+            /** @description A page of the gateway to pay on instead of scanning, when it has one. Only while the payment is INITIATED; null in every other state. */
             payUrl: string | null;
             /**
              * Format: date-time
@@ -1743,16 +2408,45 @@ export interface components {
             /** @description The id of the webhook message that was sent */
             eventId: string;
         };
-        CategoryResponseDto: {
+        RevenueKpiDto: {
+            total: number;
+            trendPercent: number;
+            trendUp: boolean;
+            comparisonNote: string;
+        };
+        OrdersKpiDto: {
+            total: number;
+            pendingDispatch: number;
+        };
+        ProductsKpiDto: {
+            totalProducts: number;
+            totalSkus: number;
+            draftCount: number;
+        };
+        UsersKpiDto: {
+            totalCustomers: number;
+            suspendedCount: number;
+        };
+        AdminDashboardKpisResponseDto: {
+            revenue: components["schemas"]["RevenueKpiDto"];
+            orders: components["schemas"]["OrdersKpiDto"];
+            products: components["schemas"]["ProductsKpiDto"];
+            users: components["schemas"]["UsersKpiDto"];
+        };
+        ChartDataPointDto: {
+            /** @example T2 */
+            label: string;
+            /** @description Revenue in current period on this day */
+            current: number;
+            /** @description Revenue in previous period on this day */
+            previous: number;
+        };
+        TopProductDto: {
             id: string;
             name: string;
-            slug?: string | null;
-            parentId?: string | null;
-            path: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
+            category: string;
+            soldCount: number;
+            revenue: number;
         };
     };
     responses: never;
@@ -2550,6 +3244,108 @@ export interface operations {
             };
         };
     };
+    AdminUserController_list: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by role (ADMIN, CUSTOMER) */
+                role?: "CUSTOMER" | "ADMIN";
+                /** @description Filter by status (ACTIVE, SUSPENDED) */
+                status?: "ACTIVE" | "SUSPENDED";
+                /** @description Search by user ID, display name, email or phone */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AdminUserSummaryDto"][];
+                        meta: components["schemas"]["NumberedPageMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    AdminUserController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description User id */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDetailDto"];
+                };
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminUserController_updateRole: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description User id */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateUserRoleDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminUserDetailDto"];
+                };
+            };
+            /** @description Lowering an administrator: AUTH-022 for oneself, AUTH-023 for another administrator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description User not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     AdminUserController_suspend: {
         parameters: {
             query?: never;
@@ -2663,7 +3459,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                    "application/json": components["schemas"]["CursorPageResponseDto"] & {
                         data?: components["schemas"]["ProductResponseDto"][];
                         meta?: components["schemas"]["PageMetaResponseDto"];
                     };
@@ -2839,7 +3635,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedResponseDto"] & {
+                    "application/json": components["schemas"]["CursorPageResponseDto"] & {
                         data?: components["schemas"]["ProductResponseDto"][];
                     };
                 };
@@ -2883,6 +3679,25 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    AdminProductController_counts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminProductCountsResponseDto"];
+                };
             };
         };
     };
@@ -3127,7 +3942,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryResponseDto"];
+                };
             };
             /** @description Bad Request */
             400: {
@@ -3201,7 +4018,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryResponseDto"];
+                };
             };
             /** @description Category not found */
             404: {
@@ -3233,7 +4052,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CategoryResponseDto"];
+                };
             };
             /** @description Category or New Parent not found */
             404: {
@@ -3255,6 +4076,123 @@ export interface operations {
         responses: {
             /** @description Sitemap data retrieved successfully */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminInventoryController_list: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by inventory status (LOW for <=10, OUT for 0) */
+                status?: "LOW" | "OUT";
+                /** @description Search by SKU code or product name */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AdminInventoryItemDto"][];
+                        meta: components["schemas"]["NumberedPageMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    AdminInventoryController_stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminInventoryStatsDto"];
+                };
+            };
+        };
+    };
+    AdminInventoryController_exportCsv: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by inventory status (LOW for <=10, OUT for 0) */
+                status?: "LOW" | "OUT";
+                /** @description Search by SKU code or product name */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV file download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminInventoryController_adjust: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description SKU ID */
+                skuId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminAdjustStockDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminInventoryItemDto"];
+                };
+            };
+            /** @description Total stock is less than the quantity held for orders */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description SKU not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3618,6 +4556,165 @@ export interface operations {
             };
         };
     };
+    AdminOrderController_list: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by order status */
+                status?: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
+                /** @description Filter by payment method (ONLINE, COD) */
+                paymentMethod?: "ONLINE" | "COD";
+                /** @description Filter orders created from this timestamp (ISO 8601 with timezone) */
+                createdFrom?: string;
+                /** @description Filter orders created until this timestamp (ISO 8601 with timezone) */
+                createdTo?: string;
+                /** @description Search by order id, or by the customer's account name, email or phone */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AdminOrderSummaryDto"][];
+                        meta: components["schemas"]["NumberedPageMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    AdminOrderController_counts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Object with order count by status and total in key "" */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: number;
+                    };
+                };
+            };
+        };
+    };
+    AdminOrderController_exportCsv: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by order status */
+                status?: "PENDING" | "PAYMENT_PROCESSING" | "CONFIRMED" | "SHIPPING" | "DELIVERED" | "CANCELLED" | "EXPIRED";
+                /** @description Filter by payment method (ONLINE, COD) */
+                paymentMethod?: "ONLINE" | "COD";
+                /** @description Filter orders created from this timestamp (ISO 8601 with timezone) */
+                createdFrom?: string;
+                /** @description Filter orders created until this timestamp (ISO 8601 with timezone) */
+                createdTo?: string;
+                /** @description Search by order id, or by the customer's account name, email or phone */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CSV file download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminOrderController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrderDetailDto"];
+                };
+            };
+            /** @description Order not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminOrderController_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminCancelOrderDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrderDetailDto"];
+                };
+            };
+            /** @description Order not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid state transition (ORD-006) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     AdminOrderController_ship: {
         parameters: {
             query?: never;
@@ -3634,7 +4731,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["AdminOrderDetailDto"];
                 };
             };
             /** @description No such order (ORD-002) */
@@ -3669,7 +4766,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OrderResponseDto"];
+                    "application/json": components["schemas"]["AdminOrderDetailDto"];
                 };
             };
             /** @description No such order (ORD-002) */
@@ -3744,6 +4841,218 @@ export interface operations {
             };
             /** @description Cannot be used now (VOU-002), does not fit the cart (VOU-003), used up (VOU-004), used up by me (VOU-005), or the cart is empty (ORD-003) */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVoucherController_list: {
+        parameters: {
+            query?: {
+                /** @description Page number (1-based) */
+                page?: number;
+                /** @description Items per page */
+                limit?: number;
+                /** @description Filter by voucher status (ACTIVE, UPCOMING, EXPIRED, DISABLED) */
+                status?: "ACTIVE" | "UPCOMING" | "EXPIRED" | "DISABLED";
+                /** @description Filter by discount type (FIXED_AMOUNT, PERCENTAGE) */
+                type?: "FIXED_AMOUNT" | "PERCENTAGE";
+                /** @description Search by voucher code or name */
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["AdminVoucherResponseDto"][];
+                        meta: components["schemas"]["NumberedPageMetaDto"];
+                    };
+                };
+            };
+        };
+    };
+    AdminVoucherController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminCreateVoucherDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVoucherResponseDto"];
+                };
+            };
+            /** @description Voucher code already exists */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVoucherController_kpis: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVoucherKpisDto"];
+                };
+            };
+        };
+    };
+    AdminVoucherController_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Voucher ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVoucherResponseDto"];
+                };
+            };
+            /** @description Voucher not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVoucherController_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Voucher ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Voucher not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Cannot delete voucher that has orders; disable it instead */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVoucherController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Voucher ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateVoucherDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVoucherResponseDto"];
+                };
+            };
+            /** @description Voucher not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminVoucherController_updateStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Voucher ID */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminUpdateVoucherStatusDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminVoucherResponseDto"];
+                };
+            };
+            /** @description Voucher not found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3938,6 +5247,72 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    AdminDashboardController_getKpis: {
+        parameters: {
+            query?: {
+                /** @description Time window in days for KPI comparison (e.g. 7, 14, 30) */
+                rangeDays?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminDashboardKpisResponseDto"];
+                };
+            };
+        };
+    };
+    AdminDashboardController_getRevenueChart: {
+        parameters: {
+            query?: {
+                /** @description Time window in days for KPI comparison (e.g. 7, 14, 30) */
+                rangeDays?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChartDataPointDto"][];
+                };
+            };
+        };
+    };
+    AdminDashboardController_getTopProducts: {
+        parameters: {
+            query?: {
+                /** @description How many products to return */
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopProductDto"][];
+                };
             };
         };
     };

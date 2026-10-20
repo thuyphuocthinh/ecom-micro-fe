@@ -929,6 +929,201 @@
         ]
       }
     },
+    "/api/v1/admin/users": {
+      "get": {
+        "operationId": "AdminUserController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "role",
+            "required": false,
+            "in": "query",
+            "description": "Filter by role (ADMIN, CUSTOMER)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CUSTOMER",
+                "ADMIN"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by status (ACTIVE, SUSPENDED)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "SUSPENDED"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by user ID, display name, email or phone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminUserSummaryDto"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/NumberedPageMetaDto"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all users across the platform with numbered pagination",
+        "tags": [
+          "Admin - Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}": {
+      "get": {
+        "operationId": "AdminUserController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get full detail of a user",
+        "tags": [
+          "Admin - Users"
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/role": {
+      "patch": {
+        "description": "Only promotes: `role: ADMIN` makes the user an administrator, and it takes effect at once (the access tokens the user already holds stop working with 401, and the next refresh brings a token with the new role; the user is not logged out). An administrator's role cannot be lowered through the API, so `role: CUSTOMER` is refused for an administrator and does nothing for a customer.",
+        "operationId": "AdminUserController_updateRole",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateUserRoleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminUserDetailDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Lowering an administrator: AUTH-022 for oneself, AUTH-023 for another administrator"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Make a customer an administrator",
+        "tags": [
+          "Admin - Users"
+        ]
+      }
+    },
     "/api/v1/admin/users/{id}/suspend": {
       "post": {
         "operationId": "AdminUserController_suspend",
@@ -964,7 +1159,7 @@
         ],
         "summary": "Suspend an account and end every session it has",
         "tags": [
-          "Admin"
+          "Admin - Users"
         ]
       }
     },
@@ -1000,7 +1195,7 @@
         ],
         "summary": "Let a suspended account log in again",
         "tags": [
-          "Admin"
+          "Admin - Users"
         ]
       }
     },
@@ -1125,7 +1320,7 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/CursorPageResponseDto"
                     },
                     {
                       "properties": {
@@ -1439,7 +1634,7 @@
                 "schema": {
                   "allOf": [
                     {
-                      "$ref": "#/components/schemas/PaginatedResponseDto"
+                      "$ref": "#/components/schemas/CursorPageResponseDto"
                     },
                     {
                       "properties": {
@@ -1515,6 +1710,33 @@
           }
         ],
         "summary": "Create a new product",
+        "tags": [
+          "Admin - Catalog"
+        ]
+      }
+    },
+    "/api/v1/admin/catalog/products/counts": {
+      "get": {
+        "operationId": "AdminProductController_counts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminProductCountsResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Count products by status for tab navigation",
         "tags": [
           "Admin - Catalog"
         ]
@@ -1834,7 +2056,14 @@
         },
         "responses": {
           "201": {
-            "description": "Category created successfully"
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponseDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request"
@@ -1880,7 +2109,14 @@
         },
         "responses": {
           "200": {
-            "description": "Category updated successfully"
+            "description": "Category updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponseDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Category not found"
@@ -1957,7 +2193,14 @@
         },
         "responses": {
           "200": {
-            "description": "Category moved successfully"
+            "description": "Category moved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponseDto"
+                }
+              }
+            }
           },
           "404": {
             "description": "Category or New Parent not found"
@@ -1987,6 +2230,243 @@
         "summary": "Get catalog sitemap data for SSR & search engine indexing",
         "tags": [
           "Catalog - SEO"
+        ]
+      }
+    },
+    "/api/v1/admin/inventory": {
+      "get": {
+        "operationId": "AdminInventoryController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by inventory status (LOW for <=10, OUT for 0)",
+            "schema": {
+              "example": "LOW",
+              "type": "string",
+              "enum": [
+                "LOW",
+                "OUT"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by SKU code or product name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminInventoryItemDto"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/NumberedPageMetaDto"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List inventory status for all SKUs with numbered pagination",
+        "tags": [
+          "Admin - Inventory"
+        ]
+      }
+    },
+    "/api/v1/admin/inventory/stats": {
+      "get": {
+        "operationId": "AdminInventoryController_stats",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminInventoryStatsDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get overall inventory statistics and counts",
+        "tags": [
+          "Admin - Inventory"
+        ]
+      }
+    },
+    "/api/v1/admin/inventory/export-csv": {
+      "get": {
+        "operationId": "AdminInventoryController_exportCsv",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by inventory status (LOW for <=10, OUT for 0)",
+            "schema": {
+              "example": "LOW",
+              "type": "string",
+              "enum": [
+                "LOW",
+                "OUT"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by SKU code or product name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file download"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export inventory as CSV (UTF-8 BOM)",
+        "tags": [
+          "Admin - Inventory"
+        ]
+      }
+    },
+    "/api/v1/admin/inventory/{skuId}": {
+      "patch": {
+        "description": "Total stock cannot be less than the quantity held for orders, including orders being placed right now. Safe while customers are buying: the stock row is locked and the Redis availability number moves by the same difference, so units held by pending orders are kept.",
+        "operationId": "AdminInventoryController_adjust",
+        "parameters": [
+          {
+            "name": "skuId",
+            "required": true,
+            "in": "path",
+            "description": "SKU ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminAdjustStockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminInventoryItemDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Total stock is less than the quantity held for orders"
+          },
+          "404": {
+            "description": "SKU not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Adjust total physical stock on hand for a SKU",
+        "tags": [
+          "Admin - Inventory"
         ]
       }
     },
@@ -2495,6 +2975,359 @@
         ]
       }
     },
+    "/api/v1/admin/orders": {
+      "get": {
+        "description": "Filter with `status`, `paymentMethod`, `createdFrom`, `createdTo`, and search with `q` (order id, or the account name, email, phone of the customer).",
+        "operationId": "AdminOrderController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by order status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "PAYMENT_PROCESSING",
+                "CONFIRMED",
+                "SHIPPING",
+                "DELIVERED",
+                "CANCELLED",
+                "EXPIRED"
+              ]
+            }
+          },
+          {
+            "name": "paymentMethod",
+            "required": false,
+            "in": "query",
+            "description": "Filter by payment method (ONLINE, COD)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ONLINE",
+                "COD"
+              ]
+            }
+          },
+          {
+            "name": "createdFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter orders created from this timestamp (ISO 8601 with timezone)",
+            "schema": {
+              "example": "2026-10-01T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter orders created until this timestamp (ISO 8601 with timezone)",
+            "schema": {
+              "example": "2026-10-31T23:59:59+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by order id, or by the customer's account name, email or phone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminOrderSummaryDto"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/NumberedPageMetaDto"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all orders across all users (numbered pagination)",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/counts": {
+      "get": {
+        "operationId": "AdminOrderController_counts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Object with order count by status and total in key \"\"",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Count orders by status across all users",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/export-csv": {
+      "get": {
+        "operationId": "AdminOrderController_exportCsv",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by order status",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "PAYMENT_PROCESSING",
+                "CONFIRMED",
+                "SHIPPING",
+                "DELIVERED",
+                "CANCELLED",
+                "EXPIRED"
+              ]
+            }
+          },
+          {
+            "name": "paymentMethod",
+            "required": false,
+            "in": "query",
+            "description": "Filter by payment method (ONLINE, COD)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ONLINE",
+                "COD"
+              ]
+            }
+          },
+          {
+            "name": "createdFrom",
+            "required": false,
+            "in": "query",
+            "description": "Filter orders created from this timestamp (ISO 8601 with timezone)",
+            "schema": {
+              "example": "2026-10-01T00:00:00+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "createdTo",
+            "required": false,
+            "in": "query",
+            "description": "Filter orders created until this timestamp (ISO 8601 with timezone)",
+            "schema": {
+              "example": "2026-10-31T23:59:59+07:00",
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by order id, or by the customer's account name, email or phone",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file download"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export orders matching filters as CSV (UTF-8 BOM)",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/{id}": {
+      "get": {
+        "operationId": "AdminOrderController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get full details of any order",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
+    "/api/v1/admin/orders/{id}/cancel": {
+      "post": {
+        "description": "Releases held inventory, returns confirmed stock, refunds vouchers, and emits Outbox events.",
+        "operationId": "AdminOrderController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCancelOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrderDetailDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          },
+          "409": {
+            "description": "Invalid state transition (ORD-006)"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Admin cancels an order before it ships (PENDING or CONFIRMED)",
+        "tags": [
+          "Admin - Orders"
+        ]
+      }
+    },
     "/api/v1/admin/orders/{id}/ship": {
       "post": {
         "operationId": "AdminOrderController_ship",
@@ -2514,7 +3347,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponseDto"
+                  "$ref": "#/components/schemas/AdminOrderDetailDto"
                 }
               }
             }
@@ -2556,7 +3389,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OrderResponseDto"
+                  "$ref": "#/components/schemas/AdminOrderDetailDto"
                 }
               }
             }
@@ -2655,9 +3488,350 @@
         ]
       }
     },
+    "/api/v1/admin/vouchers": {
+      "get": {
+        "operationId": "AdminVoucherController_list",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-based)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "description": "Filter by voucher status (ACTIVE, UPCOMING, EXPIRED, DISABLED)",
+            "schema": {
+              "example": "ACTIVE",
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "UPCOMING",
+                "EXPIRED",
+                "DISABLED"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Filter by discount type (FIXED_AMOUNT, PERCENTAGE)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "FIXED_AMOUNT",
+                "PERCENTAGE"
+              ]
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by voucher code or name",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AdminVoucherResponseDto"
+                      }
+                    },
+                    "meta": {
+                      "$ref": "#/components/schemas/NumberedPageMetaDto"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all vouchers across platform with numbered pagination",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      },
+      "post": {
+        "operationId": "AdminVoucherController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminCreateVoucherDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminVoucherResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Voucher code already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new voucher",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      }
+    },
+    "/api/v1/admin/vouchers/kpis": {
+      "get": {
+        "operationId": "AdminVoucherController_kpis",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminVoucherKpisDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get overall voucher KPIs and discount statistics",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      }
+    },
+    "/api/v1/admin/vouchers/{id}": {
+      "get": {
+        "operationId": "AdminVoucherController_get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Voucher ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminVoucherResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voucher not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get full voucher detail by ID",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      },
+      "patch": {
+        "operationId": "AdminVoucherController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Voucher ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateVoucherDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminVoucherResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voucher not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update voucher details",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      },
+      "delete": {
+        "operationId": "AdminVoucherController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Voucher ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted"
+          },
+          "404": {
+            "description": "Voucher not found"
+          },
+          "409": {
+            "description": "Cannot delete voucher that has orders; disable it instead"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a voucher if it has never been used in orders",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      }
+    },
+    "/api/v1/admin/vouchers/{id}/status": {
+      "patch": {
+        "operationId": "AdminVoucherController_updateStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Voucher ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateVoucherStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminVoucherResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Voucher not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Toggle voucher active status",
+        "tags": [
+          "Admin - Vouchers"
+        ]
+      }
+    },
     "/api/v1/orders/{orderId}/payments": {
       "post": {
-        "description": "The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Send the customer to `payUrl`.",
+        "description": "The same Idempotency-Key for the same order always gives the same payment: sending the request again returns that payment with 200 and `Idempotency-Replayed: true`, and the customer is never charged twice. Draw `qrCode` as a QR code for the customer to scan; `payUrl`, when there is one, is a page to pay on instead.",
         "operationId": "PaymentController_start",
         "parameters": [
           {
@@ -2883,6 +4057,130 @@
         "summary": "Dev only: this charge failed at the fake gateway",
         "tags": [
           "Dev: fake payment gateway"
+        ]
+      }
+    },
+    "/api/v1/admin/dashboard/kpis": {
+      "get": {
+        "operationId": "AdminDashboardController_getKpis",
+        "parameters": [
+          {
+            "name": "rangeDays",
+            "required": false,
+            "in": "query",
+            "description": "Time window in days for KPI comparison (e.g. 7, 14, 30)",
+            "schema": {
+              "default": 7,
+              "example": 7,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDashboardKpisResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get overview KPIs for the admin dashboard",
+        "tags": [
+          "Admin - Dashboard"
+        ]
+      }
+    },
+    "/api/v1/admin/dashboard/revenue-chart": {
+      "get": {
+        "operationId": "AdminDashboardController_getRevenueChart",
+        "parameters": [
+          {
+            "name": "rangeDays",
+            "required": false,
+            "in": "query",
+            "description": "Time window in days for KPI comparison (e.g. 7, 14, 30)",
+            "schema": {
+              "default": 7,
+              "example": 7,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChartDataPointDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get revenue chart data points comparing current vs previous period",
+        "tags": [
+          "Admin - Dashboard"
+        ]
+      }
+    },
+    "/api/v1/admin/dashboard/top-products": {
+      "get": {
+        "operationId": "AdminDashboardController_getTopProducts",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "How many products to return",
+            "schema": {
+              "minimum": 1,
+              "maximum": 50,
+              "default": 5,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TopProductDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get top performing products by revenue and units sold",
+        "tags": [
+          "Admin - Dashboard"
         ]
       }
     }
@@ -3503,7 +4801,290 @@
           "idToken"
         ]
       },
-      "PaginatedMetaDto": {
+      "NumberedPageMetaDto": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number",
+            "minimum": 1
+          },
+          "limit": {
+            "type": "number"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "total": {
+            "type": "number",
+            "description": "How many rows match, counted up to a ceiling"
+          },
+          "totalCapped": {
+            "type": "boolean",
+            "description": "True when more rows than `total` match"
+          },
+          "totalPages": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "page",
+          "limit",
+          "hasMore",
+          "total",
+          "totalCapped"
+        ]
+      },
+      "AdminUserSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "ADMIN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED"
+            ]
+          },
+          "orderCount": {
+            "type": "number",
+            "description": "Total number of orders placed by this user"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "ISO 8601 string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "ISO 8601 string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "role",
+          "status",
+          "orderCount",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminUserAddressDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "recipientName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "wardName": {
+            "type": "string"
+          },
+          "provinceName": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "recipientName",
+          "phone",
+          "street",
+          "wardName",
+          "provinceName",
+          "isDefault"
+        ]
+      },
+      "AdminUserRecentOrderDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "shortCode": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number",
+            "description": "Total amount as number"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "shortCode",
+          "total",
+          "status",
+          "createdAt"
+        ]
+      },
+      "AdminUserSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string",
+            "nullable": true
+          },
+          "ipAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "expiresAt"
+        ]
+      },
+      "AdminUserDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "ADMIN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "SUSPENDED"
+            ]
+          },
+          "orderCount": {
+            "type": "number"
+          },
+          "totalSpent": {
+            "type": "number",
+            "description": "Total amount spent across all completed orders"
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserAddressDto"
+            }
+          },
+          "recentOrders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserRecentOrderDto"
+            }
+          },
+          "sessions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminUserSessionDto"
+            }
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "role",
+          "status",
+          "orderCount",
+          "totalSpent",
+          "addresses",
+          "recentOrders",
+          "sessions",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminUpdateUserRoleDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "ADMIN"
+            ],
+            "description": "New role for the user (ADMIN, CUSTOMER)",
+            "example": "ADMIN"
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "CursorPageMetaDto": {
         "type": "object",
         "properties": {
           "hasMore": {
@@ -3519,11 +5100,11 @@
           "nextCursor"
         ]
       },
-      "PaginatedResponseDto": {
+      "CursorPageResponseDto": {
         "type": "object",
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/PaginatedMetaDto"
+            "$ref": "#/components/schemas/CursorPageMetaDto"
           }
         },
         "required": [
@@ -3704,6 +5285,67 @@
           "categoryId",
           "name",
           "count"
+        ]
+      },
+      "CategoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          },
+          "path": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "parentId",
+          "path",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminProductCountsResponseDto": {
+        "type": "object",
+        "properties": {
+          "ALL": {
+            "type": "number"
+          },
+          "PUBLISHED": {
+            "type": "number"
+          },
+          "DRAFT": {
+            "type": "number"
+          },
+          "ARCHIVED": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "ALL",
+          "PUBLISHED",
+          "DRAFT",
+          "ARCHIVED"
         ]
       },
       "SkuDto": {
@@ -3889,6 +5531,94 @@
             "nullable": true
           }
         }
+      },
+      "AdminInventoryItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "SKU ID"
+          },
+          "skuCode": {
+            "type": "string",
+            "description": "SKU Code"
+          },
+          "productId": {
+            "type": "string",
+            "description": "Parent product ID"
+          },
+          "productName": {
+            "type": "string",
+            "description": "Parent product name"
+          },
+          "totalStock": {
+            "type": "number",
+            "description": "Total stock on hand"
+          },
+          "reserved": {
+            "type": "number",
+            "description": "Stock reserved for pending orders"
+          },
+          "available": {
+            "type": "number",
+            "description": "Available stock to sell (totalStock - reserved)"
+          },
+          "price": {
+            "type": "number",
+            "description": "SKU price as a number"
+          }
+        },
+        "required": [
+          "id",
+          "skuCode",
+          "productId",
+          "productName",
+          "totalStock",
+          "reserved",
+          "available",
+          "price"
+        ]
+      },
+      "AdminInventoryStatsDto": {
+        "type": "object",
+        "properties": {
+          "totalSkus": {
+            "type": "number",
+            "description": "Total number of SKUs"
+          },
+          "totalStock": {
+            "type": "number",
+            "description": "Total physical items on hand across all SKUs"
+          },
+          "lowStockCount": {
+            "type": "number",
+            "description": "Number of SKUs with stock > 0 and <= 10"
+          },
+          "outOfStockCount": {
+            "type": "number",
+            "description": "Number of SKUs with available stock = 0"
+          }
+        },
+        "required": [
+          "totalSkus",
+          "totalStock",
+          "lowStockCount",
+          "outOfStockCount"
+        ]
+      },
+      "AdminAdjustStockDto": {
+        "type": "object",
+        "properties": {
+          "totalStock": {
+            "type": "number",
+            "description": "New total physical stock on hand (must be >= currently reserved)",
+            "minimum": 0,
+            "example": 50
+          }
+        },
+        "required": [
+          "totalStock"
+        ]
       },
       "CartLineResponseDto": {
         "type": "object",
@@ -4152,29 +5882,29 @@
             "description": "When the order was placed"
           },
           "confirmedAt": {
+            "format": "date-time",
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "nullable": true
           },
           "shippedAt": {
+            "format": "date-time",
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "nullable": true
           },
           "deliveredAt": {
+            "format": "date-time",
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "nullable": true
           },
           "cancelledAt": {
+            "format": "date-time",
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "nullable": true
           },
           "expiredAt": {
+            "format": "date-time",
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "nullable": true
           }
         },
         "required": [
@@ -4384,6 +6114,227 @@
           "EXPIRED"
         ]
       },
+      "AdminOrderItemSummaryDto": {
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "ID of the SKU"
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name"
+          },
+          "price": {
+            "type": "number",
+            "description": "Unit price as a number"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity ordered"
+          }
+        },
+        "required": [
+          "sku",
+          "name",
+          "price",
+          "quantity"
+        ]
+      },
+      "AdminOrderSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "shortCode": {
+            "type": "string",
+            "description": "First 8 characters of order ID"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerPhone": {
+            "type": "string"
+          },
+          "shippingAddress": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminOrderItemSummaryDto"
+            }
+          },
+          "totalAmount": {
+            "type": "number",
+            "description": "Total order amount as a number"
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ONLINE",
+              "COD"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PAYMENT_PROCESSING",
+              "CONFIRMED",
+              "SHIPPING",
+              "DELIVERED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "shortCode",
+          "customerName",
+          "customerPhone",
+          "shippingAddress",
+          "items",
+          "totalAmount",
+          "paymentMethod",
+          "status",
+          "createdAt"
+        ]
+      },
+      "AdminCustomerInfoDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fullName",
+          "email"
+        ]
+      },
+      "AdminOrderDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "shortCode": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/AdminCustomerInfoDto"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PAYMENT_PROCESSING",
+              "CONFIRMED",
+              "SHIPPING",
+              "DELIVERED",
+              "CANCELLED",
+              "EXPIRED"
+            ]
+          },
+          "paymentMethod": {
+            "type": "string",
+            "enum": [
+              "ONLINE",
+              "COD"
+            ]
+          },
+          "subtotal": {
+            "type": "number",
+            "description": "Subtotal before discount as number"
+          },
+          "discountAmount": {
+            "type": "number",
+            "description": "Discount amount as number"
+          },
+          "voucherCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "description": "Final total as number"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemResponseDto"
+            }
+          },
+          "shippingAddress": {
+            "$ref": "#/components/schemas/ShippingAddressResponseDto"
+          },
+          "expiresAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "timeline": {
+            "$ref": "#/components/schemas/OrderTimelineResponseDto"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "shortCode",
+          "userId",
+          "customer",
+          "status",
+          "paymentMethod",
+          "subtotal",
+          "discountAmount",
+          "total",
+          "items",
+          "shippingAddress",
+          "timeline",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "AdminCancelOrderDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for cancelling the order",
+            "example": "Khách hàng yêu cầu hủy qua điện thoại"
+          }
+        }
+      },
       "VoucherListItemResponseDto": {
         "type": "object",
         "properties": {
@@ -4509,6 +6460,243 @@
           "total"
         ]
       },
+      "AdminVoucherResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "discountType": {
+            "type": "string",
+            "enum": [
+              "FIXED_AMOUNT",
+              "PERCENTAGE"
+            ]
+          },
+          "discountValue": {
+            "type": "number"
+          },
+          "maxDiscountAmount": {
+            "type": "number",
+            "nullable": true
+          },
+          "minOrderValue": {
+            "type": "number"
+          },
+          "usageLimit": {
+            "type": "number"
+          },
+          "usagePerUser": {
+            "type": "number"
+          },
+          "usedCount": {
+            "type": "number"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "UPCOMING",
+              "EXPIRED",
+              "DISABLED"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "default": "ALL"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "discountType",
+          "discountValue",
+          "minOrderValue",
+          "usageLimit",
+          "usagePerUser",
+          "usedCount",
+          "startDate",
+          "endDate",
+          "status",
+          "scope",
+          "createdAt"
+        ]
+      },
+      "AdminVoucherKpisDto": {
+        "type": "object",
+        "properties": {
+          "activeCount": {
+            "type": "number",
+            "description": "Number of currently active vouchers"
+          },
+          "totalUsedCount": {
+            "type": "number",
+            "description": "Total number of times vouchers have been used"
+          },
+          "totalRevenueDriven": {
+            "type": "number",
+            "description": "Total order revenue associated with vouchers"
+          },
+          "totalDiscountAmount": {
+            "type": "number",
+            "description": "Total discount amount granted across all orders"
+          }
+        },
+        "required": [
+          "activeCount",
+          "totalUsedCount",
+          "totalRevenueDriven",
+          "totalDiscountAmount"
+        ]
+      },
+      "AdminCreateVoucherDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Voucher uppercase code (3-20 uppercase alphanumeric)",
+            "example": "SUMMER2026"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the voucher",
+            "example": "Khuyến mãi mùa hè 2026"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIXED_AMOUNT",
+              "PERCENTAGE"
+            ],
+            "description": "Type of discount: FIXED_AMOUNT (money) or PERCENTAGE (%)",
+            "example": "PERCENTAGE"
+          },
+          "value": {
+            "type": "number",
+            "description": "Discount value: percentage amount (1-100) or fixed amount in VND (> 0)",
+            "example": 15
+          },
+          "maxDiscount": {
+            "type": "number",
+            "description": "Max discount amount in VND for PERCENTAGE vouchers",
+            "example": 100000
+          },
+          "minOrderValue": {
+            "type": "number",
+            "description": "Minimum order value required to apply voucher",
+            "default": 0,
+            "example": 200000
+          },
+          "totalLimit": {
+            "type": "number",
+            "description": "Total number of uses across all customers",
+            "minimum": 1,
+            "example": 500
+          },
+          "perUserLimit": {
+            "type": "number",
+            "description": "Number of uses permitted per individual customer",
+            "default": 1,
+            "minimum": 1,
+            "example": 1
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Start date time (ISO 8601 string)",
+            "example": "2026-10-01T00:00:00Z"
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "End date time (ISO 8601 string)",
+            "example": "2026-10-31T23:59:59Z"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Whether voucher is active",
+            "default": true
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "type",
+          "value",
+          "totalLimit",
+          "startsAt",
+          "endsAt"
+        ]
+      },
+      "AdminUpdateVoucherDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIXED_AMOUNT",
+              "PERCENTAGE"
+            ]
+          },
+          "value": {
+            "type": "number"
+          },
+          "maxDiscount": {
+            "type": "number",
+            "nullable": true,
+            "description": "Send null to remove the cap"
+          },
+          "minOrderValue": {
+            "type": "number"
+          },
+          "totalLimit": {
+            "type": "number"
+          },
+          "perUserLimit": {
+            "type": "number"
+          },
+          "startsAt": {
+            "type": "string",
+            "description": "Start date time (ISO 8601 string)"
+          },
+          "endsAt": {
+            "type": "string",
+            "description": "End date time (ISO 8601 string)"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AdminUpdateVoucherStatusDto": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean",
+            "description": "Active status for voucher"
+          }
+        },
+        "required": [
+          "active"
+        ]
+      },
       "PaymentResponseDto": {
         "type": "object",
         "properties": {
@@ -4533,10 +6721,15 @@
             "type": "number",
             "description": "What the customer has to pay (VND)"
           },
+          "qrCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "The VietQR text to draw as a QR code, which the customer scans with a banking app. Only while the payment is INITIATED; null in every other state."
+          },
           "payUrl": {
             "type": "string",
             "nullable": true,
-            "description": "Where to pay. Only while the payment is INITIATED; null in every other state."
+            "description": "A page of the gateway to pay on instead of scanning, when it has one. Only while the payment is INITIATED; null in every other state."
           },
           "expiresAt": {
             "format": "date-time",
@@ -4557,6 +6750,7 @@
           "orderId",
           "status",
           "amount",
+          "qrCode",
           "payUrl",
           "expiresAt",
           "createdAt",
@@ -4589,7 +6783,124 @@
           "eventId"
         ]
       },
-      "CategoryResponseDto": {
+      "RevenueKpiDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number"
+          },
+          "trendPercent": {
+            "type": "number"
+          },
+          "trendUp": {
+            "type": "boolean"
+          },
+          "comparisonNote": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "total",
+          "trendPercent",
+          "trendUp",
+          "comparisonNote"
+        ]
+      },
+      "OrdersKpiDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number"
+          },
+          "pendingDispatch": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "total",
+          "pendingDispatch"
+        ]
+      },
+      "ProductsKpiDto": {
+        "type": "object",
+        "properties": {
+          "totalProducts": {
+            "type": "number"
+          },
+          "totalSkus": {
+            "type": "number"
+          },
+          "draftCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "totalProducts",
+          "totalSkus",
+          "draftCount"
+        ]
+      },
+      "UsersKpiDto": {
+        "type": "object",
+        "properties": {
+          "totalCustomers": {
+            "type": "number"
+          },
+          "suspendedCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "totalCustomers",
+          "suspendedCount"
+        ]
+      },
+      "AdminDashboardKpisResponseDto": {
+        "type": "object",
+        "properties": {
+          "revenue": {
+            "$ref": "#/components/schemas/RevenueKpiDto"
+          },
+          "orders": {
+            "$ref": "#/components/schemas/OrdersKpiDto"
+          },
+          "products": {
+            "$ref": "#/components/schemas/ProductsKpiDto"
+          },
+          "users": {
+            "$ref": "#/components/schemas/UsersKpiDto"
+          }
+        },
+        "required": [
+          "revenue",
+          "orders",
+          "products",
+          "users"
+        ]
+      },
+      "ChartDataPointDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "example": "T2"
+          },
+          "current": {
+            "type": "number",
+            "description": "Revenue in current period on this day"
+          },
+          "previous": {
+            "type": "number",
+            "description": "Revenue in previous period on this day"
+          }
+        },
+        "required": [
+          "label",
+          "current",
+          "previous"
+        ]
+      },
+      "TopProductDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -4598,32 +6909,22 @@
           "name": {
             "type": "string"
           },
-          "slug": {
-            "type": "string",
-            "nullable": true
-          },
-          "parentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "path": {
+          "category": {
             "type": "string"
           },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string"
+          "soldCount": {
+            "type": "number"
           },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string"
+          "revenue": {
+            "type": "number"
           }
         },
         "required": [
           "id",
           "name",
-          "path",
-          "createdAt",
-          "updatedAt"
+          "category",
+          "soldCount",
+          "revenue"
         ]
       }
     }
