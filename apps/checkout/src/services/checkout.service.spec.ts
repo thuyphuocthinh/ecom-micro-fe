@@ -132,7 +132,15 @@ describe("checkoutService", () => {
   });
 
   it("gets order payments via getOrderPayments", async () => {
-    const mockPayments = [{ id: "pay-1", status: "INITIATED", amount: 500000 }];
+    const mockPayments = [
+      {
+        id: "pay-1",
+        status: "INITIATED",
+        amount: 500000,
+        qrCode: "00020101021238570010A000000727",
+        payUrl: "https://pay.payos.vn/web/abc123",
+      },
+    ];
     vi.spyOn(api, "get").mockResolvedValueOnce({
       data: mockPayments,
     } as unknown as never);
@@ -149,7 +157,8 @@ describe("checkoutService", () => {
       id: "pay-1",
       orderId: "ord-123",
       status: "INITIATED",
-      payUrl: "https://gateway.example.com",
+      qrCode: "00020101021238570010A000000727",
+      payUrl: "https://pay.payos.vn/web/abc123",
     };
     vi.spyOn(api, "post").mockResolvedValueOnce({
       data: mockPayment,
@@ -161,34 +170,5 @@ describe("checkoutService", () => {
       idempotencyKey: "key-pay",
     });
     expect(result).toEqual(mockPayment);
-  });
-
-  it("simulates fake gateway pay and fail", async () => {
-    vi.spyOn(api, "post").mockResolvedValueOnce({
-      data: { webhookStatus: 200, eventId: "evt-1" },
-    } as unknown as never);
-
-    const payRes = await checkoutService.simulateGatewayPay("ref-123", 500000);
-    expect(api.post).toHaveBeenCalledWith(
-      "/dev/fake-gateway/charges/{providerRef}/pay",
-      {
-        params: { providerRef: "ref-123" },
-        body: { amount: 500000 },
-      },
-    );
-    expect(payRes.webhookStatus).toBe(200);
-
-    vi.spyOn(api, "post").mockResolvedValueOnce({
-      data: { webhookStatus: 200, eventId: "evt-2" },
-    } as unknown as never);
-
-    const failRes = await checkoutService.simulateGatewayFail("ref-123");
-    expect(api.post).toHaveBeenCalledWith(
-      "/dev/fake-gateway/charges/{providerRef}/fail",
-      {
-        params: { providerRef: "ref-123" },
-      },
-    );
-    expect(failRes.webhookStatus).toBe(200);
   });
 });

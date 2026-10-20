@@ -27,8 +27,6 @@ vi.mock("@/services/checkout.service.ts", () => ({
     getOrder: vi.fn(),
     getOrderPayments: vi.fn(),
     startPayment: vi.fn(),
-    simulateGatewayPay: vi.fn(),
-    simulateGatewayFail: vi.fn(),
   },
 }));
 

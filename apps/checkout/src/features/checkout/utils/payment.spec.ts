@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getPaymentState,
-  paymentIdempotencyKey,
-  providerRefFromPayUrl,
-} from "./payment";
+import { getPaymentState, paymentIdempotencyKey } from "./payment";
 
 describe("payment state utils", () => {
   it("determines success when order is confirmed or payment is succeeded", () => {
@@ -52,36 +48,5 @@ describe("paymentIdempotencyKey (AC-1, AC-3)", () => {
         /^[A-Za-z0-9_-]{8,100}$/,
       );
     }
-  });
-});
-
-describe("providerRefFromPayUrl (AC-4, AC-5)", () => {
-  it("takes the last part of the path of the fake gateway", () => {
-    expect(
-      providerRefFromPayUrl("/dev/fake-gateway/charges/fake_917b0668-156a"),
-    ).toBe("fake_917b0668-156a");
-  });
-
-  it("works with a full address, a trailing slash, a query and a fragment", () => {
-    expect(providerRefFromPayUrl("https://gw.example.com/pay/fake_abc")).toBe(
-      "fake_abc",
-    );
-    expect(providerRefFromPayUrl("/charges/fake_abc/")).toBe("fake_abc");
-    expect(providerRefFromPayUrl("/charges/fake_abc?x=1#top")).toBe("fake_abc");
-  });
-
-  it("decodes the part, and keeps it as it is when it cannot be decoded", () => {
-    expect(providerRefFromPayUrl("/c/a%20b")).toBe("a b");
-    expect(providerRefFromPayUrl("/c/100%")).toBe("100%");
-  });
-
-  it("is null when there is nothing to take", () => {
-    expect(providerRefFromPayUrl(null)).toBeNull();
-    expect(providerRefFromPayUrl(undefined)).toBeNull();
-    expect(providerRefFromPayUrl("")).toBeNull();
-    expect(providerRefFromPayUrl("/")).toBeNull();
-    expect(providerRefFromPayUrl("https://gateway.example.com")).toBeNull();
-    expect(providerRefFromPayUrl("https://gateway.example.com/")).toBeNull();
-    expect(providerRefFromPayUrl("?a=b")).toBeNull();
   });
 });

@@ -32,8 +32,6 @@ vi.mock("@/services/checkout.service.ts", () => ({
     getOrder: vi.fn(),
     getOrderPayments: vi.fn(),
     startPayment: vi.fn(),
-    simulateGatewayPay: vi.fn(),
-    simulateGatewayFail: vi.fn(),
   },
 }));
 
@@ -92,8 +90,8 @@ const mockPayments: PaymentResponse[] = [
     orderId: "ord-123",
     status: "INITIATED",
     amount: 4929000,
-    // The reference of the charge at the gateway is in the address, and is not the id of the payment.
-    payUrl: "/dev/fake-gateway/charges/fake_abc",
+    qrCode: "00020101021238570010A000000727",
+    payUrl: "https://pay.payos.vn/web/abc123",
     expiresAt: new Date(Date.now() + 14 * 60 * 1000).toISOString(),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -143,7 +141,7 @@ describe("PaymentPage Integration", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders waiting state with QR, timer, instructions and dev simulator", async () => {
+  it("renders waiting state with the QR code, timer, instructions and the link of the gateway (AC-10, AC-22, AC-24)", async () => {
     vi.mocked(checkoutService.getOrder).mockResolvedValueOnce(mockOrder);
     vi.mocked(checkoutService.getOrderPayments).mockResolvedValueOnce(
       mockPayments,
@@ -153,17 +151,37 @@ describe("PaymentPage Integration", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Hoàn tất thanh toán")).toBeInTheDocument();
-      expect(screen.getByText("Quét mã QR để thanh toán")).toBeInTheDocument();
       expect(
-        screen.getByText("Mở trang thanh toán của cổng"),
+        screen.getByRole("img", { name: "Mã QR thanh toán" }),
       ).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: /Mở trang thanh toán của cổng/ }),
+      ).toHaveAttribute("href", "https://pay.payos.vn/web/abc123");
       expect(
         screen.getByText("Đang chờ cổng thanh toán xác nhận…"),
       ).toBeInTheDocument();
+      expect(screen.queryByText(/Dev Simulator/i)).not.toBeInTheDocument();
       expect(
-        screen.getByText("Giả lập cổng thanh toán (Dev Simulator)"),
-      ).toBeInTheDocument();
+        screen.queryByRole("button", { name: /Khách đã trả/i }),
+      ).not.toBeInTheDocument();
     });
+  });
+
+  it("has no QR code to draw yet, and no link: it waits (AC-23, AC-24)", async () => {
+    vi.mocked(checkoutService.getOrder).mockResolvedValueOnce(mockOrder);
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValueOnce([
+      { ...mockPayments[0], qrCode: null, payUrl: null },
+    ]);
+
+    renderWithProviders(<PaymentPage />);
+
+    expect(await screen.findByText("Đang tạo mã QR…")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "Mã QR thanh toán" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /Mở trang thanh toán của cổng/ }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders success state when order is CONFIRMED", async () => {
@@ -238,88 +256,14 @@ describe("PaymentPage Integration", () => {
         screen.getByText("Đã hết thời gian thanh toán"),
       ).toBeInTheDocument();
       expect(
+        screen.getByText(/cửa hàng sẽ hoàn tiền lại cho bạn/),
+      ).toBeInTheDocument();
+      expect(screen.queryByText(/tự động/)).not.toBeInTheDocument();
+      expect(
         screen.getByRole("button", { name: "Về giỏ hàng để đặt lại" }),
       ).toBeInTheDocument();
     });
   });
-
-  it("calls simulateGatewayPay when dev pay button is clicked", async () => {
-    const user = userEvent.setup();
-
-    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
-    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
-    vi.mocked(checkoutService.simulateGatewayPay).mockResolvedValueOnce({
-      webhookStatus: 200,
-      eventId: "evt-sim-1",
-    });
-
-    renderWithProviders(<PaymentPage />);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole("button", { name: /Khách đã trả/i }),
-      ).toBeInTheDocument();
-    });
-
-    const payBtn = screen.getByRole("button", { name: /Khách đã trả/i });
-    await user.click(payBtn);
-
-    await waitFor(() => {
-      expect(checkoutService.simulateGatewayPay).toHaveBeenCalledWith(
-        "fake_abc",
-        4929000,
-      );
-    });
-  });
-
-  it("calls simulateGatewayFail with the reference of the charge, not the id of the payment (AC-4)", async () => {
-    const user = userEvent.setup();
-
-    vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
-    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
-    vi.mocked(checkoutService.simulateGatewayFail).mockResolvedValueOnce({
-      webhookStatus: 200,
-      eventId: "evt-sim-2",
-    });
-
-    renderWithProviders(<PaymentPage />);
-    await user.click(
-      await screen.findByRole("button", { name: /Giao dịch thất bại/i }),
-    );
-
-    await waitFor(() => {
-      expect(checkoutService.simulateGatewayFail).toHaveBeenCalledWith(
-        "fake_abc",
-      );
-    });
-    expect(checkoutService.simulateGatewayFail).not.toHaveBeenCalledWith(
-      "pay-1",
-    );
-  });
-
-  it.each([
-    ["no address", null],
-    ["an address without a path", "https://gateway.example.com"],
-  ])(
-    "does not show the simulator when the payment has %s (AC-5)",
-    async (_name, payUrl) => {
-      vi.mocked(checkoutService.getOrder).mockResolvedValue(mockOrder);
-      vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([
-        { ...mockPayments[0], payUrl },
-      ]);
-
-      renderWithProviders(<PaymentPage />);
-
-      expect(
-        await screen.findByText("Hoàn tất thanh toán"),
-      ).toBeInTheDocument();
-      expect(screen.queryByText(/Dev Simulator/i)).not.toBeInTheDocument();
-      expect(
-        screen.queryByRole("button", { name: /Khách đã trả/i }),
-      ).not.toBeInTheDocument();
-      expect(checkoutService.simulateGatewayPay).not.toHaveBeenCalled();
-    },
-  );
 });
 
 describe("PaymentPage with an order that used a voucher (AC-21)", () => {
@@ -352,30 +296,6 @@ describe("PaymentPage with an order that used a voucher (AC-21)", () => {
     expect(screen.getByText("−50.000 ₫")).toBeInTheDocument();
     const due = screen.getByText("Cần thanh toán");
     expect(due.nextElementSibling).toHaveTextContent("4.879.000 ₫");
-  });
-
-  it("the gateway simulator is asked to charge the discounted total, not the goods", async () => {
-    const user = userEvent.setup();
-    vi.mocked(checkoutService.getOrder).mockResolvedValue(discounted);
-    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(
-      discountedPayments,
-    );
-    vi.mocked(checkoutService.simulateGatewayPay).mockResolvedValueOnce({
-      webhookStatus: 200,
-      eventId: "evt-sim-2",
-    });
-
-    renderWithProviders(<PaymentPage />);
-    await user.click(
-      await screen.findByRole("button", { name: /Khách đã trả/i }),
-    );
-
-    await waitFor(() => {
-      expect(checkoutService.simulateGatewayPay).toHaveBeenCalledWith(
-        "fake_abc",
-        4879000,
-      );
-    });
   });
 
   it("an order without a voucher has no discount line", async () => {
@@ -502,7 +422,7 @@ describe("PaymentPage learns of changes from the stream (AC-9, AC-8)", () => {
     vi.mocked(checkoutService.getOrderPayments).mockResolvedValue(mockPayments);
 
     renderWithProviders(<PaymentPage />);
-    await screen.findByText("Quét mã QR để thanh toán");
+    await screen.findByText("Hoàn tất thanh toán");
 
     expect(api.stream).toHaveBeenCalledTimes(1);
     expect(api.stream).toHaveBeenCalledWith(
@@ -532,7 +452,7 @@ describe("PaymentPage learns of changes from the stream (AC-9, AC-8)", () => {
       .mockResolvedValue([{ ...mockPayments[0], status: "SUCCEEDED" }]);
 
     renderWithProviders(<PaymentPage />);
-    await screen.findByText("Quét mã QR để thanh toán");
+    await screen.findByText("Hoàn tất thanh toán");
 
     act(() =>
       streams[0].onMessage("status", {
@@ -553,7 +473,7 @@ describe("PaymentPage learns of changes from the stream (AC-9, AC-8)", () => {
       .mockResolvedValue([{ ...mockPayments[0], status: "FAILED" }]);
 
     renderWithProviders(<PaymentPage />);
-    await screen.findByText("Quét mã QR để thanh toán");
+    await screen.findByText("Hoàn tất thanh toán");
 
     act(() =>
       streams[0].onMessage("status", { orderId: "ord-123", status: "PENDING" }),
@@ -576,7 +496,7 @@ describe("PaymentPage learns of changes from the stream (AC-9, AC-8)", () => {
       );
 
       renderWithProviders(<PaymentPage />);
-      await screen.findByText("Quét mã QR để thanh toán");
+      await screen.findByText("Hoàn tất thanh toán");
       act(() =>
         streams[0].onMessage("status", {
           orderId: "ord-123",

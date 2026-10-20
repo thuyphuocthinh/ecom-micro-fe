@@ -114,13 +114,11 @@ export interface PaymentResponse {
   orderId: string;
   status: PaymentStatus;
   amount: number;
+  /** The VietQR text the customer scans; drawn as a QR code. Null unless the payment is INITIATED. */
+  qrCode: string | null;
+  /** The gateway's own payment page, a way out when scanning fails. Null when there is none. */
   payUrl: string | null;
   expiresAt: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface FakeGatewayResult {
-  webhookStatus: number;
-  eventId: string;
 }

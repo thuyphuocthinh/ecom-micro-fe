@@ -2,22 +2,17 @@ import { useEffect } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router";
 import { Spinner, Button, Icon } from "@ecom/ui";
 import { formatCurrency } from "@/utils/format.ts";
-import {
-  getPaymentState,
-  providerRefFromPayUrl,
-} from "@/features/checkout/utils";
+import { getPaymentState } from "@/features/checkout/utils";
 import {
   useOrderDetailQuery,
   useOrderPaymentsQuery,
   useStartPaymentMutation,
-  useDevGatewayMutation,
   useOrderStatusStream,
 } from "@/features/checkout/hooks";
 import {
   CheckoutStepper,
   PaymentCountdownTimer,
   PaymentQrCard,
-  PaymentDevSimulator,
 } from "@/features/checkout/components";
 
 export function PaymentPage() {
@@ -38,8 +33,6 @@ export function PaymentPage() {
   } = useOrderPaymentsQuery(orderId);
 
   const startPaymentMutation = useStartPaymentMutation();
-  const { simulatePay, simulateFail, isPaying, isFailing } =
-    useDevGatewayMutation(orderId);
 
   const latestPayment = payments[0];
 
@@ -131,9 +124,6 @@ export function PaymentPage() {
     }
   };
 
-  // What the dev simulator needs is the reference of the charge at the gateway, not the id of the payment.
-  const providerRef = providerRefFromPayUrl(latestPayment?.payUrl);
-
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       <CheckoutStepper currentStep={3} />
@@ -149,6 +139,7 @@ export function PaymentPage() {
                 orderCode={order.id}
                 attempt={attemptNumber}
                 maxAttempts={maxAttempts}
+                qrCode={latestPayment?.qrCode}
                 payUrl={latestPayment?.payUrl}
                 timerNode={
                   <PaymentCountdownTimer
@@ -260,7 +251,7 @@ export function PaymentPage() {
                 </h1>
                 <p className="text-ink-2 max-w-lg">
                   Đơn hàng đã được huỷ và hàng đã trả lại kho. Nếu bạn đã chuyển
-                  khoản ở phút cuối, tiền sẽ được hoàn lại tự động.
+                  khoản ở phút cuối, cửa hàng sẽ hoàn tiền lại cho bạn.
                 </p>
                 <Link to="/cart">
                   <Button variant="primary" size="lg">
@@ -268,17 +259,6 @@ export function PaymentPage() {
                   </Button>
                 </Link>
               </section>
-            )}
-
-            {/* 5. Dev Gateway Simulator (shown in dev mode or waiting) */}
-            {isWaiting && providerRef && (
-              <PaymentDevSimulator
-                onSimulatePaid={() =>
-                  simulatePay({ providerRef, amount: order.total })
-                }
-                onSimulateFailed={() => simulateFail({ providerRef })}
-                isLoading={isPaying || isFailing}
-              />
             )}
           </div>
 

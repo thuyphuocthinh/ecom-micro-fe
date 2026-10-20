@@ -5,5 +5,4 @@ export * from "./PaymentMethodSelector.tsx";
 export * from "./CheckoutSummaryAside.tsx";
 export * from "./PaymentCountdownTimer.tsx";
 export * from "./PaymentQrCard.tsx";
-export * from "./PaymentDevSimulator.tsx";
 export * from "./OrderTrackingTimeline.tsx";

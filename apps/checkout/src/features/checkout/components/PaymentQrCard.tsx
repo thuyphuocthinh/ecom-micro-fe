@@ -1,3 +1,4 @@
+import { QRCodeSVG } from "qrcode.react";
 import { Spinner, Icon } from "@ecom/ui";
 import { formatCurrency } from "@/utils/format.ts";
 
@@ -6,6 +7,9 @@ export interface PaymentQrCardProps {
   orderCode: string;
   attempt?: number;
   maxAttempts?: number;
+  /** The VietQR text the customer scans, drawn as a QR code. Null until the gateway has answered. */
+  qrCode?: string | null;
+  /** The gateway's own payment page: a way out when scanning does not work. */
   payUrl?: string | null;
   timerNode?: React.ReactNode;
 }
@@ -15,6 +19,7 @@ export function PaymentQrCard({
   orderCode,
   attempt = 1,
   maxAttempts = 3,
+  qrCode,
   payUrl,
   timerNode,
 }: PaymentQrCardProps) {
@@ -47,25 +52,26 @@ export function PaymentQrCard({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-[220px_minmax(0,1fr)] gap-6 sm:gap-8 items-center border-t border-line pt-6">
-        {/* QR container */}
-        <div
-          role="img"
-          aria-label="Chỗ đặt mã QR của cổng thanh toán"
-          className="size-[220px] mx-auto rounded-2xl border border-line bg-surface-sunken flex flex-col items-center justify-center text-center text-muted text-xs p-5 shadow-inner gap-2"
-        >
-          <Icon
-            name="qr-code"
-            size={64}
-            className="text-muted/60"
-            strokeWidth={1.5}
-          />
-          <span className="font-medium text-ink-2">
-            Quét mã QR để thanh toán
-          </span>
-          <span className="text-[11px] text-muted">
-            Hỗ trợ tất cả ngân hàng & ví điện tử
-          </span>
-        </div>
+        {/* QR container: always white with black modules, so a banking app can scan it in dark mode too */}
+        {qrCode ? (
+          <div className="size-[220px] mx-auto rounded-2xl border border-line bg-white flex items-center justify-center shadow-inner">
+            <QRCodeSVG
+              value={qrCode}
+              size={204}
+              level="M"
+              marginSize={2}
+              bgColor="#ffffff"
+              fgColor="#000000"
+              role="img"
+              aria-label="Mã QR thanh toán"
+            />
+          </div>
+        ) : (
+          <div className="size-[220px] mx-auto rounded-2xl border border-line bg-surface-sunken flex flex-col items-center justify-center text-center text-muted text-xs p-5 shadow-inner gap-3">
+            <Spinner className="size-8 text-brand" />
+            <span className="font-medium text-ink-2">Đang tạo mã QR…</span>
+          </div>
+        )}
 
         {/* Instructions */}
         <div className="flex flex-col gap-4">
@@ -82,9 +88,9 @@ export function PaymentQrCard({
               href={payUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 min-h-12 px-6 rounded-xl bg-brand text-white font-semibold text-sm hover:bg-brand-dark transition-colors shadow-sm"
+              className="inline-flex items-center justify-center gap-2 min-h-12 px-6 rounded-xl border border-line bg-canvas text-ink font-semibold text-sm hover:bg-surface-sunken transition-colors"
             >
-              Mở trang thanh toán của cổng
+              Không quét được? Mở trang thanh toán của cổng
               <Icon name="external-link" size={16} strokeWidth={2} />
             </a>
           )}

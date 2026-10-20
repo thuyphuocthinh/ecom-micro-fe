@@ -2,7 +2,6 @@ import { api } from "@ecom/api";
 import type {
   Address,
   CreateAddressPayload,
-  FakeGatewayResult,
   OrderResponse,
   PaymentResponse,
   PlaceOrderPayload,
@@ -69,23 +68,5 @@ export const checkoutService = {
       idempotencyKey,
     });
     return res.data as PaymentResponse;
-  },
-
-  async simulateGatewayPay(
-    providerRef: string,
-    amount?: number,
-  ): Promise<FakeGatewayResult> {
-    const res = await api.post("/dev/fake-gateway/charges/{providerRef}/pay", {
-      params: { providerRef },
-      body: amount !== undefined ? { amount } : {},
-    });
-    return res.data as FakeGatewayResult;
-  },
-
-  async simulateGatewayFail(providerRef: string): Promise<FakeGatewayResult> {
-    const res = await api.post("/dev/fake-gateway/charges/{providerRef}/fail", {
-      params: { providerRef },
-    });
-    return res.data as FakeGatewayResult;
   },
 };
