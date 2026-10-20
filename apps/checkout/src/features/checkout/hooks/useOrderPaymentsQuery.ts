@@ -27,7 +27,16 @@ export function useStartPaymentMutation() {
         orderId,
         paymentIdempotencyKey(orderId, attempt),
       ),
-    onSuccess: (_payment, { orderId }) => {
+    onSuccess: (payment, { orderId }) => {
+      // Show the payment (and its QR code) at once, newest first as the list is: waiting for the read
+      // below would leave the customer looking at "making the code" for one more round trip
+      queryClient.setQueryData<PaymentResponse[]>(
+        queryKeys.checkout.payments(orderId),
+        (current = []) => [
+          payment,
+          ...current.filter((other) => other.id !== payment.id),
+        ],
+      );
       queryClient.invalidateQueries({
         queryKey: queryKeys.checkout.payments(orderId),
       });

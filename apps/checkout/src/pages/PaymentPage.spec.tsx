@@ -331,6 +331,36 @@ describe("PaymentPage starting the payment (AC-1, AC-2, AC-3)", () => {
     });
   });
 
+  it("shows the QR code as soon as the payment is made, without waiting for the list to be read again (AC-10)", async () => {
+    // The first read of the list is empty; any later read never answers. Only the answer of the
+    // "start payment" call is left to show the code.
+    vi.mocked(checkoutService.getOrderPayments)
+      .mockResolvedValueOnce([])
+      .mockImplementation(() => new Promise(() => {}));
+    vi.mocked(checkoutService.startPayment).mockResolvedValue(mockPayments[0]);
+
+    renderWithProviders(<PaymentPage />);
+
+    expect(
+      await screen.findByRole("img", { name: "Mã QR thanh toán" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Đang tạo mã QR…")).not.toBeInTheDocument();
+  });
+
+  it("says it is making the code while the payment is being made (AC-23)", async () => {
+    vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([]);
+    vi.mocked(checkoutService.startPayment).mockImplementation(
+      () => new Promise(() => {}),
+    );
+
+    renderWithProviders(<PaymentPage />);
+
+    expect(await screen.findByText("Đang tạo mã QR…")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("img", { name: "Mã QR thanh toán" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("sends the same key whenever the page asks again: drawn twice, or opened again (AC-1)", async () => {
     vi.mocked(checkoutService.getOrderPayments).mockResolvedValue([]);
     vi.mocked(checkoutService.startPayment).mockResolvedValue(mockPayments[0]);

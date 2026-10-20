@@ -249,6 +249,13 @@ describe("CheckoutPage Integration", () => {
         "/checkout/success?orderId=ord-999",
       );
       expect(toast.success).toHaveBeenCalledWith("Đặt hàng thành công!");
+      // While the next page loads, the screen says where it is going, not "your cart is empty"
+      expect(
+        screen.getByText("Đang chuyển tới trang xác nhận đơn hàng…"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText("Giỏ hàng của bạn đang trống"),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -547,6 +554,48 @@ describe("CheckoutPage with a voucher (a signed-in customer)", () => {
         voucherCode: "GIAM50K",
       });
       expect(getSelectedVoucher()).toBeNull();
+    });
+
+    it("after the order the page never says the cart is empty and never checks the voucher on the empty cart", async () => {
+      const user = userEvent.setup();
+      selectVoucher("GIAM50K");
+      // What the server does when it takes the order: the cart is emptied, and a voucher check on an
+      // empty cart is refused (409)
+      vi.mocked(checkoutService.placeOrder).mockImplementation(async () => {
+        vi.mocked(cartService.getCart).mockResolvedValue({
+          items: [],
+          subtotal: 0,
+          lineCount: 0,
+          quantityCount: 0,
+        });
+        vi.mocked(voucherService.previewVoucher).mockRejectedValue(
+          refusal("ORD-003"),
+        );
+        return ORDER;
+      });
+      renderWithProviders(<CheckoutPage />);
+      await screen.findByText(/Mã giảm giá \(GIAM50K\)/);
+      const cartReads = vi.mocked(cartService.getCart).mock.calls.length;
+      const voucherChecks = vi.mocked(voucherService.previewVoucher).mock.calls
+        .length;
+
+      await user.click(await placeButton());
+
+      // The cart is read again after the order (the host is told it changed): wait until that landed
+      await waitFor(() =>
+        expect(
+          vi.mocked(cartService.getCart).mock.calls.length,
+        ).toBeGreaterThan(cartReads),
+      );
+      expect(
+        await screen.findByText("Đang chuyển tới trang thanh toán…"),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText("Giỏ hàng của bạn đang trống"),
+      ).not.toBeInTheDocument();
+      expect(vi.mocked(voucherService.previewVoucher).mock.calls.length).toBe(
+        voucherChecks,
+      );
     });
 
     it("without a voucher the field is not sent at all", async () => {

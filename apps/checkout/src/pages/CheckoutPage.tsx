@@ -39,6 +39,9 @@ export function CheckoutPage() {
     "new",
   );
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("ONLINE");
+  // Set once the order is placed. The cart is empty from then on, and the next page may take a moment
+  // to load: this keeps the screen from saying "your cart is empty" in between.
+  const [placedMethod, setPlacedMethod] = useState<PaymentMethod | null>(null);
   const [newAddressData, setNewAddressData] = useState<NewAddressFormData>({
     recipientName: "",
     phone: "",
@@ -105,6 +108,7 @@ export function CheckoutPage() {
       toast.error("Giỏ hàng của bạn đang trống.");
       return;
     }
+    if (placedMethod) return;
 
     try {
       let finalAddressId = selectedAddressId;
@@ -148,6 +152,7 @@ export function CheckoutPage() {
       attemptRef.current = null;
       clearVoucher();
       toast.success("Đặt hàng thành công!");
+      setPlacedMethod(paymentMethod);
 
       if (paymentMethod === "ONLINE") {
         navigate(`/checkout/payment?orderId=${order.id}`);
@@ -169,6 +174,26 @@ export function CheckoutPage() {
       );
     }
   };
+
+  if (placedMethod) {
+    return (
+      <div className="min-h-screen bg-canvas flex flex-col">
+        <CheckoutStepper currentStep={3} />
+        <div
+          role="status"
+          className="flex-1 flex flex-col items-center justify-center gap-4 p-12 text-center"
+        >
+          <Spinner className="size-8 text-brand" />
+          <p className="font-semibold text-ink">Đặt hàng thành công</p>
+          <p className="text-sm text-muted">
+            {placedMethod === "ONLINE"
+              ? "Đang chuyển tới trang thanh toán…"
+              : "Đang chuyển tới trang xác nhận đơn hàng…"}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoadingCart || isLoadingAddresses) {
     return (
