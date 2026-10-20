@@ -42,9 +42,11 @@ export const productService = {
     const res = await api.get("/catalog/products", {
       query,
     });
+    // The client has already taken the list out of the answer: `res.data` is the list and `res.meta`
+    // is the paging (`nextCursor` or `page`/`total`), side by side.
     return {
-      data: (res.data.data ?? []) as Product[],
-      meta: (res.data.meta ?? {}) as ProductsPageMeta,
+      data: (res.data ?? []) as Product[],
+      meta: (res.meta ?? {}) as ProductsPageMeta,
     };
   },
 
